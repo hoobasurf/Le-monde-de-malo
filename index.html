@@ -173,11 +173,17 @@ display:flex;align-items:center;gap:12px;
 
 // SPLASH → démarre la musique au tap (geste réel = iOS happy)
 const splash = document.getElementById(‘splash’);
-splash.addEventListener(‘pointerdown’, () => {
+let splashDone = false;
+function dismissSplash(e) {
+if (splashDone) return;
+splashDone = true;
+e.preventDefault();
 MaloMelody.play(‘menu’);
 splash.classList.add(‘hide’);
 setTimeout(() => splash.remove(), 600);
-}, { once: true });
+}
+splash.addEventListener(‘touchstart’, dismissSplash, { passive: false });
+splash.addEventListener(‘pointerdown’, dismissSplash);
 
 // Bouton musique (marche toujours, splash déjà passé ou non)
 document.getElementById(‘musicBtn’).addEventListener(‘click’, () => {
