@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#00BCD4">
+<title>Les Bulles 🫧 - Malo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow:hidden;font-family:'Baloo 2',cursive;touch-action:manipulation;}
+
+.bg{
+position:fixed;inset:0;
+background:linear-gradient(180deg,#001a4d 0%,#003580 20%,#0066cc 55%,#0099e6 80%,#33bbff 100%);
+overflow:hidden;
+}
+
+/* Rayons lumineux sous-marins */
+.rays{position:absolute;inset:0;pointer-events:none;}
+.ray{
+position:absolute;top:0;
+width:60px;
+background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,transparent 100%);
+transform-origin:top center;
+}
+.ray:nth-child(1){left:10%;height:70%;transform:rotate(-8deg);}
+.ray:nth-child(2){left:25%;height:85%;transform:rotate(-3deg);width:80px;}
+.ray:nth-child(3){left:50%;height:75%;transform:rotate(5deg);}
+.ray:nth-child(4){left:70%;height:65%;transform:rotate(10deg);width:50px;}
+.ray:nth-child(5){left:85%;height:80%;transform:rotate(-5deg);}
+
+/* Petites particules */
+.particle{
+position:absolute;
+border-radius:50%;
+background:rgba(255,255,255,.3);
+animation:rise linear infinite;
+pointer-events:none;
+}
+@keyframes rise{
+from{transform:translateY(100vh) scale(0);opacity:0;}
+10%{opacity:.4;}
+90%{opacity:.2;}
+to{transform:translateY(-100px) scale(1);opacity:0;}
+}
+
+/* Header */
+.header{
+position:fixed;top:0;left:0;right:0;
+display:flex;align-items:center;justify-content:space-between;
+padding:16px 20px;
+z-index:50;
+}
+.back-btn{
+background:rgba(255,255,255,.2);
+border:2px solid rgba(255,255,255,.4);
+border-radius:50%;
+width:48px;height:48px;
+font-size:22px;
+color:white;
+cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+backdrop-filter:blur(8px);
+text-decoration:none;
+transition:transform .2s;
+}
+.back-btn:active{transform:scale(.9);}
+.music-btn{
+background:rgba(255,255,255,.2);
+border:2px solid rgba(255,255,255,.4);
+border-radius:50%;
+width:48px;height:48px;
+font-size:22px;
+cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+backdrop-filter:blur(8px);
+transition:transform .2s;
+}
+.music-btn:active{transform:scale(.9);}
+
+.score-area{
+text-align:center;
+}
+.score-label{
+font-family:‘Nunito’,sans-serif;
+font-size:11px;
+color:rgba(255,255,255,.7);
+text-transform:uppercase;
+letter-spacing:1px;
+}
+.score-num{
+font-size:32px;
+font-weight:800;
+color:white;
+text-shadow:0 0 20px rgba(0,200,255,.8);
+line-height:1;
+}
+
+/* Canvas bulles */
+#canvas{
+position:fixed;inset:0;
+width:100%;height:100%;
+cursor:crosshair;
+}
+
+/* Message bravo */
+.bravo{
+position:fixed;
+top:50%;left:50%;
+transform:translate(-50%,-50%) scale(0);
+background:rgba(255,255,255,.95);
+border-radius:32px;
+padding:24px 36px;
+text-align:center;
+z-index:100;
+box-shadow:0 16px 48px rgba(0,0,0,.3);
+transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+pointer-events:none;
+}
+.bravo.show{transform:translate(-50%,-50%) scale(1);}
+.bravo-emoji{font-size:64px;display:block;animation:bravoBounce .5s ease-in-out infinite alternate;}
+@keyframes bravoBounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
+.bravo-text{font-size:28px;font-weight:800;color:#0066cc;margin-top:8px;}
+
+/* Titre flottant */
+.title-float{
+position:fixed;
+top:90px;
+left:0;right:0;
+text-align:center;
+pointer-events:none;
+z-index:10;
+}
+.title-float h1{
+font-size:clamp(22px,6vw,34px);
+color:white;
+text-shadow:0 3px 0 rgba(0,80,160,.6),0 0 20px rgba(0,200,255,.5);
+font-weight:800;
+}
+.title-float p{
+font-family:‘Nunito’,sans-serif;
+font-size:clamp(12px,3.5vw,16px);
+color:rgba(255,255,255,.75);
+margin-top:2px;
+}
+
+/* Pop animation */
+.pop-effect{
+position:fixed;
+pointer-events:none;
+z-index:80;
+font-size:32px;
+animation:popOut .6s ease-out forwards;
+}
+@keyframes popOut{
+0%{transform:scale(0);opacity:1;}
+60%{transform:scale(1.4);opacity:1;}
+100%{transform:scale(0);opacity:0;}
+}
+</style>
+
+</head>
+<body>
+
+<div class="bg">
+  <div class="rays">
+    <div class="ray"></div><div class="ray"></div><div class="ray"></div>
+    <div class="ray"></div><div class="ray"></div>
+  </div>
+</div>
+
+<div class="header">
+  <a class="back-btn" href="/index.html">⬅️</a>
+  <div class="score-area">
+    <div class="score-label">Bulles éclatées</div>
+    <div class="score-num" id="scoreNum">0</div>
+  </div>
+  <button class="music-btn" id="musicBtn">🎵</button>
+</div>
+
+<div class="title-float">
+  <h1>🫧 Les Bulles !</h1>
+  <p>Touche les bulles pour les éclater !</p>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div class="bravo" id="bravo">
+  <span class="bravo-emoji">🎉</span>
+  <div class="bravo-text">Super Malo !</div>
+</div>
+
+<script src="/js/melody.js"></script>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+let bubbles = [];
+let score = 0;
+let musicOn = true;
+let started = false;
+
+// Animaux dans les bulles
+const ANIMALS = ['🐟','🐠','🐡','🦈','🐙','🦑','🦀','🦞','🐬','🐳','🐋','🦭','🐧','🦐','🌊','⭐','🪸','🐚'];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Classe Bulle
+class Bubble {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.r = 30 + Math.random() * 45;
+    this.x = this.r + Math.random() * (W - this.r * 2);
+    this.y = H + this.r * 2;
+    this.vx = (Math.random() - 0.5) * 1.2;
+    this.vy = -(0.8 + Math.random() * 1.4);
+    this.animal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
+    this.hue = Math.random() * 60 + 160; // tons bleus/verts/cyans
+    this.alpha = 0.65 + Math.random() * 0.25;
+    this.wobble = Math.random() * Math.PI * 2;
+    this.wobbleSpeed = 0.02 + Math.random() * 0.03;
+    this.alive = true;
+    this.popAnim = 0;
+  }
+  update() {
+    this.wobble += this.wobbleSpeed;
+    this.x += this.vx + Math.sin(this.wobble) * 0.4;
+    this.y += this.vy;
+    if (this.y < -this.r * 2) this.reset();
+    if (this.x < this.r || this.x > W - this.r) this.vx *= -1;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+
+    // Corps de la bulle
+    const grad = ctx.createRadialGradient(
+      this.x - this.r * 0.3, this.y - this.r * 0.3, this.r * 0.1,
+      this.x, this.y, this.r
+    );
+    grad.addColorStop(0, `hsla(${this.hue},80%,90%,0.8)`);
+    grad.addColorStop(0.5, `hsla(${this.hue},70%,65%,0.4)`);
+    grad.addColorStop(1, `hsla(${this.hue},80%,50%,0.6)`);
+
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Reflet
+    ctx.beginPath();
+    ctx.ellipse(
+      this.x - this.r * 0.25,
+      this.y - this.r * 0.3,
+      this.r * 0.22,
+      this.r * 0.12,
+      -Math.PI / 4, 0, Math.PI * 2
+    );
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fill();
+
+    // Bord
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.strokeStyle = `hsla(${this.hue},70%,80%,0.8)`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+
+    // Emoji animal
+    ctx.font = `${this.r * 0.9}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(this.animal, this.x, this.y + 2);
+
+    ctx.restore();
+  }
+  contains(px, py) {
+    return Math.hypot(px - this.x, py - this.y) < this.r;
+  }
+}
+
+// Créer les bulles initiales
+function initBubbles() {
+  bubbles = [];
+  const count = Math.min(10, Math.floor(W * H / 40000) + 5);
+  for (let i = 0; i < count; i++) {
+    const b = new Bubble();
+    b.y = Math.random() * H;  // dispersion initiale
+    bubbles.push(b);
+  }
+}
+
+// Boucle d'animation
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  bubbles.forEach(b => { b.update(); b.draw(); });
+  requestAnimationFrame(loop);
+}
+
+// Pop d'une bulle
+function popBubble(bubble, px, py) {
+  // Effet visuel
+  const pop = document.createElement('div');
+  pop.className = 'pop-effect';
+  pop.textContent = bubble.animal;
+  pop.style.left = (px - 20) + 'px';
+  pop.style.top = (py - 20) + 'px';
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 700);
+
+  // Son
+  MaloMelody.playPop(0.8 + Math.random() * 0.6);
+
+  // Score
+  score++;
+  document.getElementById('scoreNum').textContent = score;
+
+  // Bravo tous les 10
+  if (score % 10 === 0) {
+    showBravo();
+    MaloMelody.playOnce('bravo');
+  }
+
+  bubble.reset();
+}
+
+function showBravo() {
+  const el = document.getElementById('bravo');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// Événements tactiles
+function handleTouch(e) {
+  e.preventDefault();
+  if (!started) { startMusic(); }
+
+  const touches = e.changedTouches || [e];
+  for (let t of touches) {
+    const rect = canvas.getBoundingClientRect();
+    const px = (t.clientX || t.x) - rect.left;
+    const py = (t.clientY || t.y) - rect.top;
+
+    let popped = false;
+    for (let b of bubbles) {
+      if (b.contains(px, py)) {
+        popBubble(b, t.clientX || t.x, t.clientY || t.y);
+        popped = true;
+        break;
+      }
+    }
+    if (!popped) {
+      // Petite bulle scintillante ratée
+      const tiny = document.createElement('div');
+      tiny.className = 'pop-effect';
+      tiny.textContent = '💧';
+      tiny.style.left = ((t.clientX || t.x) - 16) + 'px';
+      tiny.style.top = ((t.clientY || t.y) - 16) + 'px';
+      tiny.style.fontSize = '20px';
+      document.body.appendChild(tiny);
+      setTimeout(() => tiny.remove(), 500);
+    }
+  }
+}
+
+canvas.addEventListener('touchstart', handleTouch, { passive: false });
+canvas.addEventListener('mousedown', e => handleTouch({
+  changedTouches: null,
+  clientX: e.clientX, clientY: e.clientY,
+  x: e.clientX, y: e.clientY,
+  preventDefault: () => {}
+}));
+
+// Particules de fond
+function addParticles() {
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 3 + Math.random() * 8;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      animation-duration:${5+Math.random()*10}s;
+      animation-delay:${-Math.random()*10}s;
+    `;
+    document.querySelector('.bg').appendChild(p);
+  }
+}
+
+// Musique
+function startMusic() {
+  if (!started && musicOn) {
+    MaloMelody.play('bulles', true);
+    started = true;
+  }
+}
+
+document.getElementById('musicBtn').addEventListener('click', () => {
+  musicOn = !musicOn;
+  document.getElementById('musicBtn').textContent = musicOn ? '🎵' : '🔇';
+  if (musicOn) { MaloMelody.play('bulles', true); started = true; }
+  else MaloMelody.stop();
+});
+
+document.addEventListener('pointerdown', function onFirst() {
+  startMusic();
+  document.removeEventListener('pointerdown', onFirst);
+}, { once: true });
+
+// Init
+addParticles();
+initBubbles();
+loop();
+</script>
+
+</body>
+</html>
