@@ -6,392 +6,404 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Malo 🌍">
+<meta name="apple-mobile-web-app-title" content="Malo">
 <meta name="theme-color" content="#1a6b3c">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
 <title>Le Monde de Malo 🌍</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{width:100%;height:100%;overflow-x:hidden;font-family:'Baloo 2',cursive;touch-action:manipulation;}
-  .sky{position:fixed;inset:0;background:linear-gradient(180deg,#5bc8f5 0%,#a8e6ff 50%,#c8f0a0 85%,#6dbf52 100%);z-index:0;overflow:hidden;}
-  .sun{position:absolute;top:24px;right:40px;width:80px;height:80px;background:radial-gradient(circle,#fff8a0 30%,#FFD700 70%,#ffaa00 100%);border-radius:50%;box-shadow:0 0 40px 20px rgba(255,220,0,.4);animation:sunPulse 4s ease-in-out infinite;}
-  @keyframes sunPulse{0%,100%{box-shadow:0 0 40px 20px rgba(255,220,0,.4);transform:scale(1);}50%{box-shadow:0 0 60px 30px rgba(255,220,0,.6);transform:scale(1.05);}}
-  .cloud{position:absolute;background:white;border-radius:50px;opacity:.85;}
-  .cloud::before,.cloud::after{content:'';position:absolute;background:white;border-radius:50%;}
-  .cloud-1{width:100px;height:36px;top:60px;left:-120px;animation:drift 22s linear infinite;}
-  .cloud-1::before{width:52px;height:52px;top:-28px;left:14px;}.cloud-1::after{width:36px;height:36px;top:-18px;left:50px;}
-  .cloud-2{width:130px;height:44px;top:110px;left:-160px;animation:drift 30s linear infinite 8s;opacity:.7;}
-  .cloud-2::before{width:64px;height:64px;top:-34px;left:18px;}.cloud-2::after{width:44px;height:44px;top:-22px;left:64px;}
-  .cloud-3{width:80px;height:28px;top:40px;left:-100px;animation:drift 18s linear infinite 14s;opacity:.6;}
-  .cloud-3::before{width:40px;height:40px;top:-22px;left:10px;}.cloud-3::after{width:28px;height:28px;top:-14px;left:40px;}
-  @keyframes drift{from{transform:translateX(0);}to{transform:translateX(calc(100vw + 200px));}}
-  .ground-strip{position:fixed;bottom:0;left:0;right:0;height:52px;background:linear-gradient(180deg,#56c45a,#2e7d32);z-index:2;border-radius:60% 60% 0 0/20px 20px 0 0;}
-  .grass-bumps{position:absolute;top:-16px;left:0;right:0;height:30px;background:radial-gradient(ellipse 40px 18px at 10% 100%,#56c45a 99%,transparent 100%),radial-gradient(ellipse 50px 20px at 28% 100%,#4db84f 99%,transparent 100%),radial-gradient(ellipse 40px 16px at 46% 100%,#56c45a 99%,transparent 100%),radial-gradient(ellipse 55px 22px at 64% 100%,#4db84f 99%,transparent 100%),radial-gradient(ellipse 40px 18px at 82% 100%,#56c45a 99%,transparent 100%),radial-gradient(ellipse 48px 18px at 98% 100%,#4db84f 99%,transparent 100%);}
-  .butterfly{position:fixed;font-size:24px;z-index:5;pointer-events:none;opacity:.85;}
-  .butterfly:nth-child(1){top:25%;left:5%;animation:fly 12s ease-in-out infinite;}
-  .butterfly:nth-child(2){top:45%;right:6%;animation:fly 12s ease-in-out infinite 4s;font-size:20px;}
-  .butterfly:nth-child(3){top:15%;left:30%;animation:fly 12s ease-in-out infinite 8s;font-size:18px;}
-  @keyframes fly{0%{transform:translate(0,0)rotate(-5deg);}25%{transform:translate(20px,-15px)rotate(5deg);}50%{transform:translate(-10px,-25px)rotate(-3deg);}75%{transform:translate(15px,-10px)rotate(4deg);}100%{transform:translate(0,0)rotate(-5deg);}}
-  .sparkle{position:fixed;font-size:16px;z-index:4;pointer-events:none;animation:twinkle 2.5s ease-in-out infinite;}
-  .sparkle:nth-child(1){top:8%;left:15%;}.sparkle:nth-child(2){top:12%;right:20%;animation-delay:.8s;}.sparkle:nth-child(3){top:5%;left:55%;animation-delay:1.6s;}
-  @keyframes twinkle{0%,100%{opacity:.3;transform:scale(.8);}50%{opacity:1;transform:scale(1.2)rotate(180deg);}}
-  .flowers{position:fixed;bottom:40px;left:0;right:0;z-index:3;pointer-events:none;display:flex;justify-content:space-around;padding:0 20px;}
-  .flower{font-size:clamp(20px,5vw,28px);animation:sway 3s ease-in-out infinite;display:inline-block;}
-  .flower:nth-child(2){animation-delay:.5s;}.flower:nth-child(3){animation-delay:1s;}.flower:nth-child(4){animation-delay:1.5s;}.flower:nth-child(5){animation-delay:.8s;}.flower:nth-child(6){animation-delay:1.3s;}
-  @keyframes sway{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg)translateY(-4px);}}
-  .music-btn{position:fixed;top:16px;left:16px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:52px;height:52px;font-size:26px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;transition:transform .2s;}
-  .music-btn:active{transform:scale(.9);}
-  .main-content{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 120px;}
-  .app-title{margin-top:12px;text-align:center;animation:titleDrop .8s cubic-bezier(.34,1.56,.64,1) both;}
-  @keyframes titleDrop{from{opacity:0;transform:translateY(-40px)scale(.8);}to{opacity:1;transform:translateY(0)scale(1);}}
-  .title-emoji{font-size:clamp(52px,14vw,80px);display:block;animation:bounce 2.5s ease-in-out infinite 1s;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15));}
-  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-  .title-text{font-weight:800;font-size:clamp(28px,8vw,52px);color:white;text-shadow:0 3px 0 #1a6b3c,0 6px 0 rgba(0,0,0,.15);letter-spacing:1px;line-height:1.1;}
-  .title-sub{font-family:'Nunito',sans-serif;font-weight:700;font-size:clamp(14px,4vw,20px);color:rgba(255,255,255,.9);margin-top:4px;}
-  .games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:500px;margin-top:24px;}
-  .game-card{border-radius:28px;padding:20px 12px 16px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 8px 0 rgba(0,0,0,.12),0 12px 24px rgba(0,0,0,.1);border:3px solid white;transition:transform .15s;animation:cardPop .5s cubic-bezier(.34,1.56,.64,1) both;position:relative;overflow:hidden;}
-  .game-card:active{transform:scale(.94)translateY(4px);}
-  .card-animaux{background:linear-gradient(145deg,#fff8f0,#ffe8cc);}
-  .card-puzzle{background:linear-gradient(145deg,#f8f0ff,#ede0ff);}
-  .card-comptines{background:linear-gradient(145deg,#fff0f7,#ffe0f0);}
-  .card-marin{background:linear-gradient(145deg,#f0f8ff,#d0eeff);}
-  .card-cuisine{background:linear-gradient(145deg,#fff5f0,#ffe0d0);}
-  .card-tracteur{background:linear-gradient(145deg,#f0fff0,#d0ffd0);}
-  .card-bulles{background:linear-gradient(145deg,#f0feff,#d0f8ff);}
-  .card-wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:16px;padding:18px 24px;}
-  .card-wide .game-label{font-size:clamp(18px,5vw,24px);}
-  .card-wide .game-emoji{font-size:clamp(44px,12vw,64px);}
-  .game-card:nth-child(1){animation-delay:.1s;}.game-card:nth-child(2){animation-delay:.2s;}.game-card:nth-child(3){animation-delay:.3s;}.game-card:nth-child(4){animation-delay:.4s;}.game-card:nth-child(5){animation-delay:.5s;}.game-card:nth-child(6){animation-delay:.6s;}.game-card:nth-child(7){animation-delay:.7s;}
-  @keyframes cardPop{from{opacity:0;transform:scale(.6)translateY(20px);}to{opacity:1;transform:scale(1);}}
-  .game-emoji{font-size:clamp(40px,11vw,60px);display:block;line-height:1;}
-  .game-label{font-weight:800;font-size:clamp(14px,4vw,18px);color:#1a3a1a;line-height:1.2;}
-  .game-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.08);color:#555;font-family:'Nunito',sans-serif;font-weight:900;font-size:9px;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
-  .footer-note{margin-top:16px;font-family:'Nunito',sans-serif;font-size:13px;color:rgba(255,255,255,.75);text-align:center;}
-  .install-banner{position:fixed;bottom:70px;left:16px;right:16px;background:rgba(255,255,255,.96);border-radius:20px;padding:14px 18px;display:none;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:200;}
-  .install-banner.show{display:flex;}
-  .install-banner span{font-family:'Nunito',sans-serif;font-size:13px;color:#333;flex:1;}
-  .install-btn{background:#4CAF50;color:white;border:none;border-radius:12px;padding:8px 16px;font-family:'Baloo 2',cursive;font-weight:700;font-size:13px;cursor:pointer;}
-  .install-close{background:none;border:none;font-size:18px;cursor:pointer;color:#999;}
-  .ripple{position:fixed;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:rippleAnim .6s ease-out forwards;pointer-events:none;z-index:999;width:60px;height:60px;}
-  @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body {
+    width:100%; min-height:100%;
+    font-family:'Baloo 2', cursive;
+    overflow-x:hidden;
+    background:#5bc8f5;
+  }
 
-/* ===== SPLASH ===== */
-#splash{
-position:fixed;inset:0;z-index:500;
-background:linear-gradient(160deg,#ffe066 0%,#ff9e3d 40%,#ff6fa8 80%,#c97aff 100%);
-display:flex;flex-direction:column;align-items:center;justify-content:center;
-text-decoration:none;width:100%;height:100%;cursor:pointer;
-font-family:‘Baloo 2’,cursive;
-transition:opacity .5s ease, transform .5s ease;
+/* FOND ANIMÉ */
+.sky {
+position:fixed; inset:0;
+background:linear-gradient(180deg,#5bc8f5 0%,#a8e6ff 55%,#c8f0a0 82%,#6dbf52 100%);
+z-index:0;
 }
-#splash.hide{opacity:0;transform:scale(1.08);pointer-events:none;}
-.splash-star{position:absolute;font-size:28px;animation:starFloat 3s ease-in-out infinite;opacity:.7;}
-.splash-star:nth-child(1){top:8%;left:10%;animation-delay:0s;}
-.splash-star:nth-child(2){top:12%;right:12%;animation-delay:.5s;}
-.splash-star:nth-child(3){top:5%;left:50%;animation-delay:1s;}
-.splash-star:nth-child(4){bottom:18%;left:8%;animation-delay:1.5s;}
-.splash-star:nth-child(5){bottom:14%;right:10%;animation-delay:.8s;}
-.splash-star:nth-child(6){bottom:22%;left:40%;animation-delay:.3s;}
-@keyframes starFloat{0%,100%{transform:translateY(0)rotate(0deg);}50%{transform:translateY(-12px)rotate(20deg);}}
-.splash-emoji{font-size:clamp(90px,22vw,130px);animation:splashBounce 1.2s ease-in-out infinite;filter:drop-shadow(0 8px 20px rgba(0,0,0,.2));line-height:1;}
-@keyframes splashBounce{0%,100%{transform:translateY(0)scale(1);}50%{transform:translateY(-18px)scale(1.06);}}
-.splash-title{font-weight:800;font-size:clamp(32px,9vw,60px);color:white;text-shadow:0 4px 0 rgba(0,0,0,.15);margin-top:16px;text-align:center;padding:0 20px;line-height:1.15;}
-.splash-hint{margin-top:28px;font-family:‘Nunito’,sans-serif;font-size:clamp(18px,5vw,26px);color:rgba(255,255,255,.9);text-align:center;animation:hintPulse 1.5s ease-in-out infinite;}
-@keyframes hintPulse{0%,100%{transform:scale(1);opacity:.9;}50%{transform:scale(1.08);opacity:1;}}
+.sun {
+position:fixed; top:20px; right:32px;
+width:72px; height:72px;
+background:radial-gradient(circle,#fffaaa 30%,#FFD700 70%,#ffaa00 100%);
+border-radius:50%;
+box-shadow:0 0 40px 18px rgba(255,215,0,.4);
+animation:pulse 4s ease-in-out infinite;
+z-index:1;
+}
+@keyframes pulse {
+0%,100%{box-shadow:0 0 40px 18px rgba(255,215,0,.4);}
+50%{box-shadow:0 0 60px 28px rgba(255,215,0,.65);}
+}
+
+/* Nuages */
+.cloud {
+position:fixed; background:white; border-radius:50px;
+opacity:.88; z-index:1;
+}
+.cloud::before,.cloud::after {
+content:’’; position:absolute; background:white; border-radius:50%;
+}
+.c1{width:90px;height:32px;top:55px;left:-110px;animation:fly 20s linear infinite;}
+.c1::before{width:48px;height:48px;top:-26px;left:12px;}
+.c1::after{width:32px;height:32px;top:-16px;left:46px;}
+.c2{width:120px;height:40px;top:100px;left:-150px;animation:fly 28s linear infinite 7s;opacity:.7;}
+.c2::before{width:58px;height:58px;top:-30px;left:16px;}
+.c2::after{width:40px;height:40px;top:-20px;left:60px;}
+.c3{width:70px;height:26px;top:36px;left:-90px;animation:fly 16s linear infinite 13s;opacity:.55;}
+.c3::before{width:36px;height:36px;top:-20px;left:9px;}
+.c3::after{width:26px;height:26px;top:-13px;left:36px;}
+@keyframes fly {
+from{transform:translateX(0);}
+to{transform:translateX(calc(100vw + 180px));}
+}
+
+/* Sol */
+.ground {
+position:fixed; bottom:0; left:0; right:0; height:50px;
+background:linear-gradient(180deg,#56c45a,#2e7d32);
+z-index:2; border-radius:55% 55% 0 0/18px 18px 0 0;
+}
+.flowers {
+position:fixed; bottom:36px; left:0; right:0;
+display:flex; justify-content:space-around; padding:0 16px;
+z-index:3; pointer-events:none;
+}
+.flower {
+font-size:clamp(18px,5vw,26px);
+display:inline-block;
+animation:sway 3s ease-in-out infinite;
+}
+.flower:nth-child(2){animation-delay:.4s;}
+.flower:nth-child(3){animation-delay:.9s;}
+.flower:nth-child(4){animation-delay:1.4s;}
+.flower:nth-child(5){animation-delay:.7s;}
+.flower:nth-child(6){animation-delay:1.2s;}
+@keyframes sway {
+0%,100%{transform:rotate(-7deg);}
+50%{transform:rotate(7deg) translateY(-3px);}
+}
+
+/* Papillons */
+.butt {
+position:fixed; font-size:22px; z-index:4; pointer-events:none;
+animation:flutter 11s ease-in-out infinite;
+}
+.butt:nth-child(1){top:22%;left:4%;}
+.butt:nth-child(2){top:40%;right:5%;animation-delay:3.5s;font-size:18px;}
+.butt:nth-child(3){top:14%;left:28%;animation-delay:7s;font-size:16px;}
+@keyframes flutter {
+0%{transform:translate(0,0);}
+25%{transform:translate(18px,-14px);}
+50%{transform:translate(-8px,-22px);}
+75%{transform:translate(14px,-10px);}
+100%{transform:translate(0,0);}
+}
+
+/* Bouton musique */
+.music-btn {
+position:fixed; top:14px; left:14px; z-index:100;
+background:rgba(255,255,255,.88);
+border:none; border-radius:50%;
+width:50px; height:50px; font-size:24px;
+cursor:pointer;
+box-shadow:0 4px 14px rgba(0,0,0,.15);
+display:flex; align-items:center; justify-content:center;
+}
+
+/* CONTENU */
+.content {
+position:relative; z-index:10;
+display:flex; flex-direction:column; align-items:center;
+padding:18px 14px 110px;
+min-height:100vh;
+}
+
+/* Titre */
+.titre {
+text-align:center; margin-top:10px;
+animation:drop .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes drop {
+from{opacity:0;transform:translateY(-36px) scale(.8);}
+to{opacity:1;transform:translateY(0) scale(1);}
+}
+.titre-globe {
+font-size:clamp(48px,13vw,76px);
+display:block;
+animation:bob 2.5s ease-in-out infinite 1s;
+filter:drop-shadow(0 4px 8px rgba(0,0,0,.14));
+}
+@keyframes bob {
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-9px);}
+}
+.titre-text {
+font-weight:800;
+font-size:clamp(26px,7.5vw,50px);
+color:#fff;
+text-shadow:0 3px 0 #1a6b3c, 0 6px 0 rgba(0,0,0,.14);
+letter-spacing:1px; line-height:1.1;
+}
+.titre-sub {
+font-family:‘Nunito’,sans-serif; font-weight:700;
+font-size:clamp(13px,3.8vw,19px);
+color:rgba(255,255,255,.88);
+margin-top:3px;
+}
+
+/* GRILLE */
+.grid {
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:13px;
+width:100%; max-width:480px;
+margin-top:22px;
+}
+
+/* CARTE */
+.card {
+border-radius:26px;
+padding:18px 10px 14px;
+text-align:center;
+text-decoration:none;
+display:flex; flex-direction:column;
+align-items:center; gap:7px;
+border:3px solid rgba(255,255,255,.8);
+box-shadow:0 7px 0 rgba(0,0,0,.13), 0 10px 22px rgba(0,0,0,.09);
+position:relative; overflow:hidden;
+/* Animation d’entrée */
+animation:pop .45s cubic-bezier(.34,1.56,.64,1) both;
+/* IMPORTANT : cursor et user-select pour le tactile */
+cursor:pointer;
+user-select:none;
+-webkit-user-select:none;
+}
+@keyframes pop {
+from{opacity:0;transform:scale(.55) translateY(18px);}
+to{opacity:1;transform:scale(1) translateY(0);}
+}
+
+.card:nth-child(1){animation-delay:.08s;}
+.card:nth-child(2){animation-delay:.16s;}
+.card:nth-child(3){animation-delay:.24s;}
+.card:nth-child(4){animation-delay:.32s;}
+.card:nth-child(5){animation-delay:.40s;}
+.card:nth-child(6){animation-delay:.48s;}
+.card:nth-child(7){animation-delay:.56s;}
+
+/* Feedback tactile via CSS uniquement */
+.card:active {
+transform:scale(.93) translateY(4px) !important;
+box-shadow:0 3px 0 rgba(0,0,0,.13), 0 4px 10px rgba(0,0,0,.09) !important;
+transition:transform .1s, box-shadow .1s;
+}
+
+/* Couleurs */
+.c-animaux   { background:linear-gradient(145deg,#fff8f0,#ffe8cc); }
+.c-puzzle    { background:linear-gradient(145deg,#f8f0ff,#ece0ff); }
+.c-comptines { background:linear-gradient(145deg,#fff0f7,#ffd8ef); }
+.c-marin     { background:linear-gradient(145deg,#eef8ff,#cce8ff); }
+.c-cuisine   { background:linear-gradient(145deg,#fff5ee,#ffddc8); }
+.c-tracteur  { background:linear-gradient(145deg,#f0fff0,#ccffcc); }
+.c-bulles    { background:linear-gradient(145deg,#eeffff,#ccf8ff); }
+
+/* Carte large */
+.card-large {
+grid-column:1/-1;
+flex-direction:row;
+justify-content:center;
+gap:14px;
+padding:16px 22px;
+}
+.card-large .emoji { font-size:clamp(42px,11vw,60px); }
+.card-large .label { font-size:clamp(17px,5vw,23px); }
+
+.emoji {
+font-size:clamp(38px,10.5vw,56px);
+line-height:1;
+display:block;
+filter:drop-shadow(0 2px 5px rgba(0,0,0,.1));
+}
+.label {
+font-weight:800;
+font-size:clamp(13px,3.8vw,17px);
+color:#1a3020;
+line-height:1.2;
+}
+.badge {
+position:absolute; top:9px; right:9px;
+background:rgba(0,0,0,.09); color:#444;
+font-family:‘Nunito’,sans-serif; font-weight:900;
+font-size:8px; padding:2px 7px;
+border-radius:18px; text-transform:uppercase; letter-spacing:.4px;
+}
+
+.footer {
+margin-top:14px;
+font-family:‘Nunito’,sans-serif; font-size:12px;
+color:rgba(255,255,255,.7); text-align:center;
+}
 </style>
-
-<script>
-$MELODY
-
-</script>
 
 </head>
 <body>
 
-<!-- SPLASH : button plein écran, onclick inline, iOS garanti -->
+<!-- Décors -->
 
-<a id="splash" href="#" onclick="dismissSplash();return false;">
-  <span class="splash-star">⭐</span>
-  <span class="splash-star">🌟</span>
-  <span class="splash-star">✨</span>
-  <span class="splash-star">⭐</span>
-  <span class="splash-star">🌟</span>
-  <span class="splash-star">✨</span>
-  <div class="splash-emoji">🌍</div>
-  <div class="splash-title">Le Monde<br>de Malo</div>
-  <div class="splash-hint">👆 Appuie pour jouer ! 🎵</div>
+<div class="sky"></div>
+<div class="sun"></div>
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+<div class="ground"></div>
+<div class="flowers">
+  <span class="flower">🌻</span>
+  <span class="flower">🌸</span>
+  <span class="flower">🌼</span>
+  <span class="flower">🌺</span>
+  <span class="flower">🌷</span>
+  <span class="flower">🌻</span>
+</div>
+<div class="butt">🦋</div>
+<div class="butt">🦋</div>
+<div class="butt">🌸</div>
+
+<!-- Bouton musique -->
+
+<button class="music-btn" id="mBtn">🎵</button>
+
+<!-- Contenu principal -->
+
+<div class="content">
+
+  <div class="titre">
+    <span class="titre-globe">🌍</span>
+    <div class="titre-text">Le Monde de Malo</div>
+    <div class="titre-sub">✨ Choisis ton aventure ✨</div>
+  </div>
+
+  <div class="grid">
+
+```
+<a class="card c-animaux" href="animaux.html">
+  <span class="badge">Sons</span>
+  <span class="emoji">🐘</span>
+  <span class="label">Les Animaux</span>
 </a>
 
-<div class="sky">
-  <div class="sun"></div>
-  <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
-</div>
-<div class="butterfly">🦋</div><div class="butterfly">🦋</div><div class="butterfly">🌸</div>
-<div class="sparkle">✨</div><div class="sparkle">⭐</div><div class="sparkle">✨</div>
-<div class="ground-strip"><div class="grass-bumps"></div></div>
-<div class="flowers">
-  <span class="flower">🌻</span><span class="flower">🌸</span><span class="flower">🌼</span>
-  <span class="flower">🌺</span><span class="flower">🌷</span><span class="flower">🌻</span>
-</div>
-<button class="music-btn" id="musicBtn">🎵</button>
-<div class="main-content">
-  <div class="app-title">
-    <span class="title-emoji">🌍</span>
-    <div class="title-text">Le Monde de Malo</div>
-    <div class="title-sub">✨ Choisis ton aventure ✨</div>
+<a class="card c-puzzle" href="puzzle.html">
+  <span class="badge">Formes</span>
+  <span class="emoji">🧩</span>
+  <span class="label">Puzzle</span>
+</a>
+
+<a class="card c-comptines" href="comptines.html">
+  <span class="badge">Chansons</span>
+  <span class="emoji">🎵</span>
+  <span class="label">Comptines</span>
+</a>
+
+<a class="card c-marin" href="marin.html">
+  <span class="badge">Océan</span>
+  <span class="emoji">🐠</span>
+  <span class="label">Monde Marin</span>
+</a>
+
+<a class="card c-cuisine" href="cuisine.html">
+  <span class="badge">Scratch</span>
+  <span class="emoji">🍎</span>
+  <span class="label">La Cuisine</span>
+</a>
+
+<a class="card c-tracteur" href="tracteur.html">
+  <span class="badge">Conduite</span>
+  <span class="emoji">🚜</span>
+  <span class="label">Le Tracteur</span>
+</a>
+
+<a class="card c-bulles card-large" href="bulles.html">
+  <span class="badge">Tactile</span>
+  <span class="emoji">🫧</span>
+  <span class="label">Les Bulles !</span>
+</a>
+```
+
   </div>
-  <div class="games-grid">
-    <a class="game-card card-animaux" href="animaux.html"><span class="game-badge">Sons</span><span class="game-emoji">🐘</span><span class="game-label">Les Animaux</span></a>
-    <a class="game-card card-puzzle" href="puzzle.html"><span class="game-badge">Formes</span><span class="game-emoji">🧩</span><span class="game-label">Puzzle</span></a>
-    <a class="game-card card-comptines" href="comptines.html"><span class="game-badge">Chansons</span><span class="game-emoji">🎵</span><span class="game-label">Comptines</span></a>
-    <a class="game-card card-marin" href="marin.html"><span class="game-badge">Océan</span><span class="game-emoji">🐠</span><span class="game-label">Monde Marin</span></a>
-    <a class="game-card card-cuisine" href="cuisine.html"><span class="game-badge">Scratch</span><span class="game-emoji">🍎</span><span class="game-label">La Cuisine</span></a>
-    <a class="game-card card-tracteur" href="tracteur.html"><span class="game-badge">Conduite</span><span class="game-emoji">🚜</span><span class="game-label">Le Tracteur</span></a>
-    <a class="game-card card-bulles card-wide" href="bulles.html"><span class="game-badge">Tactile</span><span class="game-emoji">🫧</span><span class="game-label">Les Bulles !</span></a>
-  </div>
-  <div class="footer-note">Pour Malo 💚 avec tout mon amour</div>
+
+  <div class="footer">Pour Malo 💚 avec tout mon amour</div>
+
 </div>
-<div class="install-banner" id="installBanner">
-  <span>📲 Installe l'appli pour Malo !</span>
-  <button class="install-btn" id="installBtn">Installer</button>
-  <button class="install-close" id="installClose">✕</button>
-</div>
+
+<!-- Mélodie intégrée -->
+
 <script>
-window.MaloMelody = (() => {
-  let ctx = null;
-  let currentNodes = [];
-  let isPlaying = false;
-
-function getCtx() {
-if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-if (ctx.state === ‘suspended’) ctx.resume();
-return ctx;
-}
-
-const NOTES = {
-C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.00,B4:493.88,
-C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.00,B5:987.77,
-C6:1046.50,D6:1174.66,E6:1318.51,_:0
-};
-
-function playNote(freq, startTime, duration, volume=0.16, type=‘sine’) {
-if (!freq) return;
-const c = getCtx();
-const osc = c.createOscillator();
-const gain = c.createGain();
-const filter = c.createBiquadFilter();
-filter.type = ‘lowpass’; filter.frequency.value = 2200;
-osc.type = type; osc.frequency.value = freq;
-osc.connect(filter); filter.connect(gain); gain.connect(c.destination);
-gain.gain.setValueAtTime(0, startTime);
-gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
-gain.gain.setValueAtTime(volume, startTime + duration - 0.05);
-gain.gain.linearRampToValueAtTime(0, startTime + duration);
-osc.start(startTime); osc.stop(startTime + duration + 0.01);
-currentNodes.push(osc);
-}
-
-function playSequence(sequence, bpm=120, loop=true, volume=0.16) {
-stop(); isPlaying = true;
-const c = getCtx();
-const beat = 60 / bpm;
-function scheduleOnce(offset) {
-let t = offset, total = 0;
-sequence.forEach(([note, beats]) => {
-const dur = beats * beat;
-playNote(NOTES[note] || 0, c.currentTime + t, dur * 0.88, volume);
-t += dur; total += dur;
-});
-return total;
-}
-const dur = scheduleOnce(0);
-if (loop) {
-let n = 0;
-function doLoop() {
-if (!isPlaying) return;
-n++; scheduleOnce(n * dur);
-setTimeout(doLoop, (n * dur - 0.5) * 1000);
-}
-setTimeout(doLoop, (dur - 0.5) * 1000);
-}
-}
-
-function stop() {
-isPlaying = false;
-currentNodes.forEach(n => { try { n.stop(); } catch(e){} });
-currentNodes = [];
-}
-
-const MELODIES = {
-menu: { bpm:110, seq:[
-[‘C5’,.5],[‘E5’,.5],[‘G5’,.5],[‘C6’,1],
-[‘B5’,.5],[‘G5’,.5],[‘E5’,.5],[‘C5’,1],
-[‘D5’,.5],[‘F5’,.5],[‘A5’,.5],[‘G5’,1],
-[‘E5’,.5],[‘C5’,.5],[‘D5’,.5],[‘C5’,2]
-]},
-bulles: { bpm:130, seq:[
-[‘C5’,.25],[‘E5’,.25],[‘G5’,.25],[‘C6’,.25],
-[‘B5’,.25],[‘G5’,.25],[‘E5’,.25],[‘C5’,.25],
-[‘D5’,.25],[‘F5’,.25],[‘A5’,.25],[‘D6’,.25],
-[‘C6’,.25],[‘A5’,.25],[‘F5’,.25],[‘D5’,.25],
-[‘E5’,.25],[‘G5’,.25],[‘B5’,.25],[‘E6’,.25],
-[‘D6’,.25],[‘B5’,.25],[‘G5’,.25],[‘E5’,.25],
-[‘C5’,.5],[‘E5’,.5],[‘G5’,.5],[‘C6’,1]
-]},
-animaux: { bpm:100, seq:[
-[‘G4’,1],[‘A4’,1],[‘B4’,1],[‘C5’,1],
-[‘D5’,1],[‘E5’,1],[‘D5’,2],
-[‘C5’,1],[‘B4’,1],[‘A4’,1],[‘G4’,2],
-[‘E4’,1],[‘G4’,1],[‘F4’,1],[‘E4’,2]
-]},
-puzzle: { bpm:90, seq:[
-[‘E5’,.5],[‘D5’,.5],[‘C5’,1],[‘E5’,1],
-[‘G5’,.5],[‘F5’,.5],[‘E5’,2],
-[‘D5’,.5],[‘E5’,.5],[‘F5’,1],[‘D5’,1],
-[‘C5’,.5],[‘D5’,.5],[‘E5’,2]
-]},
-comptines: { bpm:95, seq:[
-[‘C5’,1],[‘C5’,1],[‘C5’,1],[‘D5’,1],
-[‘E5’,2],[‘D5’,2],
-[‘C5’,1],[‘E5’,1],[‘D5’,1],[‘D5’,1],
-[‘C5’,4],
-[‘E5’,1],[‘E5’,1],[‘E5’,1],[‘F5’,1],
-[‘G5’,2],[‘G5’,2],
-[‘F5’,1],[‘E5’,1],[‘D5’,1],[‘C5’,1],
-[‘G4’,4]
-]},
-marin: { bpm:85, seq:[
-[‘A4’,1],[‘C5’,1],[‘E5’,1],[‘G5’,1],
-[‘F5’,.5],[‘E5’,.5],[‘D5’,1],[‘C5’,2],
-[‘G4’,1],[‘B4’,1],[‘D5’,1],[‘F5’,1],
-[‘E5’,.5],[‘D5’,.5],[‘C5’,1],[‘A4’,2]
-]},
-cuisine: { bpm:115, seq:[
-[‘C5’,.5],[‘D5’,.5],[‘E5’,.5],[‘C5’,.5],
-[‘E5’,.5],[‘C5’,.5],[‘E5’,1],
-[‘F5’,.5],[‘G5’,.5],[‘F5’,.5],[‘E5’,.5],
-[‘D5’,.5],[‘C5’,.5],[‘D5’,1],
-[‘C5’,.5],[‘B4’,.5],[‘A4’,.5],[‘G4’,.5],
-[‘C5’,2]
-]},
-tracteur: { bpm:125, seq:[
-[‘G4’,.5],[‘G4’,.5],[‘D5’,.5],[‘D5’,.5],
-[‘E5’,.5],[‘E5’,.5],[‘D5’,1],
-[‘C5’,.5],[‘C5’,.5],[‘B4’,.5],[‘B4’,.5],
-[‘A4’,.5],[‘A4’,.5],[‘G4’,1],
-[‘G4’,.5],[‘A4’,.5],[‘B4’,.5],[‘G4’,.5],
-[‘C5’,2]
-]}
-};
-
-function play(name) {
-const m = MELODIES[name];
-if (!m) return;
-playSequence(m.seq, m.bpm, true, 0.15);
-}
-
-function playOnce(name) {
-const m = MELODIES[name];
-if (!m) return;
-playSequence(m.seq, m.bpm, false, 0.2);
-}
-
-function playPop(pitch=1) {
-const c = getCtx();
-const osc = c.createOscillator();
-const gain = c.createGain();
-osc.connect(gain); gain.connect(c.destination);
-osc.type = ‘sine’;
-osc.frequency.setValueAtTime(800 * pitch, c.currentTime);
-osc.frequency.exponentialRampToValueAtTime(200 * pitch, c.currentTime + 0.15);
-gain.gain.setValueAtTime(0.25, c.currentTime);
-gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.2);
-osc.start(c.currentTime); osc.stop(c.currentTime + 0.22);
-}
-
-function playSuccess() {
-const c = getCtx();
-[523,659,784].forEach((f,i) => {
-const osc = c.createOscillator();
-const gain = c.createGain();
-osc.connect(gain); gain.connect(c.destination);
-osc.frequency.value = f; osc.type = ‘sine’;
-gain.gain.setValueAtTime(0.2, c.currentTime + i*.12);
-gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i*.12 + .3);
-osc.start(c.currentTime + i*.12);
-osc.stop(c.currentTime + i*.12 + .35);
-});
-}
-
-function playBravo() {
-const c = getCtx();
-[523,659,784,1047].forEach((f,i) => {
-const osc = c.createOscillator();
-const gain = c.createGain();
-osc.connect(gain); gain.connect(c.destination);
-osc.frequency.value = f; osc.type = ‘sine’;
-gain.gain.setValueAtTime(0.2, c.currentTime + i*.15);
-gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i*.15 + .4);
-osc.start(c.currentTime + i*.15);
-osc.stop(c.currentTime + i*.15 + .45);
-});
-}
-
-return { play, playOnce, stop, playPop, playSuccess, playBravo };
+const Mel = (() => {
+  let ac=null, nodes=[], on=false;
+  function ctx(){
+    if(!ac) ac=new(window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended') ac.resume();
+    return ac;
+  }
+  function n(freq,t,dur,vol=0.14){
+    if(!freq)return;
+    const c=ctx(),o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();
+    f.type='lowpass';f.frequency.value=2000;
+    o.type='sine';o.frequency.value=freq;
+    o.connect(f);f.connect(g);g.connect(c.destination);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+.02);
+    g.gain.setValueAtTime(vol,t+dur-.04);
+    g.gain.linearRampToValueAtTime(0,t+dur);
+    o.start(t);o.stop(t+dur+.01);nodes.push(o);
+  }
+  function stop(){on=false;nodes.forEach(x=>{try{x.stop();}catch(e){}});nodes=[];}
+  const S=[
+    [523,.5],[659,.5],[784,.5],[1047,1],
+    [988,.5],[784,.5],[659,.5],[523,1],
+    [587,.5],[698,.5],[880,.5],[784,1],
+    [659,.5],[523,.5],[587,.5],[523,2]
+  ];
+  const BT=60/110;
+  function sched(off){
+    let t=off,tot=0;
+    S.forEach(([f,b])=>{const d=b*BT;n(f,ctx().currentTime+t,d*.87);t+=d;tot+=d;});
+    return tot;
+  }
+  function start(){
+    stop();on=true;
+    const dur=sched(0);
+    let i=0;
+    function loop(){if(!on)return;i++;sched(i*dur);setTimeout(loop,(i*dur-.4)*1000);}
+    setTimeout(loop,(dur-.4)*1000);
+  }
+  return {start,stop};
 })();
 
-if (‘serviceWorker’ in navigator) {
-window.addEventListener(‘load’, () => {
-navigator.serviceWorker.register(‘sw.js’).catch(() => {});
-});
+let musicOn=true, started=false;
+
+function tryStart(){
+  if(!started){
+    if(musicOn) Mel.start();
+    started=true;
+  }
 }
 
-</script>
-<script>
-  let musicOn = true;
+// Démarrer au premier toucher
+document.addEventListener('touchstart', tryStart, {once:true, passive:true});
+document.addEventListener('mousedown',  tryStart, {once:true});
 
-function dismissSplash() {
-try {
-const dbg = document.createElement(‘div’);
-dbg.style.cssText = ‘position:fixed;top:0;left:0;right:0;z-index:9999;background:red;color:white;font-size:18px;padding:12px;word-break:break-all;’;
-dbg.textContent = ‘CLICK OK - test melody…’;
-document.body.appendChild(dbg);
-const splash = document.getElementById(‘splash’);
-try {
-MaloMelody.play(‘menu’);
-dbg.textContent = ‘MELODY OK !’;
-} catch(e) {
-dbg.textContent = ’ERREUR MELODY: ’ + e.message;
-return;
-}
-splash.classList.add(‘hide’);
-setTimeout(() => { splash.remove(); setTimeout(() => dbg.remove(), 3000); }, 600);
-} catch(e) {
-alert(’ERREUR GLOBALE: ’ + e.message);
-}
-}
-
-document.getElementById(‘musicBtn’).addEventListener(‘click’, () => {
-musicOn = !musicOn;
-document.getElementById(‘musicBtn’).textContent = musicOn ? ‘🎵’ : ‘🔇’;
-if (musicOn) MaloMelody.play(‘menu’);
-else MaloMelody.stop();
+// Bouton musique
+document.getElementById('mBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  musicOn=!musicOn;
+  e.currentTarget.textContent = musicOn ? '🎵' : '🔇';
+  if(musicOn){Mel.start();started=true;} else Mel.stop();
 });
-
-document.querySelectorAll(’.game-card’).forEach(card => {
-card.addEventListener(‘pointerdown’, e => {
-const r = document.createElement(‘div’); r.className = ‘ripple’;
-r.style.left = (e.clientX - 30) + ‘px’; r.style.top = (e.clientY - 30) + ‘px’;
-document.body.appendChild(r); setTimeout(() => r.remove(), 700);
-});
-});
-
-let dp = null;
-window.addEventListener(‘beforeinstallprompt’, e => { e.preventDefault(); dp = e; setTimeout(() => document.getElementById(‘installBanner’).classList.add(‘show’), 3000); });
-document.getElementById(‘installBtn’).addEventListener(‘click’, () => { if (dp) { dp.prompt(); dp.userChoice.then(() => { dp = null; document.getElementById(‘installBanner’).classList.remove(‘show’); }); } });
-document.getElementById(‘installClose’).addEventListener(‘click’, () => document.getElementById(‘installBanner’).classList.remove(‘show’));
 </script>
 
 </body>
