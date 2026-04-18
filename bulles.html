@@ -9,185 +9,422 @@
 <title>Les Bulles 🫧 - Malo</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{width:100%;height:100%;overflow:hidden;font-family:'Baloo 2',cursive;touch-action:manipulation;}
-  .bg{position:fixed;inset:0;background:linear-gradient(180deg,#001a4d 0%,#003580 20%,#0066cc 55%,#0099e6 80%,#33bbff 100%);overflow:hidden;}
-  .ray{position:absolute;top:0;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent);transform-origin:top center;}
-  .ray:nth-child(1){left:10%;width:60px;height:70%;transform:rotate(-8deg);}
-  .ray:nth-child(2){left:25%;width:80px;height:85%;transform:rotate(-3deg);}
-  .ray:nth-child(3){left:50%;width:60px;height:75%;transform:rotate(5deg);}
-  .ray:nth-child(4){left:70%;width:50px;height:65%;transform:rotate(10deg);}
-  .ray:nth-child(5){left:85%;width:60px;height:80%;transform:rotate(-5deg);}
-  .particle{position:absolute;border-radius:50%;background:rgba(255,255,255,.3);animation:rise linear infinite;pointer-events:none;}
-  @keyframes rise{from{transform:translateY(100vh)scale(0);opacity:0;}10%{opacity:.4;}90%{opacity:.2;}to{transform:translateY(-100px)scale(1);opacity:0;}}
-  .header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;z-index:50;}
-  .back-btn,.music-btn{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:50%;width:52px;height:52px;font-size:24px;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .2s;backdrop-filter:blur(8px);}
-  .back-btn:active,.music-btn:active{transform:scale(.9);}
-  .score-area{text-align:center;}
-  .score-label{font-family:'Nunito',sans-serif;font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px;}
-  .score-num{font-size:36px;font-weight:800;color:white;text-shadow:0 0 20px rgba(0,200,255,.8);line-height:1;}
-  #canvas{position:fixed;inset:0;width:100%;height:100%;}
-  .title-float{position:fixed;top:90px;left:0;right:0;text-align:center;pointer-events:none;z-index:10;}
-  .title-float h1{font-size:clamp(22px,6vw,34px);color:white;text-shadow:0 3px 0 rgba(0,80,160,.6),0 0 20px rgba(0,200,255,.5);font-weight:800;}
-  .title-float p{font-family:'Nunito',sans-serif;font-size:clamp(12px,3.5vw,16px);color:rgba(255,255,255,.75);margin-top:2px;}
-  .bravo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)scale(0);background:rgba(255,255,255,.96);border-radius:32px;padding:28px 40px;text-align:center;z-index:100;box-shadow:0 16px 48px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
-  .bravo.show{transform:translate(-50%,-50%)scale(1);}
-  .bravo-emoji{font-size:64px;display:block;animation:bb .5s ease-in-out infinite alternate;}
-  @keyframes bb{from{transform:translateY(0);}to{transform:translateY(-8px);}}
-  .bravo-text{font-size:30px;font-weight:800;color:#0066cc;margin-top:8px;}
-  .pop-effect{position:fixed;pointer-events:none;z-index:80;font-size:36px;animation:popOut .6s ease-out forwards;}
-  @keyframes popOut{0%{transform:scale(0);opacity:1;}60%{transform:scale(1.5);opacity:1;}100%{transform:scale(0);opacity:0;}}
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; background:#0066cc; }
+
+.bg {
+position:fixed; inset:0;
+background:linear-gradient(180deg,#001a4d 0%,#003580 20%,#0066cc 55%,#0099e6 80%,#33bbff 100%);
+overflow:hidden;
+}
+
+/* Rayons lumineux */
+.ray {
+position:absolute; top:0;
+background:linear-gradient(180deg,rgba(255,255,255,.07),transparent);
+transform-origin:top center;
+}
+.ray:nth-child(1){left:8%;width:55px;height:70%;transform:rotate(-8deg);}
+.ray:nth-child(2){left:24%;width:75px;height:85%;transform:rotate(-2deg);}
+.ray:nth-child(3){left:48%;width:60px;height:75%;transform:rotate(5deg);}
+.ray:nth-child(4){left:68%;width:50px;height:65%;transform:rotate(10deg);}
+.ray:nth-child(5){left:84%;width:65px;height:80%;transform:rotate(-5deg);}
+
+/* Particules montantes */
+.p { position:absolute; border-radius:50%; background:rgba(255,255,255,.25); pointer-events:none; animation:rise linear infinite; }
+@keyframes rise {
+from { transform:translateY(110vh) scale(0); opacity:0; }
+10%  { opacity:.5; }
+90%  { opacity:.15; }
+to   { transform:translateY(-80px) scale(1); opacity:0; }
+}
+
+/* Header */
+.header {
+position:fixed; top:0; left:0; right:0;
+display:flex; align-items:center; justify-content:space-between;
+padding:14px 18px; z-index:50;
+}
+.btn-round {
+background:rgba(255,255,255,.18);
+border:2px solid rgba(255,255,255,.35);
+border-radius:50%; width:52px; height:52px;
+font-size:24px; color:white; cursor:pointer;
+display:flex; align-items:center; justify-content:center;
+text-decoration:none; transition:transform .15s;
+-webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.btn-round:active { transform:scale(.88); }
+
+.score-wrap { text-align:center; }
+.score-label { font-family:‘Nunito’,sans-serif; font-size:10px; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:1.5px; }
+.score-num { font-size:38px; font-weight:800; color:#fff; line-height:1; text-shadow:0 0 24px rgba(100,220,255,.9); }
+
+/* Titre */
+.title-area {
+position:fixed; top:88px; left:0; right:0;
+text-align:center; pointer-events:none; z-index:10;
+}
+.title-area h1 { font-size:clamp(20px,6vw,32px); color:#fff; font-weight:800; text-shadow:0 3px 0 rgba(0,60,140,.7),0 0 20px rgba(0,200,255,.6); }
+.title-area p  { font-family:‘Nunito’,sans-serif; font-size:clamp(12px,3.5vw,15px); color:rgba(255,255,255,.7); margin-top:3px; }
+
+/* Canvas */
+#c { position:fixed; inset:0; width:100%; height:100%; }
+
+/* Bravo popup */
+.bravo {
+position:fixed; top:50%; left:50%;
+transform:translate(-50%,-50%) scale(0);
+background:#fff; border-radius:28px;
+padding:28px 40px; text-align:center;
+z-index:200; box-shadow:0 20px 60px rgba(0,0,0,.35);
+transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+pointer-events:none;
+}
+.bravo.on { transform:translate(-50%,-50%) scale(1); }
+.bravo-ico { font-size:62px; display:block; animation:jmp .45s ease-in-out infinite alternate; }
+@keyframes jmp { from{transform:translateY(0);} to{transform:translateY(-8px);} }
+.bravo-txt { font-size:28px; font-weight:800; color:#0055cc; margin-top:8px; }
+
+/* Pop emoji */
+.pop { position:fixed; pointer-events:none; z-index:90; font-size:38px; animation:popOut .55s ease-out forwards; }
+@keyframes popOut { 0%{transform:scale(0);opacity:1;} 55%{transform:scale(1.5);opacity:1;} 100%{transform:scale(0);opacity:0;} }
 </style>
+
 </head>
 <body>
+
 <div class="bg">
   <div class="ray"></div><div class="ray"></div><div class="ray"></div>
   <div class="ray"></div><div class="ray"></div>
 </div>
+
 <div class="header">
-  <a class="back-btn" href="index.html">⬅️</a>
-  <div class="score-area">
+  <a class="btn-round" href="index.html">⬅️</a>
+  <div class="score-wrap">
     <div class="score-label">Bulles éclatées</div>
-    <div class="score-num" id="scoreNum">0</div>
+    <div class="score-num" id="score">0</div>
   </div>
-  <button class="music-btn" id="musicBtn">🎵</button>
+  <button class="btn-round" id="mBtn">🎵</button>
 </div>
-<div class="title-float">
+
+<div class="title-area">
   <h1>🫧 Les Bulles !</h1>
   <p>Touche les bulles pour les éclater !</p>
 </div>
-<canvas id="canvas"></canvas>
+
+<canvas id="c"></canvas>
+
 <div class="bravo" id="bravo">
-  <span class="bravo-emoji">🎉</span>
-  <div class="bravo-text">Super Malo !</div>
+  <span class="bravo-ico">🎉</span>
+  <div class="bravo-txt">Super Malo !</div>
 </div>
-<script src="melody.js"></script>
+
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let W, H, bubbles = [], score = 0, musicOn = true, started = false;
+/* ============================
+   🎵 MOTEUR AUDIO INTÉGRÉ
+   ============================ */
+const Audio = (() => {
+  let ac = null;
+  let nodes = [];
+  let looping = false;
 
-const ANIMALS = [‘🐟’,‘🐠’,‘🐡’,‘🦈’,‘🐙’,‘🦑’,‘🦀’,‘🦞’,‘🐬’,‘🐳’,‘🐋’,‘🦭’,‘🐧’,‘🦐’,‘🌊’,‘⭐’,‘🪸’,‘🐚’,‘🐠’,‘🐟’];
+  function ctx() {
+    if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === 'suspended') ac.resume();
+    return ac;
+  }
 
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize(); window.addEventListener(‘resize’, resize);
+  function note(freq, t, dur, vol=0.15) {
+    if (!freq) return;
+    const c = ctx();
+    const o = c.createOscillator();
+    const g = c.createGain();
+    const f = c.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 2000;
+    o.type = 'sine'; o.frequency.value = freq;
+    o.connect(f); f.connect(g); g.connect(c.destination);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.02);
+    g.gain.setValueAtTime(vol, t + dur - 0.04);
+    g.gain.linearRampToValueAtTime(0, t + dur);
+    o.start(t); o.stop(t + dur + 0.01);
+    nodes.push(o);
+  }
 
+  function stop() {
+    looping = false;
+    nodes.forEach(n => { try { n.stop(); } catch(e){} });
+    nodes = [];
+  }
+
+  // Mélodie des bulles — légère et pétillante
+  const N = {
+    C5:523.25,D5:587.33,E5:659.25,F5:698.46,
+    G5:783.99,A5:880.00,B5:987.77,
+    C6:1046.50,D6:1174.66,E6:1318.51
+  };
+  const SEQ = [
+    [N.C5,.25],[N.E5,.25],[N.G5,.25],[N.C6,.25],
+    [N.B5,.25],[N.G5,.25],[N.E5,.25],[N.C5,.25],
+    [N.D5,.25],[N.F5,.25],[N.A5,.25],[N.D6,.25],
+    [N.C6,.25],[N.A5,.25],[N.F5,.25],[N.D5,.25],
+    [N.E5,.25],[N.G5,.25],[N.B5,.25],[N.E6,.25],
+    [N.D6,.25],[N.B5,.25],[N.G5,.25],[N.E5,.25],
+    [N.C5,.5],[N.E5,.5],[N.G5,.5],[N.C6,1],
+  ];
+  const BPM = 128;
+  const BEAT = 60 / BPM;
+
+  function scheduleLoop(offset) {
+    let t = offset, total = 0;
+    SEQ.forEach(([f, b]) => {
+      const d = b * BEAT;
+      note(f, ctx().currentTime + t, d * 0.85);
+      t += d; total += d;
+    });
+    return total;
+  }
+
+  function startMusic() {
+    stop(); looping = true;
+    const dur = scheduleLoop(0);
+    let n = 0;
+    function loop() {
+      if (!looping) return;
+      n++; scheduleLoop(n * dur);
+      setTimeout(loop, (n * dur - 0.4) * 1000);
+    }
+    setTimeout(loop, (dur - 0.4) * 1000);
+  }
+
+  function pop(pitch) {
+    const c = ctx();
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(700 * pitch, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(150 * pitch, c.currentTime + 0.18);
+    g.gain.setValueAtTime(0.3, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.22);
+    o.start(c.currentTime); o.stop(c.currentTime + 0.25);
+  }
+
+  function bravo() {
+    const c = ctx();
+    [523,659,784,1047,1319].forEach((f,i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.frequency.value = f; o.type = 'sine';
+      g.gain.setValueAtTime(0.22, c.currentTime + i*.13);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i*.13 + .35);
+      o.start(c.currentTime + i*.13); o.stop(c.currentTime + i*.13 + .38);
+    });
+  }
+
+  return { startMusic, stop, pop, bravo };
+})();
+
+/* ============================
+   🫧 JEU DES BULLES
+   ============================ */
+const canvas = document.getElementById('c');
+const ctx2d  = canvas.getContext('2d');
+let W, H, bubbles = [], score = 0;
+let musicOn = true, started = false;
+
+const ANIMALS = ['🐟','🐠','🐡','🦈','🐙','🦑','🦀','🦞','🐬','🐳','🐋','🦭','🐧','🦐','⭐','🪸','🐚','🌊'];
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* Classe bulle */
 class Bubble {
-constructor() { this.reset(true); }
-reset(init = false) {
-this.r = 32 + Math.random() * 46;
-this.x = this.r + Math.random() * (W - this.r * 2);
-this.y = init ? Math.random() * H : H + this.r * 2;
-this.vx = (Math.random() - .5) * 1.2;
-this.vy = -(0.8 + Math.random() * 1.4);
-this.animal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
-this.hue = 160 + Math.random() * 60;
-this.alpha = .6 + Math.random() * .3;
-this.wobble = Math.random() * Math.PI * 2;
-this.wobbleSpeed = .02 + Math.random() * .03;
-}
-update() {
-this.wobble += this.wobbleSpeed;
-this.x += this.vx + Math.sin(this.wobble) * .4;
-this.y += this.vy;
-if (this.y < -this.r * 2) this.reset();
-if (this.x < this.r || this.x > W - this.r) this.vx *= -1;
-}
-draw() {
-ctx.save(); ctx.globalAlpha = this.alpha;
-const g = ctx.createRadialGradient(this.x - this.r * .3, this.y - this.r * .3, this.r * .1, this.x, this.y, this.r);
-g.addColorStop(0, `hsla(${this.hue},80%,90%,.8)`);
-g.addColorStop(.5, `hsla(${this.hue},70%,65%,.4)`);
-g.addColorStop(1, `hsla(${this.hue},80%,50%,.6)`);
-ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
-ctx.beginPath(); ctx.ellipse(this.x - this.r * .25, this.y - this.r * .3, this.r * .22, this.r * .12, -Math.PI / 4, 0, Math.PI * 2);
-ctx.fillStyle = ‘rgba(255,255,255,.55)’; ctx.fill();
-ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-ctx.strokeStyle = `hsla(${this.hue},70%,80%,.8)`; ctx.lineWidth = 2; ctx.stroke();
-ctx.globalAlpha = 1;
-ctx.font = `${this.r * .9}px serif`; ctx.textAlign = ‘center’; ctx.textBaseline = ‘middle’;
-ctx.fillText(this.animal, this.x, this.y + 2);
-ctx.restore();
-}
-hit(px, py) { return Math.hypot(px - this.x, py - this.y) < this.r; }
+  constructor(init) {
+    this.reset(init);
+  }
+  reset(init) {
+    this.r  = 32 + Math.random() * 44;
+    this.x  = this.r + Math.random() * Math.max(1, W - this.r * 2);
+    this.y  = init ? Math.random() * H : H + this.r * 2;
+    this.vx = (Math.random() - .5) * 1.1;
+    this.vy = -(0.7 + Math.random() * 1.3);
+    this.a  = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
+    this.hue= 170 + Math.random() * 55;
+    this.op = .58 + Math.random() * .3;
+    this.wb = Math.random() * Math.PI * 2;
+    this.ws = .018 + Math.random() * .028;
+  }
+  update() {
+    this.wb += this.ws;
+    this.x  += this.vx + Math.sin(this.wb) * .35;
+    this.y  += this.vy;
+    if (this.y < -this.r * 2) this.reset(false);
+    if (this.x < this.r || this.x > W - this.r) this.vx *= -1;
+  }
+  draw() {
+    const x = this.x, y = this.y, r = this.r;
+    ctx2d.save();
+    ctx2d.globalAlpha = this.op;
+
+    // Corps
+    const g = ctx2d.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
+    g.addColorStop(0, `hsla(${this.hue},75%,92%,.85)`);
+    g.addColorStop(.5,`hsla(${this.hue},65%,65%,.4)`);
+    g.addColorStop(1, `hsla(${this.hue},75%,50%,.65)`);
+    ctx2d.beginPath();
+    ctx2d.arc(x, y, r, 0, Math.PI*2);
+    ctx2d.fillStyle = g;
+    ctx2d.fill();
+
+    // Reflet
+    ctx2d.beginPath();
+    ctx2d.ellipse(x-r*.26,y-r*.3,r*.2,r*.1,-Math.PI/4,0,Math.PI*2);
+    ctx2d.fillStyle = 'rgba(255,255,255,.6)';
+    ctx2d.fill();
+
+    // Bord
+    ctx2d.beginPath();
+    ctx2d.arc(x, y, r, 0, Math.PI*2);
+    ctx2d.strokeStyle = `hsla(${this.hue},65%,82%,.75)`;
+    ctx2d.lineWidth = 2;
+    ctx2d.stroke();
+
+    ctx2d.globalAlpha = 1;
+
+    // Emoji
+    ctx2d.font = `${r * .88}px serif`;
+    ctx2d.textAlign    = 'center';
+    ctx2d.textBaseline = 'middle';
+    ctx2d.fillText(this.a, x, y + 2);
+
+    ctx2d.restore();
+  }
+  hit(px, py) {
+    return Math.hypot(px - this.x, py - this.y) < this.r;
+  }
 }
 
+/* Init */
 function initBubbles() {
-const count = Math.min(12, Math.floor(W * H / 35000) + 5);
-bubbles = Array.from({ length: count }, () => new Bubble());
+  const n = Math.min(13, Math.floor(W * H / 32000) + 5);
+  bubbles = Array.from({length: n}, () => new Bubble(true));
 }
 
+/* Boucle */
 function loop() {
-ctx.clearRect(0, 0, W, H);
-bubbles.forEach(b => { b.update(); b.draw(); });
-requestAnimationFrame(loop);
+  ctx2d.clearRect(0, 0, W, H);
+  bubbles.forEach(b => { b.update(); b.draw(); });
+  requestAnimationFrame(loop);
 }
 
-function startMusic() {
-if (!started && musicOn) {
-MaloMelody.play(‘bulles’);
-started = true;
-}
-}
-
+/* Pop */
 function popBubble(b, cx, cy) {
-const pop = document.createElement(‘div’);
-pop.className = ‘pop-effect’; pop.textContent = b.animal;
-pop.style.left = (cx - 18) + ‘px’; pop.style.top = (cy - 18) + ‘px’;
-document.body.appendChild(pop); setTimeout(() => pop.remove(), 700);
+  // Emoji qui explose
+  const el = document.createElement('div');
+  el.className = 'pop';
+  el.textContent = b.a;
+  el.style.left = (cx - 19) + 'px';
+  el.style.top  = (cy - 19) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 650);
 
-// Démarre la musique à la PREMIÈRE bulle éclatée (geste réel → iOS ok)
-startMusic();
+  // Son
+  Audio.pop(0.75 + Math.random() * .6);
 
-MaloMelody.playPop(.8 + Math.random() * .6);
-score++; document.getElementById(‘scoreNum’).textContent = score;
-if (score % 10 === 0) { showBravo(); MaloMelody.playBravo(); }
-b.reset();
+  // Score
+  score++;
+  document.getElementById('score').textContent = score;
+
+  // Bravo tous les 10
+  if (score % 10 === 0) {
+    Audio.bravo();
+    const bv = document.getElementById('bravo');
+    bv.classList.add('on');
+    setTimeout(() => bv.classList.remove('on'), 2400);
+  }
+
+  b.reset(false);
 }
 
-function showBravo() {
-const el = document.getElementById(‘bravo’);
-el.classList.add(‘show’); setTimeout(() => el.classList.remove(‘show’), 2500);
+/* Entrées tactiles + souris */
+function onInput(e) {
+  e.preventDefault();
+
+  // Démarrer la musique au premier toucher
+  if (!started) {
+    if (musicOn) Audio.startMusic();
+    started = true;
+  }
+
+  const touches = e.changedTouches
+    ? Array.from(e.changedTouches)
+    : [{ clientX: e.clientX, clientY: e.clientY }];
+
+  touches.forEach(t => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    const px = (t.clientX - rect.left) * scaleX;
+    const py = (t.clientY - rect.top)  * scaleY;
+
+    let hit = false;
+    for (const b of bubbles) {
+      if (b.hit(px, py)) {
+        popBubble(b, t.clientX, t.clientY);
+        hit = true;
+        break;
+      }
+    }
+    if (!hit) {
+      // Splash raté
+      const el = document.createElement('div');
+      el.className = 'pop';
+      el.textContent = '💧';
+      el.style.cssText = `left:${t.clientX-16}px;top:${t.clientY-16}px;font-size:22px;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 500);
+    }
+  });
 }
 
-function handleInput(e) {
-e.preventDefault();
-const list = e.changedTouches || [{ clientX: e.clientX, clientY: e.clientY }];
-Array.from(list).forEach(t => {
-const rect = canvas.getBoundingClientRect();
-const px = t.clientX - rect.left, py = t.clientY - rect.top;
-let hit = false;
-for (const b of bubbles) {
-if (b.hit(px, py)) { popBubble(b, t.clientX, t.clientY); hit = true; break; }
-}
-if (!hit) {
-const d = document.createElement(‘div’); d.className = ‘pop-effect’; d.textContent = ‘💧’;
-d.style.cssText = `left:${t.clientX - 16}px;top:${t.clientY - 16}px;font-size:20px;`;
-document.body.appendChild(d); setTimeout(() => d.remove(), 500);
-}
+canvas.addEventListener('touchstart', onInput, { passive: false });
+canvas.addEventListener('mousedown',  onInput);
+
+/* Bouton musique */
+document.getElementById('mBtn').addEventListener('click', () => {
+  musicOn = !musicOn;
+  document.getElementById('mBtn').textContent = musicOn ? '🎵' : '🔇';
+  if (musicOn) { Audio.startMusic(); started = true; }
+  else Audio.stop();
 });
-}
 
-canvas.addEventListener(‘touchstart’, handleInput, { passive: false });
-canvas.addEventListener(‘mousedown’, handleInput);
+/* Particules de fond */
+(function addParticles() {
+  const bg = document.querySelector('.bg');
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'p';
+    const s = 2 + Math.random() * 7;
+    el.style.cssText = `
+      width:${s}px; height:${s}px;
+      left:${Math.random()*100}%;
+      animation-duration:${6+Math.random()*10}s;
+      animation-delay:${-Math.random()*12}s;
+    `;
+    bg.appendChild(el);
+  }
+})();
 
-// Particules de fond
-for (let i = 0; i < 15; i++) {
-const p = document.createElement(‘div’); p.className = ‘particle’;
-const s = 3 + Math.random() * 8;
-p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random() * 100}%;animation-duration:${5 + Math.random() * 10}s;animation-delay:${-Math.random() * 10}s;`;
-document.querySelector(’.bg’).appendChild(p);
-}
-
-// Bouton musique (marche toujours après le premier geste)
-document.getElementById(‘musicBtn’).addEventListener(‘click’, () => {
-musicOn = !musicOn;
-document.getElementById(‘musicBtn’).textContent = musicOn ? ‘🎵’ : ‘🔇’;
-if (musicOn) { MaloMelody.play(‘bulles’); started = true; }
-else MaloMelody.stop();
-});
-
-initBubbles(); loop();
+/* Lancement */
+initBubbles();
+loop();
 </script>
 
 </body>
