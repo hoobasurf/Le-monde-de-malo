@@ -12,12 +12,7 @@
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; }
 
-/* FOND OCÉAN */
-.bg {
-position:fixed; inset:0;
-background:linear-gradient(180deg,#001a4d 0%,#003580 20%,#0066cc 55%,#0099e6 80%,#33bbff 100%);
-overflow:hidden;
-}
+.bg { position:fixed; inset:0; background:linear-gradient(180deg,#001a4d 0%,#003580 20%,#0066cc 55%,#0099e6 80%,#33bbff 100%); overflow:hidden; }
 .ray { position:absolute; top:0; background:linear-gradient(180deg,rgba(255,255,255,.07),transparent); transform-origin:top center; }
 .ray:nth-child(1){left:8%;width:55px;height:70%;transform:rotate(-8deg);}
 .ray:nth-child(2){left:24%;width:75px;height:85%;transform:rotate(-2deg);}
@@ -31,208 +26,133 @@ overflow:hidden;
 .header { position:fixed; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:12px 16px; z-index:50; }
 .btn-r { background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35); border-radius:50%; width:50px; height:50px; font-size:22px; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:transform .15s; backdrop-filter:blur(8px); }
 .btn-r:active { transform:scale(.88); }
-
-/* BARRE DE PROGRESSION */
 .progress-wrap { flex:1; margin:0 12px; }
-.progress-label { font-family:‘Nunito’,sans-serif; font-size:11px; color:rgba(255,255,255,.75); text-align:center; margin-bottom:4px; letter-spacing:.5px; }
+.progress-label { font-family:‘Nunito’,sans-serif; font-size:11px; color:rgba(255,255,255,.75); text-align:center; margin-bottom:4px; }
 .progress-bar { height:14px; background:rgba(255,255,255,.2); border-radius:10px; overflow:hidden; border:2px solid rgba(255,255,255,.3); }
 .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#FFD700,#FF8C00); border-radius:8px; transition:width .4s cubic-bezier(.34,1.56,.64,1); }
 .progress-stars { display:flex; justify-content:space-around; margin-top:3px; font-size:14px; }
 
-/* CANVAS */
+/* CANVAS JEU */
 #c { position:fixed; inset:0; width:100%; height:100%; }
 
 /* TITRE */
 .title-area { position:fixed; top:86px; left:0; right:0; text-align:center; pointer-events:none; z-index:10; }
 .title-area h1 { font-size:clamp(20px,5.5vw,30px); color:#fff; font-weight:800; text-shadow:0 3px 0 rgba(0,60,140,.7); }
-.title-area p { font-family:‘Nunito’,sans-serif; font-size:clamp(11px,3vw,14px); color:rgba(255,255,255,.7); margin-top:2px; }
+.title-area p  { font-family:‘Nunito’,sans-serif; font-size:clamp(11px,3vw,14px); color:rgba(255,255,255,.7); margin-top:2px; }
 
-/* POP EFFET */
+/* POP */
 .pop { position:fixed; pointer-events:none; z-index:90; font-size:36px; animation:popOut .55s ease-out forwards; }
 @keyframes popOut { 0%{transform:scale(0);opacity:1;} 55%{transform:scale(1.5);opacity:1;} 100%{transform:scale(0);opacity:0;} }
 
 /* ===== ÉCRAN VICTOIRE ===== */
 .win-screen {
 position:fixed; inset:0; z-index:200;
-background:linear-gradient(180deg,#1a4a00 0%,#2e7d00 40%,#52b000 100%);
-display:flex; flex-direction:column; align-items:center; justify-content:center;
+background:linear-gradient(160deg,#ff8c00 0%,#ffd700 40%,#ffe066 70%,#fff5cc 100%);
+display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+padding-top:20px;
 opacity:0; pointer-events:none;
-transition:opacity .6s;
+transition:opacity .5s;
+overflow:hidden;
 }
 .win-screen.show { opacity:1; pointer-events:all; }
 
-/* Étoiles victoire */
-.win-stars { font-size:clamp(32px,8vw,52px); margin-bottom:8px; animation:starPop .5s cubic-bezier(.34,1.56,.64,1) both; }
-@keyframes starPop { from{transform:scale(0);} to{transform:scale(1);} }
-.win-stars span:nth-child(2) { animation-delay:.15s; }
-.win-stars span:nth-child(3) { animation-delay:.3s; }
-
-.win-title { font-size:clamp(28px,7vw,44px); color:#FFD700; font-weight:800; text-shadow:0 3px 0 rgba(0,0,0,.3); animation:slideUp .5s .1s cubic-bezier(.34,1.56,.64,1) both; }
-.win-sub { font-family:‘Nunito’,sans-serif; font-size:clamp(14px,4vw,20px); color:rgba(255,255,255,.9); margin-top:6px; animation:slideUp .5s .2s cubic-bezier(.34,1.56,.64,1) both; }
-@keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-
-/* LIONCEAU */
-.lion-wrap { position:relative; width:180px; height:180px; margin:16px 0; animation:lionEntry .7s .3s cubic-bezier(.34,1.56,.64,1) both; }
-@keyframes lionEntry { from{transform:scale(0) rotate(-15deg);} to{transform:scale(1) rotate(0);} }
-
-.lion { position:relative; width:180px; height:180px; }
-
-/* Corps */
-.lion-body {
-position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-width:100px; height:85px;
-background:#E8A030;
-border-radius:50% 50% 40% 40%;
-box-shadow:inset -8px -6px 0 rgba(0,0,0,.12);
-animation:breathe 2s ease-in-out infinite;
-}
-@keyframes breathe { 0%,100%{transform:translateX(-50%) scaleY(1);} 50%{transform:translateX(-50%) scaleY(1.04);} }
-
-/* Pattes */
-.patte { position:absolute; width:22px; height:32px; background:#D48820; border-radius:8px 8px 14px 14px; bottom:10px; }
-.patte-gl { left:16px; transform:rotate(-5deg); animation:patte1 1.5s ease-in-out infinite; }
-.patte-gr { right:16px; transform:rotate(5deg); animation:patte2 1.5s ease-in-out infinite; }
-@keyframes patte1 { 0%,100%{transform:rotate(-5deg);} 50%{transform:rotate(-12deg) translateY(-3px);} }
-@keyframes patte2 { 0%,100%{transform:rotate(5deg);} 50%{transform:rotate(12deg) translateY(-3px);} }
-
-/* Queue */
-.queue {
-position:absolute; right:-18px; bottom:28px;
-width:14px; height:55px;
-background:#D4882080;
-border-radius:0 0 8px 8px;
-transform-origin:top center;
-animation:queue 1.8s ease-in-out infinite;
-}
-.queue::after { content:’’; position:absolute; bottom:-8px; left:-4px; width:22px; height:22px; background:#C07018; border-radius:50%; }
-@keyframes queue { 0%,100%{transform:rotate(-20deg);} 50%{transform:rotate(20deg);} }
-
-/* Tête */
-.lion-head {
-position:absolute; top:12px; left:50%; transform:translateX(-50%);
-width:90px; height:88px;
-background:#F0B040;
-border-radius:50%;
-box-shadow:inset -6px -4px 0 rgba(0,0,0,.1);
-animation:headBob 2s ease-in-out infinite;
-z-index:5;
-}
-@keyframes headBob { 0%,100%{transform:translateX(-50%) rotate(-3deg);} 50%{transform:translateX(-50%) rotate(3deg) translateY(-3px);} }
-
-/* Crinière */
-.criniere {
-position:absolute; top:4px; left:50%; transform:translateX(-50%);
-width:108px; height:105px;
-background:radial-gradient(circle,#8B4513 30%,#6B2E0A 70%);
-border-radius:50%;
-z-index:4;
-animation:headBob 2s ease-in-out infinite;
-}
-.criniere::before {
+/* Soleil safari en fond */
+.win-screen::before {
 content:’’;
-position:absolute; inset:-8px;
-background:radial-gradient(circle,transparent 38%,#A0520A 42%,#7B3A08 55%,transparent 65%);
+position:absolute;
+top:-80px; left:50%; transform:translateX(-50%);
+width:300px; height:300px;
+background:radial-gradient(circle, rgba(255,255,255,.4) 0%, transparent 70%);
 border-radius:50%;
-animation:crinSpin 8s linear infinite;
+animation:sunGlow 3s ease-in-out infinite;
 }
-@keyframes crinSpin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@keyframes sunGlow { 0%,100%{transform:translateX(-50%) scale(1);} 50%{transform:translateX(-50%) scale(1.15);} }
 
-/* Oreilles */
-.oreille { position:absolute; width:26px; height:26px; background:#E8A030; border-radius:50% 50% 0 50%; top:-8px; z-index:3; }
-.oreille::after { content:’’; position:absolute; inset:5px; background:#FFB0B0; border-radius:50% 50% 0 50%; }
-.oreille-g { left:2px; transform:rotate(-30deg); }
-.oreille-d { right:2px; transform:rotate(30deg) scaleX(-1); }
-
-/* Yeux */
-.yeux { position:absolute; top:30px; left:50%; transform:translateX(-50%); width:62px; display:flex; justify-content:space-between; z-index:6; }
-.oeil { width:18px; height:18px; background:#1a0a00; border-radius:50%; position:relative; overflow:hidden; animation:cligne 4s ease-in-out infinite; }
-.oeil::before { content:’’; position:absolute; inset:3px; background:#8B4513; border-radius:50%; }
-.oeil::after { content:’’; position:absolute; top:3px; right:3px; width:5px; height:5px; background:white; border-radius:50%; }
-@keyframes cligne { 0%,90%,100%{transform:scaleY(1);} 95%{transform:scaleY(.08);} }
-
-/* Nez */
-.nez { position:absolute; top:50px; left:50%; transform:translateX(-50%); z-index:6; }
-.nez::before { content:’’; display:block; width:18px; height:12px; background:#8B1A1A; border-radius:50% 50% 40% 40%; }
-/* Moustaches */
-.moustaches { position:absolute; top:52px; left:50%; transform:translateX(-50%); width:80px; display:flex; justify-content:space-between; z-index:6; }
-.moust { width:28px; height:2px; background:rgba(255,255,255,.6); border-radius:2px; margin-top:6px; }
-.moust-g { transform:rotate(-8deg); }
-.moust-d { transform:rotate(8deg); }
-
-/* Bouche sourire */
-.bouche {
-position:absolute; top:62px; left:50%; transform:translateX(-50%);
-width:28px; height:14px;
-border-bottom:3px solid #8B1A1A;
-border-radius:0 0 50% 50%;
-z-index:6;
-animation:sourire 2s ease-in-out infinite;
+.win-title {
+font-size:clamp(30px,8vw,48px); color:#8B2500; font-weight:800;
+text-shadow:0 3px 0 rgba(255,255,255,.5);
+animation:titlePop .5s .1s cubic-bezier(.34,1.56,.64,1) both;
+position:relative; z-index:2;
 }
-@keyframes sourire { 0%,100%{transform:translateX(-50%) scaleX(1);} 50%{transform:translateX(-50%) scaleX(1.2);} }
+@keyframes titlePop { from{transform:scale(0) rotate(-5deg);} to{transform:scale(1) rotate(0);} }
 
-/* Joues roses */
-.joue { position:absolute; width:18px; height:10px; background:rgba(255,100,100,.3); border-radius:50%; top:52px; z-index:6; }
-.joue-g { left:6px; }
-.joue-d { right:6px; }
+.win-stars {
+font-size:clamp(28px,7vw,40px); margin:6px 0;
+animation:starsIn .5s .2s cubic-bezier(.34,1.56,.64,1) both;
+position:relative; z-index:2;
+}
+@keyframes starsIn { from{transform:scale(0);opacity:0;} to{transform:scale(1);opacity:1;} }
 
-/* Pattes avant */
-.patte-av { position:absolute; bottom:-14px; width:28px; height:20px; background:#E8A030; border-radius:40% 40% 50% 50%; z-index:5; }
-.patte-av-g { left:12px; animation:wavePatte 2s ease-in-out infinite; }
-.patte-av-d { right:12px; animation:wavePatte 2s ease-in-out infinite .3s; }
-@keyframes wavePatte { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+.win-sub {
+font-family:‘Nunito’,sans-serif;
+font-size:clamp(13px,3.5vw,18px); color:#5a1a00;
+margin-bottom:8px;
+animation:fadeIn .5s .35s both;
+position:relative; z-index:2;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
 
-/* Étoiles autour du lion */
-.win-stars-around { position:absolute; width:100%; height:100%; pointer-events:none; }
-.star-around { position:absolute; font-size:24px; animation:orbitStar 3s linear infinite; }
-.star-around:nth-child(1){top:0%;left:50%;animation-delay:0s;}
-.star-around:nth-child(2){top:25%;right:0%;animation-delay:.5s;}
-.star-around:nth-child(3){bottom:10%;right:10%;animation-delay:1s;}
-.star-around:nth-child(4){bottom:10%;left:10%;animation-delay:1.5s;}
-.star-around:nth-child(5){top:25%;left:0%;animation-delay:2s;}
-@keyframes orbitStar { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:.6;} }
+/* Canvas Three.js pour Simba */
+#simba-canvas {
+width:min(280px, 75vw);
+height:min(280px, 75vw);
+position:relative; z-index:2;
+border-radius:50%;
+background:radial-gradient(circle, rgba(255,200,80,.3) 0%, transparent 70%);
+animation:simbaEntry .7s .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes simbaEntry { from{transform:scale(0) rotate(-20deg);} to{transform:scale(1) rotate(0);} }
 
-/* Boutons victoire */
-.win-btns { display:flex; gap:14px; margin-top:18px; animation:slideUp .5s .5s cubic-bezier(.34,1.56,.64,1) both; }
+/* Herbe savane */
+.savane {
+position:absolute; bottom:0; left:0; right:0; height:80px;
+background:linear-gradient(180deg, #7dc43a 0%, #4a8a1a 100%);
+border-radius:60% 60% 0 0 / 30px 30px 0 0;
+z-index:1;
+}
+.savane::before {
+content:‘🌾🌿🌾🌿🌾🌿🌾🌿🌾’;
+position:absolute; top:-16px; left:0; right:0;
+font-size:20px; text-align:center; letter-spacing:4px;
+}
+
+/* Boutons */
+.win-btns {
+display:flex; gap:14px; margin-top:10px;
+animation:fadeIn .5s .6s both;
+position:relative; z-index:3;
+}
 .win-btn {
-padding:14px 26px; border:none; border-radius:20px;
+padding:14px 28px; border:none; border-radius:20px;
 font-family:‘Baloo 2’,cursive; font-weight:800;
 font-size:clamp(14px,4vw,18px); cursor:pointer;
 box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
 }
 .win-btn:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.2); }
-.btn-rejouer { background:#FFD700; color:#333; }
-.btn-menu { background:rgba(255,255,255,.25); color:white; border:2px solid rgba(255,255,255,.4); }
+.btn-rejouer { background:#FF6B00; color:white; }
+.btn-menu { background:rgba(255,255,255,.7); color:#5a1a00; }
 
 /* Confettis */
-.confetti { position:absolute; width:10px; height:10px; border-radius:2px; pointer-events:none; animation:confettiFall linear forwards; }
-@keyframes confettiFall {
-0%   { transform:translateY(-20px) rotate(0deg); opacity:1; }
-100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
-}
+.confetti { position:absolute; border-radius:2px; pointer-events:none; animation:confettiFall linear forwards; z-index:1; }
+@keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1;} 100%{transform:translateY(100vh) rotate(720deg);opacity:0;} }
 </style>
 
 </head>
 <body>
-
-<!-- FOND -->
 
 <div class="bg">
   <div class="ray"></div><div class="ray"></div><div class="ray"></div>
   <div class="ray"></div><div class="ray"></div>
 </div>
 
-<!-- AUDIO -->
-
 <audio id="bgMusic" loop preload="auto">
   <source src="bulles.mp3" type="audio/mpeg">
 </audio>
 
-<!-- HEADER -->
-
 <div class="header">
   <a class="btn-r" href="index.html">⬅️</a>
   <div class="progress-wrap">
-    <div class="progress-label" id="progLabel">Éclate 20 bulles ! 🫧</div>
+    <div class="progress-label" id="progLabel">Éclate 20 bulles pour libérer Simba ! 🫧</div>
     <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
     <div class="progress-stars" id="progStars">
       <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
@@ -241,78 +161,126 @@ box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
   <button class="btn-r" id="mBtn">🎵</button>
 </div>
 
-<!-- TITRE -->
-
 <div class="title-area">
   <h1>🫧 Les Bulles !</h1>
-  <p>Touche les bulles pour les éclater !</p>
+  <p>Éclate 20 bulles pour libérer Simba !</p>
 </div>
-
-<!-- CANVAS BULLES -->
 
 <canvas id="c"></canvas>
 
 <!-- ÉCRAN VICTOIRE -->
 
 <div class="win-screen" id="winScreen">
-  <div class="win-stars">
-    <span style="animation-delay:.1s">⭐</span>
-    <span style="animation-delay:.25s">⭐</span>
-    <span style="animation-delay:.4s">⭐</span>
-  </div>
-  <div class="win-title">Bravo Malo !</div>
-  <div class="win-sub">Tu as éclaté toutes les bulles ! 🎉</div>
-
-  <!-- LIONCEAU CSS -->
-
-  <div class="lion-wrap">
-    <div class="win-stars-around">
-      <span class="star-around">✨</span>
-      <span class="star-around">⭐</span>
-      <span class="star-around">✨</span>
-      <span class="star-around">⭐</span>
-      <span class="star-around">✨</span>
-    </div>
-    <div class="lion">
-      <!-- Queue -->
-      <div class="queue" style="position:absolute;right:-18px;bottom:48px;"></div>
-      <!-- Corps -->
-      <div class="lion-body">
-        <div class="patte patte-gl"></div>
-        <div class="patte patte-gr"></div>
-        <div class="patte-av patte-av-g"></div>
-        <div class="patte-av patte-av-d"></div>
-      </div>
-      <!-- Crinière (derrière la tête) -->
-      <div class="criniere"></div>
-      <!-- Tête -->
-      <div class="lion-head">
-        <div class="oreille oreille-g"></div>
-        <div class="oreille oreille-d"></div>
-        <div class="yeux">
-          <div class="oeil"></div>
-          <div class="oeil"></div>
-        </div>
-        <div class="joue joue-g"></div>
-        <div class="joue joue-d"></div>
-        <div class="nez"></div>
-        <div class="moustaches">
-          <div class="moust moust-g"></div>
-          <div class="moust moust-d"></div>
-        </div>
-        <div class="bouche"></div>
-      </div>
-    </div>
-  </div>
-
+  <div class="win-title">🦁 Simba est libre !</div>
+  <div class="win-stars">⭐⭐⭐</div>
+  <div class="win-sub">Bravo Malo, tu es le Roi des Bulles ! 👑</div>
+  <canvas id="simba-canvas"></canvas>
   <div class="win-btns">
     <button class="win-btn btn-rejouer" id="btnRejouer">🔄 Rejouer</button>
     <a class="win-btn btn-menu" href="index.html">🏠 Menu</a>
   </div>
+  <div class="savane"></div>
 </div>
 
+<!-- Three.js -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
-/* ====== CANVAS & BULLES ====== */
+/* ============================================================
+   CHARGEUR GLB MINIMAL (sans GLTFLoader CDN - on l'intègre)
+   ============================================================ */
+
+// Mini GLTFLoader inline (r128 compatible)
+// On utilise la version importmap-free
+let simbaScene = null;
+
+function loadSimba() {
+  // Charger GLTFLoader depuis CDN
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+  script.onload = () => initSimba3D();
+  script.onerror = () => console.log('GLTFLoader non chargé');
+  document.head.appendChild(script);
+}
+
+function initSimba3D() {
+  const canvas3d = document.getElementById('simba-canvas');
+  const size = canvas3d.offsetWidth || 260;
+  canvas3d.width  = size;
+  canvas3d.height = size;
+
+  // Renderer
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, alpha: true, antialias: true });
+  renderer.setSize(size, size);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.shadowMap.enabled = false;
+
+  // Scène
+  const scene = new THREE.Scene();
+
+  // Caméra
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
+  camera.position.set(0, 1.2, 4);
+  camera.lookAt(0, 0.6, 0);
+
+  // Lumières
+  const ambient = new THREE.AmbientLight(0xfff5e0, 1.2);
+  scene.add(ambient);
+  const dirLight = new THREE.DirectionalLight(0xffd580, 2);
+  dirLight.position.set(3, 5, 3);
+  scene.add(dirLight);
+  const fillLight = new THREE.DirectionalLight(0xff8c00, 0.5);
+  fillLight.position.set(-3, 2, -2);
+  scene.add(fillLight);
+
+  // Charger Simba.glb
+  const loader = new THREE.GLTFLoader();
+  loader.load(
+    'Simba.glb',
+    (gltf) => {
+      const model = gltf.scene;
+
+      // Centrer et dimensionner
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      const sizeVec = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(sizeVec.x, sizeVec.y, sizeVec.z);
+      const scale = 2.5 / maxDim;
+
+      model.position.sub(center);
+      model.scale.setScalar(scale);
+      model.position.y = -sizeVec.y * scale * 0.3;
+
+      scene.add(model);
+      simbaScene = { model, renderer, scene, camera };
+
+      // Animation loop
+      let t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.02;
+        // Rotation douce
+        model.rotation.y = Math.sin(t * 0.5) * 0.6;
+        // Légère lévitation
+        model.position.y = -sizeVec.y * scale * 0.3 + Math.sin(t) * 0.06;
+        renderer.render(scene, camera);
+      }
+      animate();
+    },
+    undefined,
+    (err) => {
+      // Fallback si le modèle ne charge pas
+      canvas3d.style.display = 'none';
+      console.log('Erreur chargement Simba:', err);
+    }
+  );
+}
+
+/* ============================================================
+   JEU DES BULLES
+   ============================================================ */
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 let W, H, bubbles = [], score = 0, gameOver = false;
@@ -327,7 +295,6 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-/* Bulle */
 class Bubble {
   constructor(init) { this.reset(init); }
   reset(init) {
@@ -385,28 +352,22 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-/* Progression */
 function updateProgress() {
   const pct = (score / MAX) * 100;
   document.getElementById('progFill').style.width = pct + '%';
   document.getElementById('progLabel').textContent =
-    score < MAX ? `${score} / ${MAX} bulles 🫧` : 'Terminé ! 🎉';
-
-  // Étoiles (1 tous les 4 bulles)
+    score < MAX ? `${score} / ${MAX} bulles pour libérer Simba ! 🫧` : '🦁 Simba est libre !';
   const stars = document.getElementById('progStars').children;
   const filled = Math.floor(score / 4);
-  for (let i = 0; i < 5; i++) {
-    stars[i].textContent = i < filled ? '⭐' : '☆';
-  }
+  for (let i=0;i<5;i++) stars[i].textContent = i < filled ? '⭐' : '☆';
 }
 
-/* Son pop Web Audio */
 function playPop(pitch) {
   try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    const o = ac.createOscillator(), g = ac.createGain();
+    const ac = new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain();
     o.connect(g); g.connect(ac.destination);
-    o.type = 'sine';
+    o.type='sine';
     o.frequency.setValueAtTime(700*pitch, ac.currentTime);
     o.frequency.exponentialRampToValueAtTime(150*pitch, ac.currentTime+.18);
     g.gain.setValueAtTime(.28, ac.currentTime);
@@ -415,93 +376,75 @@ function playPop(pitch) {
   } catch(e){}
 }
 
-/* Confettis */
+function playVictory() {
+  try {
+    const ac = new (window.AudioContext||window.webkitAudioContext)();
+    [523,659,784,1047,1319].forEach((f,i)=>{
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.connect(g);g.connect(ac.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(.22,ac.currentTime+i*.14);
+      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.14+.4);
+      o.start(ac.currentTime+i*.14);o.stop(ac.currentTime+i*.14+.45);
+    });
+  } catch(e){}
+}
+
 function launchConfetti() {
-  const colors = ['#FFD700','#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD'];
-  for (let i = 0; i < 60; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'confetti';
-      el.style.cssText = `
-        left:${Math.random()*100}%;
-        top:-10px;
-        background:${colors[Math.floor(Math.random()*colors.length)]};
-        width:${6+Math.random()*10}px;
-        height:${6+Math.random()*10}px;
-        animation-duration:${2+Math.random()*2}s;
-        animation-delay:${Math.random()*.5}s;
-        transform:rotate(${Math.random()*360}deg);
-      `;
-      document.querySelector('.win-screen').appendChild(el);
-      setTimeout(() => el.remove(), 4000);
-    }, i * 40);
+  const colors=['#FFD700','#FF6B00','#FF4444','#44BBFF','#44FF88','#FF88CC'];
+  const ws = document.getElementById('winScreen');
+  for (let i=0;i<70;i++) {
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti';
+      const s=5+Math.random()*10;
+      el.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${s}px;height:${s}px;animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.3}s;transform:rotate(${Math.random()*360}deg);`;
+      ws.appendChild(el);
+      setTimeout(()=>el.remove(),4000);
+    }, i*35);
   }
 }
 
-/* Victoire */
 function showVictory() {
   gameOver = true;
-  // Fade out musique
-  const music = document.getElementById('bgMusic');
-  music.pause();
-
-  setTimeout(() => {
+  document.getElementById('bgMusic').pause();
+  updateProgress();
+  setTimeout(()=>{
     document.getElementById('winScreen').classList.add('show');
     launchConfetti();
-    // Son de victoire
-    try {
-      const ac = new (window.AudioContext || window.webkitAudioContext)();
-      [523,659,784,1047,1319].forEach((f,i) => {
-        const o=ac.createOscillator(),g=ac.createGain();
-        o.connect(g);g.connect(ac.destination);
-        o.frequency.value=f;o.type='sine';
-        g.gain.setValueAtTime(.22,ac.currentTime+i*.14);
-        g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.14+.4);
-        o.start(ac.currentTime+i*.14);o.stop(ac.currentTime+i*.14+.45);
-      });
-    } catch(e){}
-  }, 200);
+    playVictory();
+    loadSimba(); // Charger Simba 3D
+  }, 300);
 }
 
-/* Pop bulle */
 function popBubble(b, cx, cy) {
-  const el = document.createElement('div');
-  el.className = 'pop';
-  el.textContent = b.a;
-  el.style.left = (cx-18)+'px'; el.style.top = (cy-18)+'px';
+  const el=document.createElement('div');
+  el.className='pop'; el.textContent=b.a;
+  el.style.left=(cx-18)+'px'; el.style.top=(cy-18)+'px';
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 650);
-
-  playPop(.75 + Math.random()*.6);
+  setTimeout(()=>el.remove(), 650);
+  playPop(.75+Math.random()*.6);
   score++;
   updateProgress();
   if (score >= MAX) { showVictory(); return; }
   b.reset(false);
 }
 
-/* Entrées */
 function onInput(e) {
   e.preventDefault();
   if (gameOver) return;
-
-  // Musique au 1er toucher
   if (!musicStarted) startMusic();
-
-  const list = e.changedTouches
-    ? Array.from(e.changedTouches)
-    : [{ clientX:e.clientX, clientY:e.clientY }];
-
-  list.forEach(t => {
-    const rect = canvas.getBoundingClientRect();
-    const px = (t.clientX - rect.left) * (W/rect.width);
-    const py = (t.clientY - rect.top)  * (H/rect.height);
-    let hit = false;
+  const list = e.changedTouches ? Array.from(e.changedTouches) : [{clientX:e.clientX,clientY:e.clientY}];
+  list.forEach(t=>{
+    const rect=canvas.getBoundingClientRect();
+    const px=(t.clientX-rect.left)*(W/rect.width);
+    const py=(t.clientY-rect.top)*(H/rect.height);
+    let hit=false;
     for (const b of bubbles) {
-      if (b.hit(px,py)) { popBubble(b, t.clientX, t.clientY); hit=true; break; }
+      if (b.hit(px,py)) { popBubble(b,t.clientX,t.clientY); hit=true; break; }
     }
     if (!hit) {
-      const el = document.createElement('div');
-      el.className='pop'; el.textContent='💧';
+      const el=document.createElement('div'); el.className='pop'; el.textContent='💧';
       el.style.cssText=`left:${t.clientX-14}px;top:${t.clientY-14}px;font-size:20px;`;
       document.body.appendChild(el); setTimeout(()=>el.remove(),500);
     }
@@ -511,55 +454,47 @@ function onInput(e) {
 canvas.addEventListener('touchstart', onInput, {passive:false});
 canvas.addEventListener('mousedown',  onInput);
 
-/* Rejouer */
-document.getElementById('btnRejouer').addEventListener('click', () => {
-  score = 0; gameOver = false;
+document.getElementById('btnRejouer').addEventListener('click', ()=>{
+  score=0; gameOver=false;
   updateProgress();
   document.getElementById('winScreen').classList.remove('show');
-  // Nettoyer confettis
   document.querySelectorAll('.confetti').forEach(e=>e.remove());
+  // Détruire Three.js canvas
+  const sc = document.getElementById('simba-canvas');
+  sc.style.display='';
   initBubbles();
   startMusic();
 });
 
-/* ====== MUSIQUE MP3 ====== */
-let musicOn = true, musicStarted = false;
+/* MUSIQUE */
+let musicOn=true, musicStarted=false;
 const music = document.getElementById('bgMusic');
 
 function startMusic() {
   if (musicStarted && !music.paused) return;
-  music.volume = 0.6;
+  music.volume=0.6;
   music.play().catch(()=>{});
-  musicStarted = true;
+  musicStarted=true;
 }
 
-document.getElementById('mBtn').addEventListener('click', () => {
-  musicOn = !musicOn;
-  document.getElementById('mBtn').textContent = musicOn ? '🎵' : '🔇';
-  if (musicOn) { startMusic(); }
-  else { music.pause(); }
+document.getElementById('mBtn').addEventListener('click', ()=>{
+  musicOn=!musicOn;
+  document.getElementById('mBtn').textContent=musicOn?'🎵':'🔇';
+  if(musicOn) startMusic(); else music.pause();
 });
 
-// Démarrer au 1er toucher (règle navigateur mobile)
-document.addEventListener('touchstart', function onFirst() {
-  startMusic();
-  document.removeEventListener('touchstart', onFirst);
-}, {once:true, passive:true});
-document.addEventListener('mousedown', function onFirst() {
-  startMusic();
-  document.removeEventListener('mousedown', onFirst);
-}, {once:true});
+document.addEventListener('touchstart', function onF(){ startMusic(); document.removeEventListener('touchstart',onF); },{once:true,passive:true});
+document.addEventListener('mousedown',  function onF(){ startMusic(); document.removeEventListener('mousedown',onF); },{once:true});
 
-/* Particules de fond */
-const bg = document.querySelector('.bg');
-for (let i=0;i<18;i++) {
+/* Particules */
+const bg=document.querySelector('.bg');
+for(let i=0;i<18;i++){
   const p=document.createElement('div'); p.className='particle';
   const s=2+Math.random()*7;
   p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${-Math.random()*12}s;`;
   bg.appendChild(p);
 }
 
-/* Init */
 updateProgress();
 initBubbles();
 loop();
