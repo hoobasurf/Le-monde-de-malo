@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Test Bulles</title>
+<style>
+body{margin:0;background:#0066cc;overflow:hidden;}
+canvas{display:block;}
+#info{position:fixed;top:10px;left:10px;color:white;font-size:18px;font-family:sans-serif;z-index:99;}
+</style>
+</head>
+<body>
+<div id="info">Chargement...</div>
+<canvas id="cv"></canvas>
+<script>
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var info = document.getElementById('info');
+
+cv.width = window.innerWidth;
+cv.height = window.innerHeight;
+info.textContent = ‘W:’+cv.width+’ H:’+cv.height;
+
+// 3 grosses bulles fixes pour tester
+ctx.beginPath();
+ctx.arc(cv.width/2, cv.height/2, 80, 0, Math.PI*2);
+ctx.fillStyle = ‘rgba(255,255,255,0.7)’;
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(100, 200, 60, 0, Math.PI*2);
+ctx.fillStyle = ‘rgba(255,200,100,0.7)’;
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(cv.width-100, 300, 70, 0, Math.PI*2);
+ctx.fillStyle = ‘rgba(100,255,200,0.7)’;
+ctx.fill();
+
+ctx.font = ‘40px serif’;
+ctx.textAlign = ‘center’;
+ctx.fillText(‘🐟’, cv.width/2, cv.height/2+10);
+ctx.fillText(‘🐠’, 100, 210);
+ctx.fillText(‘🐙’, cv.width-100, 310);
+</script>
+
+</body>
+</html>
