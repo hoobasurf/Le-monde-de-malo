@@ -158,11 +158,24 @@ transition:opacity .5s ease, transform .5s ease;
   let musicOn = true;
 
 function dismissSplash() {
+try {
+const dbg = document.createElement(‘div’);
+dbg.style.cssText = ‘position:fixed;top:0;left:0;right:0;z-index:9999;background:red;color:white;font-size:18px;padding:12px;word-break:break-all;’;
+dbg.textContent = ‘CLICK OK - test melody…’;
+document.body.appendChild(dbg);
 const splash = document.getElementById(‘splash’);
-if (!splash) return;
+try {
 MaloMelody.play(‘menu’);
+dbg.textContent = ‘MELODY OK !’;
+} catch(e) {
+dbg.textContent = ’ERREUR MELODY: ’ + e.message;
+return;
+}
 splash.classList.add(‘hide’);
-setTimeout(() => splash.remove(), 600);
+setTimeout(() => { splash.remove(); setTimeout(() => dbg.remove(), 3000); }, 600);
+} catch(e) {
+alert(’ERREUR GLOBALE: ’ + e.message);
+}
 }
 
 document.getElementById(‘musicBtn’).addEventListener(‘click’, () => {
