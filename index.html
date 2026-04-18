@@ -116,13 +116,22 @@
 <script src="melody.js"></script>
 <script>
   let musicOn=true, started=false;
-  function startMusic(){if(!started&&musicOn){MaloMelody.play('menu');started=true;}}
+  function startMusic(){
+    if(!started&&musicOn){MaloMelody.play('menu');started=true;}
+  }
   document.getElementById('musicBtn').addEventListener('click',()=>{
     musicOn=!musicOn;
     document.getElementById('musicBtn').textContent=musicOn?'🎵':'🔇';
     if(musicOn){MaloMelody.play('menu');started=true;}else MaloMelody.stop();
   });
-  document.addEventListener('pointerdown',function onFirst(){startMusic();document.removeEventListener('pointerdown',onFirst);},{once:true});
+  document.body.addEventListener('touchstart',function onFirst(){
+    startMusic();
+    document.body.removeEventListener('touchstart',onFirst);
+  },{once:true,passive:true});
+  document.body.addEventListener('mousedown',function onFirstMouse(){
+    startMusic();
+    document.body.removeEventListener('mousedown',onFirstMouse);
+  },{once:true});
   document.querySelectorAll('.game-card').forEach(card=>{
     card.addEventListener('pointerdown',e=>{
       const r=document.createElement('div');r.className='ripple';
