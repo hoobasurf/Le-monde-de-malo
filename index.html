@@ -5,196 +5,144 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0066cc">
-<title>Les Bulles - Malo</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Malo 🌍">
+<meta name="theme-color" content="#1a6b3c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Le Monde de Malo 🌍</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Baloo 2',cursive;background:#0066cc;}
-.ray{position:fixed;top:0;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent);transform-origin:top center;pointer-events:none;z-index:1;}
-.ray:nth-child(1){left:10%;width:60px;height:70%;transform:rotate(-8deg);}
-.ray:nth-child(2){left:25%;width:80px;height:85%;transform:rotate(-3deg);}
-.ray:nth-child(3){left:50%;width:60px;height:75%;transform:rotate(5deg);}
-.ray:nth-child(4){left:70%;width:50px;height:65%;transform:rotate(10deg);}
-.ray:nth-child(5){left:85%;width:60px;height:80%;transform:rotate(-5deg);}
-/* CANVAS : pas de width/height en CSS — géré uniquement en JS */
-canvas{position:fixed;top:0;left:0;z-index:2;display:block;}
-.header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;z-index:10;pointer-events:none;}
-.back-btn,.music-btn{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:50%;width:52px;height:52px;font-size:24px;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;backdrop-filter:blur(8px);pointer-events:auto;}
-.score-area{text-align:center;}
-.score-label{font-family:'Nunito',sans-serif;font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px;}
-.score-num{font-size:36px;font-weight:800;color:white;line-height:1;}
-.titre{position:fixed;top:90px;left:0;right:0;text-align:center;pointer-events:none;z-index:10;}
-.titre h1{font-size:28px;color:white;font-weight:800;}
-.titre p{font-family:'Nunito',sans-serif;font-size:14px;color:rgba(255,255,255,.8);margin-top:4px;}
-.bravo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:white;border-radius:32px;padding:28px 40px;text-align:center;z-index:20;box-shadow:0 16px 48px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
-.bravo.show{transform:translate(-50%,-50%) scale(1);}
-.bravo-emoji{font-size:64px;display:block;}
-.bravo-text{font-size:30px;font-weight:800;color:#0066cc;margin-top:8px;}
-.pop{position:fixed;pointer-events:none;z-index:15;font-size:36px;animation:popOut .6s ease-out forwards;}
-@keyframes popOut{0%{transform:scale(0);opacity:1;}60%{transform:scale(1.5);opacity:1;}100%{transform:scale(0);opacity:0;}}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow-x:hidden;font-family:'Baloo 2',cursive;touch-action:manipulation;}
+  .sky{position:fixed;inset:0;background:linear-gradient(180deg,#5bc8f5 0%,#a8e6ff 50%,#c8f0a0 85%,#6dbf52 100%);z-index:0;overflow:hidden;}
+  .sun{position:absolute;top:24px;right:40px;width:80px;height:80px;background:radial-gradient(circle,#fff8a0 30%,#FFD700 70%,#ffaa00 100%);border-radius:50%;box-shadow:0 0 40px 20px rgba(255,220,0,.4);animation:sunPulse 4s ease-in-out infinite;}
+  @keyframes sunPulse{0%,100%{box-shadow:0 0 40px 20px rgba(255,220,0,.4);transform:scale(1);}50%{box-shadow:0 0 60px 30px rgba(255,220,0,.6);transform:scale(1.05);}}
+  .cloud{position:absolute;background:white;border-radius:50px;opacity:.85;}
+  .cloud::before,.cloud::after{content:'';position:absolute;background:white;border-radius:50%;}
+  .cloud-1{width:100px;height:36px;top:60px;left:-120px;animation:drift 22s linear infinite;}
+  .cloud-1::before{width:52px;height:52px;top:-28px;left:14px;}.cloud-1::after{width:36px;height:36px;top:-18px;left:50px;}
+  .cloud-2{width:130px;height:44px;top:110px;left:-160px;animation:drift 30s linear infinite 8s;opacity:.7;}
+  .cloud-2::before{width:64px;height:64px;top:-34px;left:18px;}.cloud-2::after{width:44px;height:44px;top:-22px;left:64px;}
+  .cloud-3{width:80px;height:28px;top:40px;left:-100px;animation:drift 18s linear infinite 14s;opacity:.6;}
+  .cloud-3::before{width:40px;height:40px;top:-22px;left:10px;}.cloud-3::after{width:28px;height:28px;top:-14px;left:40px;}
+  @keyframes drift{from{transform:translateX(0);}to{transform:translateX(calc(100vw + 200px));}}
+  .ground-strip{position:fixed;bottom:0;left:0;right:0;height:52px;background:linear-gradient(180deg,#56c45a,#2e7d32);z-index:2;border-radius:60% 60% 0 0/20px 20px 0 0;}
+  .grass-bumps{position:absolute;top:-16px;left:0;right:0;height:30px;background:radial-gradient(ellipse 40px 18px at 10% 100%,#56c45a 99%,transparent 100%),radial-gradient(ellipse 50px 20px at 28% 100%,#4db84f 99%,transparent 100%),radial-gradient(ellipse 40px 16px at 46% 100%,#56c45a 99%,transparent 100%),radial-gradient(ellipse 55px 22px at 64% 100%,#4db84f 99%,transparent 100%),radial-gradient(ellipse 40px 18px at 82% 100%,#56c45a 99%,transparent 100%),radial-gradient(ellipse 48px 18px at 98% 100%,#4db84f 99%,transparent 100%);}
+  .butterfly{position:fixed;font-size:24px;z-index:5;pointer-events:none;opacity:.85;}
+  .butterfly:nth-child(1){top:25%;left:5%;animation:fly 12s ease-in-out infinite;}
+  .butterfly:nth-child(2){top:45%;right:6%;animation:fly 12s ease-in-out infinite 4s;font-size:20px;}
+  .butterfly:nth-child(3){top:15%;left:30%;animation:fly 12s ease-in-out infinite 8s;font-size:18px;}
+  @keyframes fly{0%{transform:translate(0,0)rotate(-5deg);}25%{transform:translate(20px,-15px)rotate(5deg);}50%{transform:translate(-10px,-25px)rotate(-3deg);}75%{transform:translate(15px,-10px)rotate(4deg);}100%{transform:translate(0,0)rotate(-5deg);}}
+  .sparkle{position:fixed;font-size:16px;z-index:4;pointer-events:none;animation:twinkle 2.5s ease-in-out infinite;}
+  .sparkle:nth-child(1){top:8%;left:15%;}.sparkle:nth-child(2){top:12%;right:20%;animation-delay:.8s;}.sparkle:nth-child(3){top:5%;left:55%;animation-delay:1.6s;}
+  @keyframes twinkle{0%,100%{opacity:.3;transform:scale(.8);}50%{opacity:1;transform:scale(1.2)rotate(180deg);}}
+  .flowers{position:fixed;bottom:40px;left:0;right:0;z-index:3;pointer-events:none;display:flex;justify-content:space-around;padding:0 20px;}
+  .flower{font-size:clamp(20px,5vw,28px);animation:sway 3s ease-in-out infinite;display:inline-block;}
+  .flower:nth-child(2){animation-delay:.5s;}.flower:nth-child(3){animation-delay:1s;}.flower:nth-child(4){animation-delay:1.5s;}.flower:nth-child(5){animation-delay:.8s;}.flower:nth-child(6){animation-delay:1.3s;}
+  @keyframes sway{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg)translateY(-4px);}}
+  .music-btn{position:fixed;top:16px;left:16px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:52px;height:52px;font-size:26px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+  .music-btn:active{transform:scale(.9);}
+  .main-content{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 120px;}
+  .app-title{margin-top:12px;text-align:center;animation:titleDrop .8s cubic-bezier(.34,1.56,.64,1) both;}
+  @keyframes titleDrop{from{opacity:0;transform:translateY(-40px)scale(.8);}to{opacity:1;transform:translateY(0)scale(1);}}
+  .title-emoji{font-size:clamp(52px,14vw,80px);display:block;animation:bounce 2.5s ease-in-out infinite 1s;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15));}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .title-text{font-weight:800;font-size:clamp(28px,8vw,52px);color:white;text-shadow:0 3px 0 #1a6b3c,0 6px 0 rgba(0,0,0,.15);letter-spacing:1px;line-height:1.1;}
+  .title-sub{font-family:'Nunito',sans-serif;font-weight:700;font-size:clamp(14px,4vw,20px);color:rgba(255,255,255,.9);margin-top:4px;}
+  .games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:500px;margin-top:24px;}
+  .game-card{border-radius:28px;padding:20px 12px 16px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 8px 0 rgba(0,0,0,.12),0 12px 24px rgba(0,0,0,.1);border:3px solid white;transition:transform .15s;animation:cardPop .5s cubic-bezier(.34,1.56,.64,1) both;position:relative;overflow:hidden;}
+  .game-card:active{transform:scale(.94)translateY(4px);}
+  .card-animaux{background:linear-gradient(145deg,#fff8f0,#ffe8cc);}
+  .card-puzzle{background:linear-gradient(145deg,#f8f0ff,#ede0ff);}
+  .card-comptines{background:linear-gradient(145deg,#fff0f7,#ffe0f0);}
+  .card-marin{background:linear-gradient(145deg,#f0f8ff,#d0eeff);}
+  .card-cuisine{background:linear-gradient(145deg,#fff5f0,#ffe0d0);}
+  .card-tracteur{background:linear-gradient(145deg,#f0fff0,#d0ffd0);}
+  .card-bulles{background:linear-gradient(145deg,#f0feff,#d0f8ff);}
+  .card-wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:16px;padding:18px 24px;}
+  .card-wide .game-label{font-size:clamp(18px,5vw,24px);}
+  .card-wide .game-emoji{font-size:clamp(44px,12vw,64px);}
+  .game-card:nth-child(1){animation-delay:.1s;}.game-card:nth-child(2){animation-delay:.2s;}.game-card:nth-child(3){animation-delay:.3s;}.game-card:nth-child(4){animation-delay:.4s;}.game-card:nth-child(5){animation-delay:.5s;}.game-card:nth-child(6){animation-delay:.6s;}.game-card:nth-child(7){animation-delay:.7s;}
+  @keyframes cardPop{from{opacity:0;transform:scale(.6)translateY(20px);}to{opacity:1;transform:scale(1);}}
+  .game-emoji{font-size:clamp(40px,11vw,60px);display:block;line-height:1;}
+  .game-label{font-weight:800;font-size:clamp(14px,4vw,18px);color:#1a3a1a;line-height:1.2;}
+  .game-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.08);color:#555;font-family:'Nunito',sans-serif;font-weight:900;font-size:9px;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
+  .footer-note{margin-top:16px;font-family:'Nunito',sans-serif;font-size:13px;color:rgba(255,255,255,.75);text-align:center;}
+  .install-banner{position:fixed;bottom:70px;left:16px;right:16px;background:rgba(255,255,255,.96);border-radius:20px;padding:14px 18px;display:none;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:200;}
+  .install-banner.show{display:flex;}
+  .install-banner span{font-family:'Nunito',sans-serif;font-size:13px;color:#333;flex:1;}
+  .install-btn{background:#4CAF50;color:white;border:none;border-radius:12px;padding:8px 16px;font-family:'Baloo 2',cursive;font-weight:700;font-size:13px;cursor:pointer;}
+  .install-close{background:none;border:none;font-size:18px;cursor:pointer;color:#999;}
+  .ripple{position:fixed;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:rippleAnim .6s ease-out forwards;pointer-events:none;z-index:999;width:60px;height:60px;}
+  @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
 </style>
 </head>
 <body>
-<div class="ray"></div><div class="ray"></div><div class="ray"></div><div class="ray"></div><div class="ray"></div>
-<canvas id="cv"></canvas>
-<div class="header">
-  <a class="back-btn" href="index.html">&#8592;</a>
-  <div class="score-area">
-    <div class="score-label">Bulles</div>
-    <div class="score-num" id="score">0</div>
+<div class="sky">
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
+</div>
+<div class="butterfly">🦋</div><div class="butterfly">🦋</div><div class="butterfly">🌸</div>
+<div class="sparkle">✨</div><div class="sparkle">⭐</div><div class="sparkle">✨</div>
+<div class="ground-strip"><div class="grass-bumps"></div></div>
+<div class="flowers">
+  <span class="flower">🌻</span><span class="flower">🌸</span><span class="flower">🌼</span>
+  <span class="flower">🌺</span><span class="flower">🌷</span><span class="flower">🌻</span>
+</div>
+<button class="music-btn" id="musicBtn">🎵</button>
+<div class="main-content">
+  <div class="app-title">
+    <span class="title-emoji">🌍</span>
+    <div class="title-text">Le Monde de Malo</div>
+    <div class="title-sub">✨ Choisis ton aventure ✨</div>
   </div>
-  <button class="music-btn" id="mBtn">&#127925;</button>
+  <div class="games-grid">
+    <a class="game-card card-animaux" href="animaux.html"><span class="game-badge">Sons</span><span class="game-emoji">🐘</span><span class="game-label">Les Animaux</span></a>
+    <a class="game-card card-puzzle" href="puzzle.html"><span class="game-badge">Formes</span><span class="game-emoji">🧩</span><span class="game-label">Puzzle</span></a>
+    <a class="game-card card-comptines" href="comptines.html"><span class="game-badge">Chansons</span><span class="game-emoji">🎵</span><span class="game-label">Comptines</span></a>
+    <a class="game-card card-marin" href="marin.html"><span class="game-badge">Océan</span><span class="game-emoji">🐠</span><span class="game-label">Monde Marin</span></a>
+    <a class="game-card card-cuisine" href="cuisine.html"><span class="game-badge">Scratch</span><span class="game-emoji">🍎</span><span class="game-label">La Cuisine</span></a>
+    <a class="game-card card-tracteur" href="tracteur.html"><span class="game-badge">Conduite</span><span class="game-emoji">🚜</span><span class="game-label">Le Tracteur</span></a>
+    <a class="game-card card-bulles card-wide" href="bulles.html"><span class="game-badge">Tactile</span><span class="game-emoji">🫧</span><span class="game-label">Les Bulles !</span></a>
+  </div>
+  <div class="footer-note">Pour Malo 💚 avec tout mon amour</div>
 </div>
-<div class="titre">
-  <h1>&#129511; Les Bulles !</h1>
-  <p>Touche les bulles pour les eclater !</p>
-</div>
-<div class="bravo" id="bravo">
-  <span class="bravo-emoji">&#127881;</span>
-  <div class="bravo-text">Super Malo !</div>
+<div class="install-banner" id="installBanner">
+  <span>📲 Installe l'appli pour Malo !</span>
+  <button class="install-btn" id="installBtn">Installer</button>
+  <button class="install-close" id="installClose">✕</button>
 </div>
 <script src="melody.js"></script>
 <script>
-var cv = document.getElementById('cv');
-var ctx = cv.getContext('2d');
-var W = 0, H = 0;
-var bubbles = [], score = 0, musicOn = true, started = false;
-
-var ANIMALS = [‘🐟’,‘🐠’,‘🐡’,‘🦈’,‘🐙’,‘🦑’,‘🦀’,‘🦞’,‘🐬’,‘🐳’,‘🦭’,‘🐧’,‘🦐’,‘⭐’,‘🐚’];
-
-// RESIZE : on lit offsetWidth/offsetHeight APRES le paint
-function resize() {
-W = window.innerWidth;
-H = window.innerHeight;
-cv.width = W;
-cv.height = H;
-}
-
-function mkBubble(init) {
-var r = 36 + Math.random() * 44;
-return {
-r: r,
-x: r + Math.random() * Math.max(1, W - r*2),
-y: init ? Math.random() * H : H + r*2,
-vx: (Math.random()-.5)*1.2,
-vy: -(0.9 + Math.random()*1.3),
-a: ANIMALS[Math.floor(Math.random()*ANIMALS.length)],
-hue: 160+Math.random()*60,
-al: .65+Math.random()*.25,
-w: Math.random()*Math.PI*2,
-ws: .02+Math.random()*.03
-};
-}
-
-function resetBubble(b) {
-var r = 36 + Math.random() * 44;
-b.r=r; b.x=r+Math.random()*Math.max(1,W-r*2); b.y=H+r*2;
-b.vx=(Math.random()-.5)*1.2; b.vy=-(0.9+Math.random()*1.3);
-b.a=ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
-b.hue=160+Math.random()*60; b.al=.65+Math.random()*.25;
-b.w=Math.random()*Math.PI*2; b.ws=.02+Math.random()*.03;
-}
-
-function initBubbles() {
-var n = Math.min(12, Math.floor(W*H/35000)+5);
-bubbles=[];
-for(var i=0;i<n;i++) bubbles.push(mkBubble(true));
-}
-
-function drawBubble(b) {
-ctx.save();
-ctx.globalAlpha = b.al;
-var g = ctx.createRadialGradient(b.x-b.r*.3,b.y-b.r*.3,b.r*.1,b.x,b.y,b.r);
-g.addColorStop(0,‘hsla(’+b.hue+’,80%,90%,.8)’);
-g.addColorStop(.5,‘hsla(’+b.hue+’,70%,65%,.4)’);
-g.addColorStop(1,‘hsla(’+b.hue+’,80%,50%,.6)’);
-ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-ctx.fillStyle=g; ctx.fill();
-ctx.beginPath();
-ctx.ellipse(b.x-b.r*.25,b.y-b.r*.3,b.r*.22,b.r*.12,-Math.PI/4,0,Math.PI*2);
-ctx.fillStyle=‘rgba(255,255,255,.55)’; ctx.fill();
-ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-ctx.strokeStyle=‘hsla(’+b.hue+’,70%,80%,.8)’; ctx.lineWidth=2; ctx.stroke();
-ctx.globalAlpha=1;
-ctx.font=Math.round(b.r*.9)+‘px serif’;
-ctx.textAlign=‘center’; ctx.textBaseline=‘middle’;
-ctx.fillText(b.a,b.x,b.y+2);
-ctx.restore();
-}
-
-function loop() {
-ctx.clearRect(0,0,W,H);
-for(var i=0;i<bubbles.length;i++){
-var b=bubbles[i];
-b.w+=b.ws; b.x+=b.vx+Math.sin(b.w)*.4; b.y+=b.vy;
-if(b.y<-b.r*2) resetBubble(b);
-if(b.x<b.r||b.x>W-b.r) b.vx*=-1;
-drawBubble(b);
-}
-requestAnimationFrame(loop);
-}
-
-function startMusic() {
-if(!started&&musicOn){MaloMelody.play(‘bulles’);started=true;}
-}
-
-function showBravo() {
-var el=document.getElementById(‘bravo’);
-el.classList.add(‘show’);
-setTimeout(function(){el.classList.remove(‘show’);},2500);
-}
-
-function onTouch(e) {
-e.preventDefault();
-startMusic();
-var pts = e.changedTouches ? e.changedTouches : [e];
-for(var i=0;i<pts.length;i++){
-var px=pts[i].clientX, py=pts[i].clientY, hit=false;
-for(var j=0;j<bubbles.length;j++){
-var b=bubbles[j];
-if(Math.hypot(px-b.x,py-b.y)<b.r){
-// pop
-var d=document.createElement(‘div’); d.className=‘pop’; d.textContent=b.a;
-d.style.left=(px-18)+‘px’; d.style.top=(py-18)+‘px’;
-document.body.appendChild(d);
-setTimeout(function(el){return function(){el.parentNode&&el.parentNode.removeChild(el);};}(d),700);
-MaloMelody.playPop(.8+Math.random()*.6);
-score++; document.getElementById(‘score’).textContent=score;
-if(score%10===0){showBravo();MaloMelody.playBravo();}
-resetBubble(b); hit=true; break;
-}
-}
-if(!hit){
-var d2=document.createElement(‘div’); d2.className=‘pop’; d2.textContent=‘💧’;
-d2.style.left=(px-16)+‘px’; d2.style.top=(py-16)+‘px’; d2.style.fontSize=‘20px’;
-document.body.appendChild(d2);
-setTimeout(function(el){return function(){el.parentNode&&el.parentNode.removeChild(el);};}(d2),500);
-}
-}
-}
-
-document.getElementById(‘mBtn’).addEventListener(‘click’,function(){
-musicOn=!musicOn;
-document.getElementById(‘mBtn’).innerHTML=musicOn?’🎵’:’🔇’;
-if(musicOn){MaloMelody.play(‘bulles’);started=true;}else MaloMelody.stop();
-});
-
-document.body.addEventListener(‘touchstart’, onTouch, {passive:false});
-document.body.addEventListener(‘mousedown’, onTouch);
-
-// Attendre que le DOM soit peint avant de lire les dimensions
-window.addEventListener(‘load’, function(){
-resize();
-initBubbles();
-loop();
-});
-
-window.addEventListener(‘resize’, function(){
-resize();
-initBubbles();
-});
+  let musicOn=true, started=false;
+  function startMusic(){
+    if(!started&&musicOn){MaloMelody.play('menu');started=true;}
+  }
+  document.getElementById('musicBtn').addEventListener('click',()=>{
+    musicOn=!musicOn;
+    document.getElementById('musicBtn').textContent=musicOn?'🎵':'🔇';
+    if(musicOn){MaloMelody.play('menu');started=true;}else MaloMelody.stop();
+  });
+  document.body.addEventListener('touchstart',function onFirst(){
+    startMusic();
+    document.body.removeEventListener('touchstart',onFirst);
+  },{once:true,passive:true});
+  document.body.addEventListener('mousedown',function onFirstMouse(){
+    startMusic();
+    document.body.removeEventListener('mousedown',onFirstMouse);
+  },{once:true});
+  document.querySelectorAll('.game-card').forEach(card=>{
+    card.addEventListener('pointerdown',e=>{
+      const r=document.createElement('div');r.className='ripple';
+      r.style.left=(e.clientX-30)+'px';r.style.top=(e.clientY-30)+'px';
+      document.body.appendChild(r);setTimeout(()=>r.remove(),700);
+    });
+  });
+  let dp=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;setTimeout(()=>document.getElementById('installBanner').classList.add('show'),3000);});
+  document.getElementById('installBtn').addEventListener('click',()=>{if(dp){dp.prompt();dp.userChoice.then(()=>{dp=null;document.getElementById('installBanner').classList.remove('show');});}});
+  document.getElementById('installClose').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
 </script>
-
 </body>
 </html>
