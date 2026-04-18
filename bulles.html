@@ -175,7 +175,6 @@ musicOn=!musicOn;
 document.getElementById(‘musicBtn’).textContent=musicOn?‘🎵’:‘🔇’;
 if(musicOn){MaloMelody.play(‘bulles’);started=true;}else MaloMelody.stop();
 });
-document.addEventListener(‘pointerdown’,function onFirst(){startMusic();document.removeEventListener(‘pointerdown’,onFirst);},{once:true});
 
 initBubbles();loop();
 </script>
