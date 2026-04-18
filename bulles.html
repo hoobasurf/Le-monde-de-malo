@@ -9,233 +9,316 @@
 <title>Les Bulles 🫧 - Malo</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html, body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; background:#0066cc; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; }
 
+/* FOND OCÉAN */
 .bg {
 position:fixed; inset:0;
 background:linear-gradient(180deg,#001a4d 0%,#003580 20%,#0066cc 55%,#0099e6 80%,#33bbff 100%);
 overflow:hidden;
 }
-
-/* Rayons lumineux */
-.ray {
-position:absolute; top:0;
-background:linear-gradient(180deg,rgba(255,255,255,.07),transparent);
-transform-origin:top center;
-}
+.ray { position:absolute; top:0; background:linear-gradient(180deg,rgba(255,255,255,.07),transparent); transform-origin:top center; }
 .ray:nth-child(1){left:8%;width:55px;height:70%;transform:rotate(-8deg);}
 .ray:nth-child(2){left:24%;width:75px;height:85%;transform:rotate(-2deg);}
 .ray:nth-child(3){left:48%;width:60px;height:75%;transform:rotate(5deg);}
 .ray:nth-child(4){left:68%;width:50px;height:65%;transform:rotate(10deg);}
 .ray:nth-child(5){left:84%;width:65px;height:80%;transform:rotate(-5deg);}
+.particle { position:absolute; border-radius:50%; background:rgba(255,255,255,.25); pointer-events:none; animation:rise linear infinite; }
+@keyframes rise { from{transform:translateY(110vh)scale(0);opacity:0;} 10%{opacity:.5;} 90%{opacity:.15;} to{transform:translateY(-80px)scale(1);opacity:0;} }
 
-/* Particules montantes */
-.p { position:absolute; border-radius:50%; background:rgba(255,255,255,.25); pointer-events:none; animation:rise linear infinite; }
-@keyframes rise {
-from { transform:translateY(110vh) scale(0); opacity:0; }
-10%  { opacity:.5; }
-90%  { opacity:.15; }
-to   { transform:translateY(-80px) scale(1); opacity:0; }
-}
+/* HEADER */
+.header { position:fixed; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:12px 16px; z-index:50; }
+.btn-r { background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35); border-radius:50%; width:50px; height:50px; font-size:22px; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:transform .15s; backdrop-filter:blur(8px); }
+.btn-r:active { transform:scale(.88); }
 
-/* Header */
-.header {
-position:fixed; top:0; left:0; right:0;
-display:flex; align-items:center; justify-content:space-between;
-padding:14px 18px; z-index:50;
-}
-.btn-round {
-background:rgba(255,255,255,.18);
-border:2px solid rgba(255,255,255,.35);
-border-radius:50%; width:52px; height:52px;
-font-size:24px; color:white; cursor:pointer;
-display:flex; align-items:center; justify-content:center;
-text-decoration:none; transition:transform .15s;
--webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-}
-.btn-round:active { transform:scale(.88); }
+/* BARRE DE PROGRESSION */
+.progress-wrap { flex:1; margin:0 12px; }
+.progress-label { font-family:‘Nunito’,sans-serif; font-size:11px; color:rgba(255,255,255,.75); text-align:center; margin-bottom:4px; letter-spacing:.5px; }
+.progress-bar { height:14px; background:rgba(255,255,255,.2); border-radius:10px; overflow:hidden; border:2px solid rgba(255,255,255,.3); }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#FFD700,#FF8C00); border-radius:8px; transition:width .4s cubic-bezier(.34,1.56,.64,1); }
+.progress-stars { display:flex; justify-content:space-around; margin-top:3px; font-size:14px; }
 
-.score-wrap { text-align:center; }
-.score-label { font-family:‘Nunito’,sans-serif; font-size:10px; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:1.5px; }
-.score-num { font-size:38px; font-weight:800; color:#fff; line-height:1; text-shadow:0 0 24px rgba(100,220,255,.9); }
-
-/* Titre */
-.title-area {
-position:fixed; top:88px; left:0; right:0;
-text-align:center; pointer-events:none; z-index:10;
-}
-.title-area h1 { font-size:clamp(20px,6vw,32px); color:#fff; font-weight:800; text-shadow:0 3px 0 rgba(0,60,140,.7),0 0 20px rgba(0,200,255,.6); }
-.title-area p  { font-family:‘Nunito’,sans-serif; font-size:clamp(12px,3.5vw,15px); color:rgba(255,255,255,.7); margin-top:3px; }
-
-/* Canvas */
+/* CANVAS */
 #c { position:fixed; inset:0; width:100%; height:100%; }
 
-/* Bravo popup */
-.bravo {
-position:fixed; top:50%; left:50%;
-transform:translate(-50%,-50%) scale(0);
-background:#fff; border-radius:28px;
-padding:28px 40px; text-align:center;
-z-index:200; box-shadow:0 20px 60px rgba(0,0,0,.35);
-transition:transform .35s cubic-bezier(.34,1.56,.64,1);
-pointer-events:none;
-}
-.bravo.on { transform:translate(-50%,-50%) scale(1); }
-.bravo-ico { font-size:62px; display:block; animation:jmp .45s ease-in-out infinite alternate; }
-@keyframes jmp { from{transform:translateY(0);} to{transform:translateY(-8px);} }
-.bravo-txt { font-size:28px; font-weight:800; color:#0055cc; margin-top:8px; }
+/* TITRE */
+.title-area { position:fixed; top:86px; left:0; right:0; text-align:center; pointer-events:none; z-index:10; }
+.title-area h1 { font-size:clamp(20px,5.5vw,30px); color:#fff; font-weight:800; text-shadow:0 3px 0 rgba(0,60,140,.7); }
+.title-area p { font-family:‘Nunito’,sans-serif; font-size:clamp(11px,3vw,14px); color:rgba(255,255,255,.7); margin-top:2px; }
 
-/* Pop emoji */
-.pop { position:fixed; pointer-events:none; z-index:90; font-size:38px; animation:popOut .55s ease-out forwards; }
+/* POP EFFET */
+.pop { position:fixed; pointer-events:none; z-index:90; font-size:36px; animation:popOut .55s ease-out forwards; }
 @keyframes popOut { 0%{transform:scale(0);opacity:1;} 55%{transform:scale(1.5);opacity:1;} 100%{transform:scale(0);opacity:0;} }
+
+/* ===== ÉCRAN VICTOIRE ===== */
+.win-screen {
+position:fixed; inset:0; z-index:200;
+background:linear-gradient(180deg,#1a4a00 0%,#2e7d00 40%,#52b000 100%);
+display:flex; flex-direction:column; align-items:center; justify-content:center;
+opacity:0; pointer-events:none;
+transition:opacity .6s;
+}
+.win-screen.show { opacity:1; pointer-events:all; }
+
+/* Étoiles victoire */
+.win-stars { font-size:clamp(32px,8vw,52px); margin-bottom:8px; animation:starPop .5s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes starPop { from{transform:scale(0);} to{transform:scale(1);} }
+.win-stars span:nth-child(2) { animation-delay:.15s; }
+.win-stars span:nth-child(3) { animation-delay:.3s; }
+
+.win-title { font-size:clamp(28px,7vw,44px); color:#FFD700; font-weight:800; text-shadow:0 3px 0 rgba(0,0,0,.3); animation:slideUp .5s .1s cubic-bezier(.34,1.56,.64,1) both; }
+.win-sub { font-family:‘Nunito’,sans-serif; font-size:clamp(14px,4vw,20px); color:rgba(255,255,255,.9); margin-top:6px; animation:slideUp .5s .2s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+/* LIONCEAU */
+.lion-wrap { position:relative; width:180px; height:180px; margin:16px 0; animation:lionEntry .7s .3s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes lionEntry { from{transform:scale(0) rotate(-15deg);} to{transform:scale(1) rotate(0);} }
+
+.lion { position:relative; width:180px; height:180px; }
+
+/* Corps */
+.lion-body {
+position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+width:100px; height:85px;
+background:#E8A030;
+border-radius:50% 50% 40% 40%;
+box-shadow:inset -8px -6px 0 rgba(0,0,0,.12);
+animation:breathe 2s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:translateX(-50%) scaleY(1);} 50%{transform:translateX(-50%) scaleY(1.04);} }
+
+/* Pattes */
+.patte { position:absolute; width:22px; height:32px; background:#D48820; border-radius:8px 8px 14px 14px; bottom:10px; }
+.patte-gl { left:16px; transform:rotate(-5deg); animation:patte1 1.5s ease-in-out infinite; }
+.patte-gr { right:16px; transform:rotate(5deg); animation:patte2 1.5s ease-in-out infinite; }
+@keyframes patte1 { 0%,100%{transform:rotate(-5deg);} 50%{transform:rotate(-12deg) translateY(-3px);} }
+@keyframes patte2 { 0%,100%{transform:rotate(5deg);} 50%{transform:rotate(12deg) translateY(-3px);} }
+
+/* Queue */
+.queue {
+position:absolute; right:-18px; bottom:28px;
+width:14px; height:55px;
+background:#D4882080;
+border-radius:0 0 8px 8px;
+transform-origin:top center;
+animation:queue 1.8s ease-in-out infinite;
+}
+.queue::after { content:’’; position:absolute; bottom:-8px; left:-4px; width:22px; height:22px; background:#C07018; border-radius:50%; }
+@keyframes queue { 0%,100%{transform:rotate(-20deg);} 50%{transform:rotate(20deg);} }
+
+/* Tête */
+.lion-head {
+position:absolute; top:12px; left:50%; transform:translateX(-50%);
+width:90px; height:88px;
+background:#F0B040;
+border-radius:50%;
+box-shadow:inset -6px -4px 0 rgba(0,0,0,.1);
+animation:headBob 2s ease-in-out infinite;
+z-index:5;
+}
+@keyframes headBob { 0%,100%{transform:translateX(-50%) rotate(-3deg);} 50%{transform:translateX(-50%) rotate(3deg) translateY(-3px);} }
+
+/* Crinière */
+.criniere {
+position:absolute; top:4px; left:50%; transform:translateX(-50%);
+width:108px; height:105px;
+background:radial-gradient(circle,#8B4513 30%,#6B2E0A 70%);
+border-radius:50%;
+z-index:4;
+animation:headBob 2s ease-in-out infinite;
+}
+.criniere::before {
+content:’’;
+position:absolute; inset:-8px;
+background:radial-gradient(circle,transparent 38%,#A0520A 42%,#7B3A08 55%,transparent 65%);
+border-radius:50%;
+animation:crinSpin 8s linear infinite;
+}
+@keyframes crinSpin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+/* Oreilles */
+.oreille { position:absolute; width:26px; height:26px; background:#E8A030; border-radius:50% 50% 0 50%; top:-8px; z-index:3; }
+.oreille::after { content:’’; position:absolute; inset:5px; background:#FFB0B0; border-radius:50% 50% 0 50%; }
+.oreille-g { left:2px; transform:rotate(-30deg); }
+.oreille-d { right:2px; transform:rotate(30deg) scaleX(-1); }
+
+/* Yeux */
+.yeux { position:absolute; top:30px; left:50%; transform:translateX(-50%); width:62px; display:flex; justify-content:space-between; z-index:6; }
+.oeil { width:18px; height:18px; background:#1a0a00; border-radius:50%; position:relative; overflow:hidden; animation:cligne 4s ease-in-out infinite; }
+.oeil::before { content:’’; position:absolute; inset:3px; background:#8B4513; border-radius:50%; }
+.oeil::after { content:’’; position:absolute; top:3px; right:3px; width:5px; height:5px; background:white; border-radius:50%; }
+@keyframes cligne { 0%,90%,100%{transform:scaleY(1);} 95%{transform:scaleY(.08);} }
+
+/* Nez */
+.nez { position:absolute; top:50px; left:50%; transform:translateX(-50%); z-index:6; }
+.nez::before { content:’’; display:block; width:18px; height:12px; background:#8B1A1A; border-radius:50% 50% 40% 40%; }
+/* Moustaches */
+.moustaches { position:absolute; top:52px; left:50%; transform:translateX(-50%); width:80px; display:flex; justify-content:space-between; z-index:6; }
+.moust { width:28px; height:2px; background:rgba(255,255,255,.6); border-radius:2px; margin-top:6px; }
+.moust-g { transform:rotate(-8deg); }
+.moust-d { transform:rotate(8deg); }
+
+/* Bouche sourire */
+.bouche {
+position:absolute; top:62px; left:50%; transform:translateX(-50%);
+width:28px; height:14px;
+border-bottom:3px solid #8B1A1A;
+border-radius:0 0 50% 50%;
+z-index:6;
+animation:sourire 2s ease-in-out infinite;
+}
+@keyframes sourire { 0%,100%{transform:translateX(-50%) scaleX(1);} 50%{transform:translateX(-50%) scaleX(1.2);} }
+
+/* Joues roses */
+.joue { position:absolute; width:18px; height:10px; background:rgba(255,100,100,.3); border-radius:50%; top:52px; z-index:6; }
+.joue-g { left:6px; }
+.joue-d { right:6px; }
+
+/* Pattes avant */
+.patte-av { position:absolute; bottom:-14px; width:28px; height:20px; background:#E8A030; border-radius:40% 40% 50% 50%; z-index:5; }
+.patte-av-g { left:12px; animation:wavePatte 2s ease-in-out infinite; }
+.patte-av-d { right:12px; animation:wavePatte 2s ease-in-out infinite .3s; }
+@keyframes wavePatte { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+
+/* Étoiles autour du lion */
+.win-stars-around { position:absolute; width:100%; height:100%; pointer-events:none; }
+.star-around { position:absolute; font-size:24px; animation:orbitStar 3s linear infinite; }
+.star-around:nth-child(1){top:0%;left:50%;animation-delay:0s;}
+.star-around:nth-child(2){top:25%;right:0%;animation-delay:.5s;}
+.star-around:nth-child(3){bottom:10%;right:10%;animation-delay:1s;}
+.star-around:nth-child(4){bottom:10%;left:10%;animation-delay:1.5s;}
+.star-around:nth-child(5){top:25%;left:0%;animation-delay:2s;}
+@keyframes orbitStar { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:.6;} }
+
+/* Boutons victoire */
+.win-btns { display:flex; gap:14px; margin-top:18px; animation:slideUp .5s .5s cubic-bezier(.34,1.56,.64,1) both; }
+.win-btn {
+padding:14px 26px; border:none; border-radius:20px;
+font-family:‘Baloo 2’,cursive; font-weight:800;
+font-size:clamp(14px,4vw,18px); cursor:pointer;
+box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
+}
+.win-btn:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.2); }
+.btn-rejouer { background:#FFD700; color:#333; }
+.btn-menu { background:rgba(255,255,255,.25); color:white; border:2px solid rgba(255,255,255,.4); }
+
+/* Confettis */
+.confetti { position:absolute; width:10px; height:10px; border-radius:2px; pointer-events:none; animation:confettiFall linear forwards; }
+@keyframes confettiFall {
+0%   { transform:translateY(-20px) rotate(0deg); opacity:1; }
+100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
+}
 </style>
 
 </head>
 <body>
+
+<!-- FOND -->
 
 <div class="bg">
   <div class="ray"></div><div class="ray"></div><div class="ray"></div>
   <div class="ray"></div><div class="ray"></div>
 </div>
 
+<!-- AUDIO -->
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="bulles.mp3" type="audio/mpeg">
+</audio>
+
+<!-- HEADER -->
+
 <div class="header">
-  <a class="btn-round" href="index.html">⬅️</a>
-  <div class="score-wrap">
-    <div class="score-label">Bulles éclatées</div>
-    <div class="score-num" id="score">0</div>
+  <a class="btn-r" href="index.html">⬅️</a>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progLabel">Éclate 20 bulles ! 🫧</div>
+    <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+    <div class="progress-stars" id="progStars">
+      <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+    </div>
   </div>
-  <button class="btn-round" id="mBtn">🎵</button>
+  <button class="btn-r" id="mBtn">🎵</button>
 </div>
+
+<!-- TITRE -->
 
 <div class="title-area">
   <h1>🫧 Les Bulles !</h1>
   <p>Touche les bulles pour les éclater !</p>
 </div>
 
+<!-- CANVAS BULLES -->
+
 <canvas id="c"></canvas>
 
-<div class="bravo" id="bravo">
-  <span class="bravo-ico">🎉</span>
-  <div class="bravo-txt">Super Malo !</div>
+<!-- ÉCRAN VICTOIRE -->
+
+<div class="win-screen" id="winScreen">
+  <div class="win-stars">
+    <span style="animation-delay:.1s">⭐</span>
+    <span style="animation-delay:.25s">⭐</span>
+    <span style="animation-delay:.4s">⭐</span>
+  </div>
+  <div class="win-title">Bravo Malo !</div>
+  <div class="win-sub">Tu as éclaté toutes les bulles ! 🎉</div>
+
+  <!-- LIONCEAU CSS -->
+
+  <div class="lion-wrap">
+    <div class="win-stars-around">
+      <span class="star-around">✨</span>
+      <span class="star-around">⭐</span>
+      <span class="star-around">✨</span>
+      <span class="star-around">⭐</span>
+      <span class="star-around">✨</span>
+    </div>
+    <div class="lion">
+      <!-- Queue -->
+      <div class="queue" style="position:absolute;right:-18px;bottom:48px;"></div>
+      <!-- Corps -->
+      <div class="lion-body">
+        <div class="patte patte-gl"></div>
+        <div class="patte patte-gr"></div>
+        <div class="patte-av patte-av-g"></div>
+        <div class="patte-av patte-av-d"></div>
+      </div>
+      <!-- Crinière (derrière la tête) -->
+      <div class="criniere"></div>
+      <!-- Tête -->
+      <div class="lion-head">
+        <div class="oreille oreille-g"></div>
+        <div class="oreille oreille-d"></div>
+        <div class="yeux">
+          <div class="oeil"></div>
+          <div class="oeil"></div>
+        </div>
+        <div class="joue joue-g"></div>
+        <div class="joue joue-d"></div>
+        <div class="nez"></div>
+        <div class="moustaches">
+          <div class="moust moust-g"></div>
+          <div class="moust moust-d"></div>
+        </div>
+        <div class="bouche"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="win-btns">
+    <button class="win-btn btn-rejouer" id="btnRejouer">🔄 Rejouer</button>
+    <a class="win-btn btn-menu" href="index.html">🏠 Menu</a>
+  </div>
 </div>
 
 <script>
-/* ============================
-   🎵 MOTEUR AUDIO INTÉGRÉ
-   ============================ */
-const Audio = (() => {
-  let ac = null;
-  let nodes = [];
-  let looping = false;
-
-  function ctx() {
-    if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
-    if (ac.state === 'suspended') ac.resume();
-    return ac;
-  }
-
-  function note(freq, t, dur, vol=0.15) {
-    if (!freq) return;
-    const c = ctx();
-    const o = c.createOscillator();
-    const g = c.createGain();
-    const f = c.createBiquadFilter();
-    f.type = 'lowpass'; f.frequency.value = 2000;
-    o.type = 'sine'; o.frequency.value = freq;
-    o.connect(f); f.connect(g); g.connect(c.destination);
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(vol, t + 0.02);
-    g.gain.setValueAtTime(vol, t + dur - 0.04);
-    g.gain.linearRampToValueAtTime(0, t + dur);
-    o.start(t); o.stop(t + dur + 0.01);
-    nodes.push(o);
-  }
-
-  function stop() {
-    looping = false;
-    nodes.forEach(n => { try { n.stop(); } catch(e){} });
-    nodes = [];
-  }
-
-  // Mélodie des bulles — légère et pétillante
-  const N = {
-    C5:523.25,D5:587.33,E5:659.25,F5:698.46,
-    G5:783.99,A5:880.00,B5:987.77,
-    C6:1046.50,D6:1174.66,E6:1318.51
-  };
-  const SEQ = [
-    [N.C5,.25],[N.E5,.25],[N.G5,.25],[N.C6,.25],
-    [N.B5,.25],[N.G5,.25],[N.E5,.25],[N.C5,.25],
-    [N.D5,.25],[N.F5,.25],[N.A5,.25],[N.D6,.25],
-    [N.C6,.25],[N.A5,.25],[N.F5,.25],[N.D5,.25],
-    [N.E5,.25],[N.G5,.25],[N.B5,.25],[N.E6,.25],
-    [N.D6,.25],[N.B5,.25],[N.G5,.25],[N.E5,.25],
-    [N.C5,.5],[N.E5,.5],[N.G5,.5],[N.C6,1],
-  ];
-  const BPM = 128;
-  const BEAT = 60 / BPM;
-
-  function scheduleLoop(offset) {
-    let t = offset, total = 0;
-    SEQ.forEach(([f, b]) => {
-      const d = b * BEAT;
-      note(f, ctx().currentTime + t, d * 0.85);
-      t += d; total += d;
-    });
-    return total;
-  }
-
-  function startMusic() {
-    stop(); looping = true;
-    const dur = scheduleLoop(0);
-    let n = 0;
-    function loop() {
-      if (!looping) return;
-      n++; scheduleLoop(n * dur);
-      setTimeout(loop, (n * dur - 0.4) * 1000);
-    }
-    setTimeout(loop, (dur - 0.4) * 1000);
-  }
-
-  function pop(pitch) {
-    const c = ctx();
-    const o = c.createOscillator();
-    const g = c.createGain();
-    o.connect(g); g.connect(c.destination);
-    o.type = 'sine';
-    o.frequency.setValueAtTime(700 * pitch, c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(150 * pitch, c.currentTime + 0.18);
-    g.gain.setValueAtTime(0.3, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.22);
-    o.start(c.currentTime); o.stop(c.currentTime + 0.25);
-  }
-
-  function bravo() {
-    const c = ctx();
-    [523,659,784,1047,1319].forEach((f,i) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.connect(g); g.connect(c.destination);
-      o.frequency.value = f; o.type = 'sine';
-      g.gain.setValueAtTime(0.22, c.currentTime + i*.13);
-      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i*.13 + .35);
-      o.start(c.currentTime + i*.13); o.stop(c.currentTime + i*.13 + .38);
-    });
-  }
-
-  return { startMusic, stop, pop, bravo };
-})();
-
-/* ============================
-   🫧 JEU DES BULLES
-   ============================ */
+/* ====== CANVAS & BULLES ====== */
 const canvas = document.getElementById('c');
-const ctx2d  = canvas.getContext('2d');
-let W, H, bubbles = [], score = 0;
-let musicOn = true, started = false;
+const ctx    = canvas.getContext('2d');
+let W, H, bubbles = [], score = 0, gameOver = false;
+const MAX = 20;
 
-const ANIMALS = ['🐟','🐠','🐡','🦈','🐙','🦑','🦀','🦞','🐬','🐳','🐋','🦭','🐧','🦐','⭐','🪸','🐚','🌊'];
+const ANIMALS = ['🐟','🐠','🐡','🦈','🐙','🦑','🦀','🦞','🐬','🐳','🦭','🐧','🦐','⭐','🪸','🐚','🌊','🐋'];
 
 function resize() {
   W = canvas.width  = window.innerWidth;
@@ -244,185 +327,240 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-/* Classe bulle */
+/* Bulle */
 class Bubble {
-  constructor(init) {
-    this.reset(init);
-  }
+  constructor(init) { this.reset(init); }
   reset(init) {
-    this.r  = 32 + Math.random() * 44;
+    this.r  = 30 + Math.random() * 46;
     this.x  = this.r + Math.random() * Math.max(1, W - this.r * 2);
     this.y  = init ? Math.random() * H : H + this.r * 2;
     this.vx = (Math.random() - .5) * 1.1;
-    this.vy = -(0.7 + Math.random() * 1.3);
+    this.vy = -(0.65 + Math.random() * 1.2);
     this.a  = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
     this.hue= 170 + Math.random() * 55;
-    this.op = .58 + Math.random() * .3;
+    this.op = .6 + Math.random() * .28;
     this.wb = Math.random() * Math.PI * 2;
-    this.ws = .018 + Math.random() * .028;
+    this.ws = .018 + Math.random() * .026;
   }
   update() {
     this.wb += this.ws;
-    this.x  += this.vx + Math.sin(this.wb) * .35;
+    this.x  += this.vx + Math.sin(this.wb) * .32;
     this.y  += this.vy;
     if (this.y < -this.r * 2) this.reset(false);
     if (this.x < this.r || this.x > W - this.r) this.vx *= -1;
   }
   draw() {
     const x = this.x, y = this.y, r = this.r;
-    ctx2d.save();
-    ctx2d.globalAlpha = this.op;
-
-    // Corps
-    const g = ctx2d.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
-    g.addColorStop(0, `hsla(${this.hue},75%,92%,.85)`);
+    ctx.save();
+    ctx.globalAlpha = this.op;
+    const g = ctx.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
+    g.addColorStop(0,`hsla(${this.hue},75%,92%,.85)`);
     g.addColorStop(.5,`hsla(${this.hue},65%,65%,.4)`);
-    g.addColorStop(1, `hsla(${this.hue},75%,50%,.65)`);
-    ctx2d.beginPath();
-    ctx2d.arc(x, y, r, 0, Math.PI*2);
-    ctx2d.fillStyle = g;
-    ctx2d.fill();
-
-    // Reflet
-    ctx2d.beginPath();
-    ctx2d.ellipse(x-r*.26,y-r*.3,r*.2,r*.1,-Math.PI/4,0,Math.PI*2);
-    ctx2d.fillStyle = 'rgba(255,255,255,.6)';
-    ctx2d.fill();
-
-    // Bord
-    ctx2d.beginPath();
-    ctx2d.arc(x, y, r, 0, Math.PI*2);
-    ctx2d.strokeStyle = `hsla(${this.hue},65%,82%,.75)`;
-    ctx2d.lineWidth = 2;
-    ctx2d.stroke();
-
-    ctx2d.globalAlpha = 1;
-
-    // Emoji
-    ctx2d.font = `${r * .88}px serif`;
-    ctx2d.textAlign    = 'center';
-    ctx2d.textBaseline = 'middle';
-    ctx2d.fillText(this.a, x, y + 2);
-
-    ctx2d.restore();
+    g.addColorStop(1,`hsla(${this.hue},75%,50%,.65)`);
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x-r*.26,y-r*.3,r*.2,r*.1,-Math.PI/4,0,Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,.58)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.strokeStyle = `hsla(${this.hue},65%,82%,.75)`;
+    ctx.lineWidth = 2; ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.font = `${r*.88}px serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(this.a, x, y+2);
+    ctx.restore();
   }
-  hit(px, py) {
-    return Math.hypot(px - this.x, py - this.y) < this.r;
-  }
+  hit(px,py) { return Math.hypot(px-this.x, py-this.y) < this.r; }
 }
 
-/* Init */
 function initBubbles() {
-  const n = Math.min(13, Math.floor(W * H / 32000) + 5);
-  bubbles = Array.from({length: n}, () => new Bubble(true));
+  const n = Math.min(10, Math.floor(W*H/36000)+4);
+  bubbles = Array.from({length:n}, () => new Bubble(true));
 }
 
-/* Boucle */
 function loop() {
-  ctx2d.clearRect(0, 0, W, H);
-  bubbles.forEach(b => { b.update(); b.draw(); });
+  ctx.clearRect(0,0,W,H);
+  if (!gameOver) bubbles.forEach(b => { b.update(); b.draw(); });
   requestAnimationFrame(loop);
 }
 
-/* Pop */
+/* Progression */
+function updateProgress() {
+  const pct = (score / MAX) * 100;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent =
+    score < MAX ? `${score} / ${MAX} bulles 🫧` : 'Terminé ! 🎉';
+
+  // Étoiles (1 tous les 4 bulles)
+  const stars = document.getElementById('progStars').children;
+  const filled = Math.floor(score / 4);
+  for (let i = 0; i < 5; i++) {
+    stars[i].textContent = i < filled ? '⭐' : '☆';
+  }
+}
+
+/* Son pop Web Audio */
+function playPop(pitch) {
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(700*pitch, ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(150*pitch, ac.currentTime+.18);
+    g.gain.setValueAtTime(.28, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+.22);
+    o.start(); o.stop(ac.currentTime+.25);
+  } catch(e){}
+}
+
+/* Confettis */
+function launchConfetti() {
+  const colors = ['#FFD700','#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.cssText = `
+        left:${Math.random()*100}%;
+        top:-10px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        width:${6+Math.random()*10}px;
+        height:${6+Math.random()*10}px;
+        animation-duration:${2+Math.random()*2}s;
+        animation-delay:${Math.random()*.5}s;
+        transform:rotate(${Math.random()*360}deg);
+      `;
+      document.querySelector('.win-screen').appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 40);
+  }
+}
+
+/* Victoire */
+function showVictory() {
+  gameOver = true;
+  // Fade out musique
+  const music = document.getElementById('bgMusic');
+  music.pause();
+
+  setTimeout(() => {
+    document.getElementById('winScreen').classList.add('show');
+    launchConfetti();
+    // Son de victoire
+    try {
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      [523,659,784,1047,1319].forEach((f,i) => {
+        const o=ac.createOscillator(),g=ac.createGain();
+        o.connect(g);g.connect(ac.destination);
+        o.frequency.value=f;o.type='sine';
+        g.gain.setValueAtTime(.22,ac.currentTime+i*.14);
+        g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.14+.4);
+        o.start(ac.currentTime+i*.14);o.stop(ac.currentTime+i*.14+.45);
+      });
+    } catch(e){}
+  }, 200);
+}
+
+/* Pop bulle */
 function popBubble(b, cx, cy) {
-  // Emoji qui explose
   const el = document.createElement('div');
   el.className = 'pop';
   el.textContent = b.a;
-  el.style.left = (cx - 19) + 'px';
-  el.style.top  = (cy - 19) + 'px';
+  el.style.left = (cx-18)+'px'; el.style.top = (cy-18)+'px';
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 650);
 
-  // Son
-  Audio.pop(0.75 + Math.random() * .6);
-
-  // Score
+  playPop(.75 + Math.random()*.6);
   score++;
-  document.getElementById('score').textContent = score;
-
-  // Bravo tous les 10
-  if (score % 10 === 0) {
-    Audio.bravo();
-    const bv = document.getElementById('bravo');
-    bv.classList.add('on');
-    setTimeout(() => bv.classList.remove('on'), 2400);
-  }
-
+  updateProgress();
+  if (score >= MAX) { showVictory(); return; }
   b.reset(false);
 }
 
-/* Entrées tactiles + souris */
+/* Entrées */
 function onInput(e) {
   e.preventDefault();
+  if (gameOver) return;
 
-  // Démarrer la musique au premier toucher
-  if (!started) {
-    if (musicOn) Audio.startMusic();
-    started = true;
-  }
+  // Musique au 1er toucher
+  if (!musicStarted) startMusic();
 
-  const touches = e.changedTouches
+  const list = e.changedTouches
     ? Array.from(e.changedTouches)
-    : [{ clientX: e.clientX, clientY: e.clientY }];
+    : [{ clientX:e.clientX, clientY:e.clientY }];
 
-  touches.forEach(t => {
+  list.forEach(t => {
     const rect = canvas.getBoundingClientRect();
-    const scaleX = W / rect.width;
-    const scaleY = H / rect.height;
-    const px = (t.clientX - rect.left) * scaleX;
-    const py = (t.clientY - rect.top)  * scaleY;
-
+    const px = (t.clientX - rect.left) * (W/rect.width);
+    const py = (t.clientY - rect.top)  * (H/rect.height);
     let hit = false;
     for (const b of bubbles) {
-      if (b.hit(px, py)) {
-        popBubble(b, t.clientX, t.clientY);
-        hit = true;
-        break;
-      }
+      if (b.hit(px,py)) { popBubble(b, t.clientX, t.clientY); hit=true; break; }
     }
     if (!hit) {
-      // Splash raté
       const el = document.createElement('div');
-      el.className = 'pop';
-      el.textContent = '💧';
-      el.style.cssText = `left:${t.clientX-16}px;top:${t.clientY-16}px;font-size:22px;`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 500);
+      el.className='pop'; el.textContent='💧';
+      el.style.cssText=`left:${t.clientX-14}px;top:${t.clientY-14}px;font-size:20px;`;
+      document.body.appendChild(el); setTimeout(()=>el.remove(),500);
     }
   });
 }
 
-canvas.addEventListener('touchstart', onInput, { passive: false });
+canvas.addEventListener('touchstart', onInput, {passive:false});
 canvas.addEventListener('mousedown',  onInput);
 
-/* Bouton musique */
+/* Rejouer */
+document.getElementById('btnRejouer').addEventListener('click', () => {
+  score = 0; gameOver = false;
+  updateProgress();
+  document.getElementById('winScreen').classList.remove('show');
+  // Nettoyer confettis
+  document.querySelectorAll('.confetti').forEach(e=>e.remove());
+  initBubbles();
+  startMusic();
+});
+
+/* ====== MUSIQUE MP3 ====== */
+let musicOn = true, musicStarted = false;
+const music = document.getElementById('bgMusic');
+
+function startMusic() {
+  if (musicStarted && !music.paused) return;
+  music.volume = 0.6;
+  music.play().catch(()=>{});
+  musicStarted = true;
+}
+
 document.getElementById('mBtn').addEventListener('click', () => {
   musicOn = !musicOn;
   document.getElementById('mBtn').textContent = musicOn ? '🎵' : '🔇';
-  if (musicOn) { Audio.startMusic(); started = true; }
-  else Audio.stop();
+  if (musicOn) { startMusic(); }
+  else { music.pause(); }
 });
 
-/* Particules de fond */
-(function addParticles() {
-  const bg = document.querySelector('.bg');
-  for (let i = 0; i < 18; i++) {
-    const el = document.createElement('div');
-    el.className = 'p';
-    const s = 2 + Math.random() * 7;
-    el.style.cssText = `
-      width:${s}px; height:${s}px;
-      left:${Math.random()*100}%;
-      animation-duration:${6+Math.random()*10}s;
-      animation-delay:${-Math.random()*12}s;
-    `;
-    bg.appendChild(el);
-  }
-})();
+// Démarrer au 1er toucher (règle navigateur mobile)
+document.addEventListener('touchstart', function onFirst() {
+  startMusic();
+  document.removeEventListener('touchstart', onFirst);
+}, {once:true, passive:true});
+document.addEventListener('mousedown', function onFirst() {
+  startMusic();
+  document.removeEventListener('mousedown', onFirst);
+}, {once:true});
 
-/* Lancement */
+/* Particules de fond */
+const bg = document.querySelector('.bg');
+for (let i=0;i<18;i++) {
+  const p=document.createElement('div'); p.className='particle';
+  const s=2+Math.random()*7;
+  p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${-Math.random()*12}s;`;
+  bg.appendChild(p);
+}
+
+/* Init */
+updateProgress();
 initBubbles();
 loop();
 </script>
