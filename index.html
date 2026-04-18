@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a6b3c">
+<title>Le Monde de Malo 🌍</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky1: #87CEEB;
+    --sky2: #B0E2FF;
+    --ground: #4CAF50;
+    --ground-dark: #2e7d32;
+    --sun: #FFD700;
+    --text-dark: #1a3a1a;
+    --card-bg: rgba(255,255,255,0.92);
+    --shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+width: 100%; height: 100%;
+overflow-x: hidden;
+font-family: ‘Baloo 2’, cursive;
+background: var(–sky1);
+touch-action: manipulation;
+}
+
+/* ===== CIEL ANIMÉ ===== */
+.sky {
+position: fixed; inset: 0;
+background: linear-gradient(180deg, #5bc8f5 0%, #a8e6ff 50%, #c8f0a0 85%, #6dbf52 100%);
+z-index: 0;
+overflow: hidden;
+}
+
+/* Soleil */
+.sun {
+position: absolute;
+top: 24px; right: 40px;
+width: 80px; height: 80px;
+background: radial-gradient(circle, #fff8a0 30%, #FFD700 70%, #ffaa00 100%);
+border-radius: 50%;
+box-shadow: 0 0 40px 20px rgba(255,220,0,0.4);
+animation: sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse {
+0%,100% { box-shadow: 0 0 40px 20px rgba(255,220,0,0.4); transform: scale(1); }
+50% { box-shadow: 0 0 60px 30px rgba(255,220,0,0.6); transform: scale(1.05); }
+}
+
+/* Nuages */
+.cloud {
+position: absolute;
+background: white;
+border-radius: 50px;
+opacity: 0.85;
+filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+}
+.cloud::before, .cloud::after {
+content: ‘’;
+position: absolute;
+background: white;
+border-radius: 50%;
+}
+.cloud-1 { width: 100px; height: 36px; top: 60px; left: -120px; animation: drift1 22s linear infinite; }
+.cloud-1::before { width: 52px; height: 52px; top: -28px; left: 14px; }
+.cloud-1::after  { width: 36px; height: 36px; top: -18px; left: 50px; }
+
+.cloud-2 { width: 130px; height: 44px; top: 110px; left: -160px; animation: drift1 30s linear infinite 8s; opacity: 0.7; }
+.cloud-2::before { width: 64px; height: 64px; top: -34px; left: 18px; }
+.cloud-2::after  { width: 44px; height: 44px; top: -22px; left: 64px; }
+
+.cloud-3 { width: 80px; height: 28px; top: 40px; left: -100px; animation: drift1 18s linear infinite 14s; opacity: 0.6; }
+.cloud-3::before { width: 40px; height: 40px; top: -22px; left: 10px; }
+.cloud-3::after  { width: 28px; height: 28px; top: -14px; left: 40px; }
+
+@keyframes drift1 {
+from { transform: translateX(0); }
+to   { transform: translateX(calc(100vw + 200px)); }
+}
+
+/* Arbres décoratifs */
+.trees {
+position: fixed;
+bottom: 0; left: 0; right: 0;
+height: 160px;
+z-index: 1;
+pointer-events: none;
+}
+.tree {
+position: absolute;
+bottom: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+.tree-top {
+width: 0; height: 0;
+border-left: solid transparent;
+border-right: solid transparent;
+border-bottom: solid;
+filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+.tree-trunk {
+background: #795548;
+border-radius: 3px;
+}
+
+/* Herbe au sol */
+.ground-strip {
+position: fixed;
+bottom: 0; left: 0; right: 0;
+height: 52px;
+background: linear-gradient(180deg, #56c45a 0%, #2e7d32 100%);
+z-index: 2;
+border-radius: 60% 60% 0 0 / 20px 20px 0 0;
+}
+.grass-bumps {
+position: absolute;
+top: -16px; left: 0; right: 0;
+height: 30px;
+background: radial-gradient(ellipse 40px 18px at 10% 100%, #56c45a 99%, transparent 100%),
+radial-gradient(ellipse 50px 20px at 28% 100%, #4db84f 99%, transparent 100%),
+radial-gradient(ellipse 40px 16px at 46% 100%, #56c45a 99%, transparent 100%),
+radial-gradient(ellipse 55px 22px at 64% 100%, #4db84f 99%, transparent 100%),
+radial-gradient(ellipse 40px 18px at 82% 100%, #56c45a 99%, transparent 100%),
+radial-gradient(ellipse 48px 18px at 98% 100%, #4db84f 99%, transparent 100%);
+}
+
+/* ===== CONTENU PRINCIPAL ===== */
+.main-content {
+position: relative;
+z-index: 10;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px 16px 120px;
+}
+
+/* Titre */
+.app-title {
+margin-top: 12px;
+text-align: center;
+animation: titleDrop 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes titleDrop {
+from { opacity:0; transform: translateY(-40px) scale(0.8); }
+to   { opacity:1; transform: translateY(0) scale(1); }
+}
+.title-emoji {
+font-size: clamp(52px, 14vw, 80px);
+display: block;
+animation: bounce 2.5s ease-in-out infinite 1s;
+filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+@keyframes bounce {
+0%,100% { transform: translateY(0); }
+50%      { transform: translateY(-10px); }
+}
+.title-text {
+font-family: ‘Baloo 2’, cursive;
+font-weight: 800;
+font-size: clamp(28px, 8vw, 52px);
+color: white;
+text-shadow:
+0 3px 0 #1a6b3c,
+0 6px 0 rgba(0,0,0,0.15),
+0 0 30px rgba(255,255,255,0.5);
+letter-spacing: 1px;
+line-height: 1.1;
+}
+.title-sub {
+font-family: ‘Nunito’, sans-serif;
+font-weight: 700;
+font-size: clamp(14px, 4vw, 20px);
+color: rgba(255,255,255,0.9);
+text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+margin-top: 4px;
+}
+
+/* Grille de jeux */
+.games-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 14px;
+width: 100%;
+max-width: 500px;
+margin-top: 24px;
+}
+
+.game-card {
+background: var(–card-bg);
+border-radius: 28px;
+padding: 20px 12px 16px;
+text-align: center;
+cursor: pointer;
+text-decoration: none;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+box-shadow:
+0 8px 0 rgba(0,0,0,0.12),
+0 12px 24px rgba(0,0,0,0.1);
+border: 3px solid white;
+transition: transform 0.15s, box-shadow 0.15s;
+animation: cardPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+position: relative;
+overflow: hidden;
+}
+
+.game-card::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+border-radius: 25px;
+opacity: 0.12;
+}
+
+/* Couleurs par carte */
+.card-animaux  { –card-color: #FF8C42; background: linear-gradient(145deg, #fff8f0, #fff0e0); }
+.card-animaux::before  { background: #FF8C42; }
+.card-puzzle   { –card-color: #9C6DD4; background: linear-gradient(145deg, #f8f0ff, #ede0ff); }
+.card-puzzle::before   { background: #9C6DD4; }
+.card-comptines { –card-color: #E84393; background: linear-gradient(145deg, #fff0f7, #ffe0f0); }
+.card-comptines::before { background: #E84393; }
+.card-marin    { –card-color: #2196F3; background: linear-gradient(145deg, #f0f8ff, #e0f0ff); }
+.card-marin::before    { background: #2196F3; }
+.card-cuisine  { –card-color: #F44336; background: linear-gradient(145deg, #fff0f0, #ffe0e0); }
+.card-cuisine::before  { background: #F44336; }
+.card-tracteur { –card-color: #4CAF50; background: linear-gradient(145deg, #f0fff0, #e0ffe0); }
+.card-tracteur::before { background: #4CAF50; }
+.card-bulles   { –card-color: #00BCD4; background: linear-gradient(145deg, #f0feff, #e0fbff); }
+.card-bulles::before   { background: #00BCD4; }
+
+/* Carte large (dernière seule) */
+.card-wide {
+grid-column: 1 / -1;
+flex-direction: row;
+justify-content: center;
+gap: 16px;
+padding: 18px 24px;
+}
+.card-wide .game-label { font-size: clamp(18px, 5vw, 24px); }
+.card-wide .game-emoji { font-size: clamp(44px, 12vw, 64px); }
+
+.game-card:active {
+transform: scale(0.94) translateY(4px);
+box-shadow: 0 3px 0 rgba(0,0,0,0.12), 0 5px 12px rgba(0,0,0,0.1);
+}
+
+/* Délais d’animation */
+.game-card:nth-child(1) { animation-delay: 0.1s; }
+.game-card:nth-child(2) { animation-delay: 0.2s; }
+.game-card:nth-child(3) { animation-delay: 0.3s; }
+.game-card:nth-child(4) { animation-delay: 0.4s; }
+.game-card:nth-child(5) { animation-delay: 0.5s; }
+.game-card:nth-child(6) { animation-delay: 0.6s; }
+.game-card:nth-child(7) { animation-delay: 0.7s; }
+
+@keyframes cardPop {
+from { opacity:0; transform: scale(0.6) translateY(20px); }
+to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.game-emoji {
+font-size: clamp(40px, 11vw, 60px);
+display: block;
+filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12));
+line-height: 1;
+}
+
+.game-label {
+font-family: ‘Baloo 2’, cursive;
+font-weight: 800;
+font-size: clamp(14px, 4vw, 18px);
+color: #1a3a1a;
+line-height: 1.2;
+text-shadow: none;
+}
+
+.game-badge {
+position: absolute;
+top: 10px; right: 10px;
+background: var(–card-color);
+color: white;
+font-family: ‘Nunito’, sans-serif;
+font-weight: 900;
+font-size: 10px;
+padding: 2px 8px;
+border-radius: 20px;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Papillons décoratifs */
+.butterfly {
+position: fixed;
+font-size: 24px;
+z-index: 5;
+pointer-events: none;
+animation: fly1 12s ease-in-out infinite;
+opacity: 0.85;
+}
+.butterfly:nth-child(1) { top: 25%; left: 5%; animation-delay: 0s; }
+.butterfly:nth-child(2) { top: 45%; right: 6%; animation-delay: 4s; font-size: 20px; }
+.butterfly:nth-child(3) { top: 15%; left: 30%; animation-delay: 8s; font-size: 18px; }
+
+@keyframes fly1 {
+0%   { transform: translate(0,0) rotate(-5deg); }
+25%  { transform: translate(20px,-15px) rotate(5deg); }
+50%  { transform: translate(-10px,-25px) rotate(-3deg); }
+75%  { transform: translate(15px,-10px) rotate(4deg); }
+100% { transform: translate(0,0) rotate(-5deg); }
+}
+
+/* Fleurs */
+.flowers {
+position: fixed;
+bottom: 40px; left: 0; right: 0;
+z-index: 3;
+pointer-events: none;
+display: flex;
+justify-content: space-around;
+padding: 0 20px;
+}
+.flower {
+font-size: clamp(20px, 5vw, 28px);
+animation: sway 3s ease-in-out infinite;
+display: inline-block;
+}
+.flower:nth-child(2) { animation-delay: 0.5s; }
+.flower:nth-child(3) { animation-delay: 1s; }
+.flower:nth-child(4) { animation-delay: 1.5s; }
+.flower:nth-child(5) { animation-delay: 0.8s; }
+.flower:nth-child(6) { animation-delay: 1.3s; }
+
+@keyframes sway {
+0%,100% { transform: rotate(-8deg) translateY(0); }
+50%      { transform: rotate(8deg) translateY(-4px); }
+}
+
+/* Étoiles scintillantes */
+.sparkle {
+position: fixed;
+font-size: 16px;
+z-index: 4;
+pointer-events: none;
+animation: twinkle 2.5s ease-in-out infinite;
+}
+.sparkle:nth-child(1) { top: 8%; left: 15%; animation-delay: 0s; }
+.sparkle:nth-child(2) { top: 12%; right: 20%; animation-delay: 0.8s; }
+.sparkle:nth-child(3) { top: 5%; left: 55%; animation-delay: 1.6s; }
+@keyframes twinkle {
+0%,100% { opacity:0.3; transform: scale(0.8) rotate(0deg); }
+50%      { opacity:1;   transform: scale(1.2) rotate(180deg); }
+}
+
+/* Footer */
+.footer-note {
+margin-top: 16px;
+font-family: ‘Nunito’, sans-serif;
+font-size: 13px;
+color: rgba(255,255,255,0.75);
+text-align: center;
+text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Sons feedback */
+.ripple {
+position: fixed;
+border-radius: 50%;
+background: rgba(255,255,255,0.5);
+transform: scale(0);
+animation: rippleAnim 0.6s ease-out forwards;
+pointer-events: none;
+z-index: 999;
+}
+@keyframes rippleAnim {
+to { transform: scale(4); opacity: 0; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- Décor fond -->
+
+<div class="sky">
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+</div>
+
+<!-- Papillons -->
+
+<div class="butterfly">🦋</div>
+<div class="butterfly">🦋</div>
+<div class="butterfly">🌸</div>
+
+<!-- Étoiles -->
+
+<div class="sparkle">✨</div>
+<div class="sparkle">⭐</div>
+<div class="sparkle">✨</div>
+
+<!-- Sol -->
+
+<div class="ground-strip"><div class="grass-bumps"></div></div>
+<div class="flowers">
+  <span class="flower">🌻</span>
+  <span class="flower">🌸</span>
+  <span class="flower">🌼</span>
+  <span class="flower">🌺</span>
+  <span class="flower">🌷</span>
+  <span class="flower">🌻</span>
+</div>
+
+<!-- Contenu -->
+
+<div class="main-content">
+
+  <div class="app-title">
+    <span class="title-emoji">🌍</span>
+    <div class="title-text">Le Monde de Malo</div>
+    <div class="title-sub">✨ Choisis ton aventure ✨</div>
+  </div>
+
+  <div class="games-grid">
+
+```
+<a class="game-card card-animaux" href="games/animaux.html">
+  <span class="game-badge">Sons</span>
+  <span class="game-emoji">🐘</span>
+  <span class="game-label">Les Animaux</span>
+</a>
+
+<a class="game-card card-puzzle" href="games/puzzle.html">
+  <span class="game-badge">Formes</span>
+  <span class="game-emoji">🧩</span>
+  <span class="game-label">Puzzle</span>
+</a>
+
+<a class="game-card card-comptines" href="games/comptines.html">
+  <span class="game-badge">Chansons</span>
+  <span class="game-emoji">🎵</span>
+  <span class="game-label">Comptines</span>
+</a>
+
+<a class="game-card card-marin" href="games/marin.html">
+  <span class="game-badge">Océan</span>
+  <span class="game-emoji">🐠</span>
+  <span class="game-label">Monde Marin</span>
+</a>
+
+<a class="game-card card-cuisine" href="games/cuisine.html">
+  <span class="game-badge">Scratch</span>
+  <span class="game-emoji">🍎</span>
+  <span class="game-label">La Cuisine</span>
+</a>
+
+<a class="game-card card-tracteur" href="games/tracteur.html">
+  <span class="game-badge">Conduite</span>
+  <span class="game-emoji">🚜</span>
+  <span class="game-label">Le Tracteur</span>
+</a>
+
+<a class="game-card card-bulles card-wide" href="games/bulles.html">
+  <span class="game-badge">Tactile</span>
+  <span class="game-emoji">🫧</span>
+  <span class="game-label">Les Bulles !</span>
+</a>
+```
+
+  </div>
+
+  <div class="footer-note">Pour Malo 💚 avec tout mon amour</div>
+
+</div>
+
+<script>
+  // Effet ripple au toucher
+  document.querySelectorAll('.game-card').forEach(card => {
+    card.addEventListener('pointerdown', function(e) {
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      const size = 60;
+      ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - size/2}px;top:${e.clientY - size/2}px;`;
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 700);
+    });
+  });
+
+  // Petite animation de bienvenue au son (Web Audio)
+  function playWelcomeSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [523, 659, 784, 1047];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.18);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.35);
+        osc.start(ctx.currentTime + i * 0.18);
+        osc.stop(ctx.currentTime + i * 0.18 + 0.35);
+      });
+    } catch(e) {}
+  }
+
+  // Jouer au premier toucher
+  document.addEventListener('pointerdown', function onFirst() {
+    playWelcomeSound();
+    document.removeEventListener('pointerdown', onFirst);
+  }, { once: true });
+</script>
+
+</body>
+</html>
