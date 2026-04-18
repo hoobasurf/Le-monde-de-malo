@@ -76,9 +76,63 @@
   .install-close{background:none;border:none;font-size:18px;cursor:pointer;color:#999;}
   .ripple{position:fixed;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:rippleAnim .6s ease-out forwards;pointer-events:none;z-index:999;width:60px;height:60px;}
   @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+
+/* ===== SPLASH ===== */
+#splash{
+position:fixed;inset:0;z-index:500;
+background:linear-gradient(160deg,#ffe066 0%,#ff9e3d 40%,#ff6fa8 80%,#c97aff 100%);
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+cursor:pointer;user-select:none;
+transition:opacity .5s ease, transform .5s ease;
+}
+#splash.hide{opacity:0;transform:scale(1.08);pointer-events:none;}
+.splash-star{position:absolute;font-size:28px;animation:starFloat 3s ease-in-out infinite;opacity:.7;}
+.splash-star:nth-child(1){top:8%;left:10%;animation-delay:0s;}
+.splash-star:nth-child(2){top:12%;right:12%;animation-delay:.5s;}
+.splash-star:nth-child(3){top:5%;left:50%;animation-delay:1s;}
+.splash-star:nth-child(4){bottom:18%;left:8%;animation-delay:1.5s;}
+.splash-star:nth-child(5){bottom:14%;right:10%;animation-delay:.8s;}
+.splash-star:nth-child(6){bottom:22%;left:40%;animation-delay:.3s;}
+@keyframes starFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(20deg);}}
+.splash-emoji{font-size:clamp(90px,22vw,130px);animation:splashBounce 1.2s ease-in-out infinite;filter:drop-shadow(0 8px 20px rgba(0,0,0,.2));line-height:1;}
+@keyframes splashBounce{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-18px) scale(1.06);}}
+.splash-title{font-weight:800;font-size:clamp(32px,9vw,60px);color:white;text-shadow:0 4px 0 rgba(0,0,0,.15);margin-top:16px;text-align:center;padding:0 20px;line-height:1.15;}
+.splash-btn{
+margin-top:28px;
+background:white;
+border:none;border-radius:60px;
+padding:18px 40px;
+font-family:‘Baloo 2’,cursive;font-weight:800;
+font-size:clamp(20px,6vw,30px);
+color:#ff6fa8;
+box-shadow:0 8px 0 rgba(0,0,0,.15), 0 12px 30px rgba(0,0,0,.15);
+cursor:pointer;
+animation:btnPulse 1.5s ease-in-out infinite;
+display:flex;align-items:center;gap:12px;
+}
+@keyframes btnPulse{0%,100%{transform:scale(1);box-shadow:0 8px 0 rgba(0,0,0,.15),0 12px 30px rgba(0,0,0,.15);}50%{transform:scale(1.05);box-shadow:0 10px 0 rgba(0,0,0,.12),0 16px 36px rgba(0,0,0,.2);}}
+.splash-btn:active{transform:scale(.93) translateY(4px)!important;box-shadow:0 4px 0 rgba(0,0,0,.15)!important;}
+.splash-hint{margin-top:16px;font-family:‘Nunito’,sans-serif;font-size:clamp(13px,4vw,18px);color:rgba(255,255,255,.8);text-align:center;}
 </style>
+
 </head>
 <body>
+
+<!-- SPLASH -->
+
+<div id="splash">
+  <span class="splash-star">⭐</span>
+  <span class="splash-star">🌟</span>
+  <span class="splash-star">✨</span>
+  <span class="splash-star">⭐</span>
+  <span class="splash-star">🌟</span>
+  <span class="splash-star">✨</span>
+  <div class="splash-emoji">🌍</div>
+  <div class="splash-title">Le Monde<br>de Malo</div>
+  <button class="splash-btn">▶ Jouer !</button>
+  <div class="splash-hint">Appuie pour commencer 🎵</div>
+</div>
+
 <div class="sky">
   <div class="sun"></div>
   <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div><div class="cloud cloud-3"></div>
@@ -115,34 +169,37 @@
 </div>
 <script src="melody.js"></script>
 <script>
-  let musicOn=true, started=false;
-  function startMusic(){
-    if(!started&&musicOn){MaloMelody.play('menu');started=true;}
-  }
-  document.getElementById('musicBtn').addEventListener('click',()=>{
-    musicOn=!musicOn;
-    document.getElementById('musicBtn').textContent=musicOn?'🎵':'🔇';
-    if(musicOn){MaloMelody.play('menu');started=true;}else MaloMelody.stop();
-  });
-  document.body.addEventListener('touchstart',function onFirst(){
-    startMusic();
-    document.body.removeEventListener('touchstart',onFirst);
-  },{once:true,passive:true});
-  document.body.addEventListener('mousedown',function onFirstMouse(){
-    startMusic();
-    document.body.removeEventListener('mousedown',onFirstMouse);
-  },{once:true});
-  document.querySelectorAll('.game-card').forEach(card=>{
-    card.addEventListener('pointerdown',e=>{
-      const r=document.createElement('div');r.className='ripple';
-      r.style.left=(e.clientX-30)+'px';r.style.top=(e.clientY-30)+'px';
-      document.body.appendChild(r);setTimeout(()=>r.remove(),700);
-    });
-  });
-  let dp=null;
-  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;setTimeout(()=>document.getElementById('installBanner').classList.add('show'),3000);});
-  document.getElementById('installBtn').addEventListener('click',()=>{if(dp){dp.prompt();dp.userChoice.then(()=>{dp=null;document.getElementById('installBanner').classList.remove('show');});}});
-  document.getElementById('installClose').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
+  let musicOn = true;
+
+// SPLASH → démarre la musique au tap (geste réel = iOS happy)
+const splash = document.getElementById(‘splash’);
+splash.addEventListener(‘pointerdown’, () => {
+MaloMelody.play(‘menu’);
+splash.classList.add(‘hide’);
+setTimeout(() => splash.remove(), 600);
+}, { once: true });
+
+// Bouton musique (marche toujours, splash déjà passé ou non)
+document.getElementById(‘musicBtn’).addEventListener(‘click’, () => {
+musicOn = !musicOn;
+document.getElementById(‘musicBtn’).textContent = musicOn ? ‘🎵’ : ‘🔇’;
+if (musicOn) MaloMelody.play(‘menu’);
+else MaloMelody.stop();
+});
+
+document.querySelectorAll(’.game-card’).forEach(card => {
+card.addEventListener(‘pointerdown’, e => {
+const r = document.createElement(‘div’); r.className = ‘ripple’;
+r.style.left = (e.clientX - 30) + ‘px’; r.style.top = (e.clientY - 30) + ‘px’;
+document.body.appendChild(r); setTimeout(() => r.remove(), 700);
+});
+});
+
+let dp = null;
+window.addEventListener(‘beforeinstallprompt’, e => { e.preventDefault(); dp = e; setTimeout(() => document.getElementById(‘installBanner’).classList.add(‘show’), 3000); });
+document.getElementById(‘installBtn’).addEventListener(‘click’, () => { if (dp) { dp.prompt(); dp.userChoice.then(() => { dp = null; document.getElementById(‘installBanner’).classList.remove(‘show’); }); } });
+document.getElementById(‘installClose’).addEventListener(‘click’, () => document.getElementById(‘installBanner’).classList.remove(‘show’));
 </script>
+
 </body>
 </html>
