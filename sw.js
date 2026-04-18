@@ -1,4 +1,4 @@
-const CACHE = ‘malo-v1’;
+const CACHE = ‘malo-v2’;
 const ASSETS = [
 ‘index.html’, ‘manifest.json’, ‘melody.js’,
 ‘bulles.html’, ‘animaux.html’, ‘puzzle.html’,
