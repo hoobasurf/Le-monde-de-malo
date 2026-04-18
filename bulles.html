@@ -247,7 +247,7 @@ function initSimba3D() {
       const center = box.getCenter(new THREE.Vector3());
       const sizeVec = box.getSize(new THREE.Vector3());
       const maxDim = Math.max(sizeVec.x, sizeVec.y, sizeVec.z);
-      const scale = 3.8 / maxDim;
+      const scale = 5.5 / maxDim;
 
       model.position.sub(center);
       model.scale.setScalar(scale);
@@ -262,7 +262,7 @@ function initSimba3D() {
         requestAnimationFrame(animate);
         t += 0.02;
         // Rotation douce
-        model.rotation.y = 0;
+        model.rotation.y = Math.PI;
         // Légère lévitation
         model.position.y = -sizeVec.y * scale * 0.3 + Math.sin(t) * 0.06;
         renderer.render(scene, camera);
