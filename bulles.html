@@ -22,193 +22,89 @@ html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',curs
 .particle { position:absolute; border-radius:50%; background:rgba(255,255,255,.25); pointer-events:none; animation:rise linear infinite; }
 @keyframes rise { from{transform:translateY(110vh)scale(0);opacity:0;} 10%{opacity:.5;} 90%{opacity:.15;} to{transform:translateY(-80px)scale(1);opacity:0;} }
 
-/* ===== HEADER ===== */
-.header {
-position:fixed; top:0; left:0; right:0;
-z-index:50;
-padding:10px 14px 8px;
-display:flex; flex-direction:column; gap:8px;
-}
-
-.header-row1 {
-display:flex; align-items:center; justify-content:space-between; gap:8px;
-}
-
-.btn-r {
-flex-shrink:0;
-background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35);
-border-radius:50%; width:48px; height:48px; font-size:20px;
-color:white; cursor:pointer;
-display:flex; align-items:center; justify-content:center;
-text-decoration:none; transition:transform .15s;
-backdrop-filter:blur(8px);
-}
+/* HEADER */
+.header { position:fixed; top:0; left:0; right:0; z-index:50; padding:10px 14px 8px; display:flex; flex-direction:column; gap:8px; }
+.header-row1 { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.btn-r { flex-shrink:0; background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35); border-radius:50%; width:48px; height:48px; font-size:20px; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:transform .15s; backdrop-filter:blur(8px); }
 .btn-r:active { transform:scale(.88); }
 
-/* Cible — animal à trouver */
-.target-box {
-flex:1;
-background:rgba(255,255,255,.15);
-border:2px solid rgba(255,255,255,.4);
-border-radius:20px;
-padding:6px 12px;
-display:flex; align-items:center; justify-content:center; gap:8px;
-backdrop-filter:blur(8px);
-}
-.target-label {
-font-family:‘Nunito’,sans-serif; font-size:12px;
-color:rgba(255,255,255,.8); white-space:nowrap;
-}
-.target-animal {
-font-size:36px;
-animation:targetPulse 1.5s ease-in-out infinite;
-filter:drop-shadow(0 0 8px rgba(255,255,100,.9));
-}
-@keyframes targetPulse {
-0%,100%{transform:scale(1);}
-50%{transform:scale(1.2);}
-}
+.target-box { flex:1; background:rgba(255,255,255,.15); border:2px solid rgba(255,255,255,.4); border-radius:20px; padding:6px 12px; display:flex; align-items:center; justify-content:center; gap:8px; backdrop-filter:blur(8px); }
+.target-label { font-family:‘Nunito’,sans-serif; font-size:12px; color:rgba(255,255,255,.85); white-space:nowrap; }
+.target-animal { font-size:38px; animation:targetPulse 1.4s ease-in-out infinite; filter:drop-shadow(0 0 10px rgba(255,255,100,1)); }
+@keyframes targetPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.25);} }
 
-/* Progression */
-.progress-wrap { }
-.progress-bar {
-height:12px; background:rgba(255,255,255,.2);
-border-radius:10px; overflow:hidden;
-border:2px solid rgba(255,255,255,.3);
-}
-.progress-fill {
-height:100%; width:0%;
-background:linear-gradient(90deg,#FFD700,#FF8C00);
-border-radius:8px;
-transition:width .35s cubic-bezier(.34,1.56,.64,1);
-}
-.progress-stars {
-display:flex; justify-content:space-around;
-margin-top:3px; font-size:13px;
-}
+.progress-bar { height:12px; background:rgba(255,255,255,.2); border-radius:10px; overflow:hidden; border:2px solid rgba(255,255,255,.3); }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#FFD700,#FF8C00); border-radius:8px; transition:width .3s cubic-bezier(.34,1.56,.64,1); }
+.progress-stars { display:flex; justify-content:space-around; margin-top:3px; font-size:13px; }
+.progress-count { font-family:‘Nunito’,sans-serif; font-size:11px; color:rgba(255,255,255,.7); text-align:center; margin-bottom:3px; }
 
-/* CANVAS */
 #c { position:fixed; inset:0; width:100%; height:100%; }
 
-/* POP correct */
 .pop { position:fixed; pointer-events:none; z-index:90; font-size:38px; animation:popOk .5s ease-out forwards; }
 @keyframes popOk { 0%{transform:scale(0);opacity:1;} 55%{transform:scale(1.6) rotate(10deg);opacity:1;} 100%{transform:scale(0);opacity:0;} }
-
-/* POP mauvais */
-.pop-wrong { position:fixed; pointer-events:none; z-index:90; font-size:28px; animation:popWrong .5s ease-out forwards; }
+.pop-wrong { position:fixed; pointer-events:none; z-index:90; font-size:28px; animation:popWrong .4s ease-out forwards; }
 @keyframes popWrong { 0%{transform:scale(1);opacity:1;} 100%{transform:scale(0) translateY(-20px);opacity:0;} }
 
-/* Shake écran */
-@keyframes shake {
-0%,100%{transform:translateX(0);}
-20%{transform:translateX(-8px);}
-40%{transform:translateX(8px);}
-60%{transform:translateX(-6px);}
-80%{transform:translateX(6px);}
-}
-.shake { animation:shake .35s ease-out; }
+@keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);} }
+.shake { animation:shake .3s ease-out; }
 
-/* ===== ÉCRAN VICTOIRE ===== */
+/* ===== VICTOIRE ===== */
 .win-screen {
 position:fixed; inset:0; z-index:200;
 background:linear-gradient(160deg,#ff8c00 0%,#ffd700 45%,#ffe47a 70%,#fff5cc 100%);
 display:flex; flex-direction:column; align-items:center; justify-content:center;
-gap:6px;
-opacity:0; pointer-events:none;
-transition:opacity .5s;
-overflow:hidden;
+gap:6px; opacity:0; pointer-events:none;
+transition:opacity .5s; overflow:hidden;
 }
 .win-screen.show { opacity:1; pointer-events:all; }
-
 .win-screen::before {
-content:’’;
-position:absolute; top:-60px; left:50%; transform:translateX(-50%);
+content:’’; position:absolute; top:-60px; left:50%; transform:translateX(-50%);
 width:320px; height:320px;
 background:radial-gradient(circle,rgba(255,255,255,.4) 0%,transparent 65%);
-border-radius:50%;
-animation:halo 3s ease-in-out infinite;
-pointer-events:none;
+border-radius:50%; animation:halo 3s ease-in-out infinite; pointer-events:none;
 }
 @keyframes halo { 0%,100%{transform:translateX(-50%) scale(1);} 50%{transform:translateX(-50%) scale(1.12);} }
 
-.win-title {
-font-size:clamp(28px,7.5vw,46px); color:#7a1a00; font-weight:800;
-text-shadow:0 3px 0 rgba(255,255,255,.55);
-animation:titlePop .5s .1s cubic-bezier(.34,1.56,.64,1) both;
-position:relative; z-index:2; text-align:center;
-}
+.win-title { font-size:clamp(28px,7.5vw,46px); color:#7a1a00; font-weight:800; text-shadow:0 3px 0 rgba(255,255,255,.55); animation:titlePop .5s .1s cubic-bezier(.34,1.56,.64,1) both; position:relative; z-index:2; text-align:center; }
 @keyframes titlePop { from{transform:scale(0) rotate(-5deg);} to{transform:scale(1) rotate(0);} }
 
-.win-stars {
-font-size:clamp(28px,7vw,42px);
-animation:starsIn .5s .25s cubic-bezier(.34,1.56,.64,1) both;
-position:relative; z-index:2;
-}
+.win-stars { font-size:clamp(28px,7vw,42px); animation:starsIn .5s .25s cubic-bezier(.34,1.56,.64,1) both; position:relative; z-index:2; }
 @keyframes starsIn { from{transform:scale(0);opacity:0;} to{transform:scale(1);opacity:1;} }
 
-.win-sub {
-font-family:‘Nunito’,sans-serif;
-font-size:clamp(13px,3.5vw,18px); color:#5a1a00;
-animation:fadeUp .5s .35s both;
-position:relative; z-index:2; text-align:center; padding:0 20px;
-}
+.win-sub { font-family:‘Nunito’,sans-serif; font-size:clamp(13px,3.5vw,18px); color:#5a1a00; animation:fadeUp .5s .35s both; position:relative; z-index:2; text-align:center; padding:0 20px; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
 
-/* SIMBA PHOTO — GRANDE */
-.simba-wrap {
-position:relative; z-index:2;
-animation:simbaIn .7s .3s cubic-bezier(.34,1.56,.64,1) both;
-}
+/* SIMBA GRANDE PHOTO */
+.simba-wrap { position:relative; z-index:2; animation:simbaIn .7s .4s cubic-bezier(.34,1.56,.64,1) both; }
 @keyframes simbaIn { from{transform:scale(0) rotate(-15deg);} to{transform:scale(1) rotate(0);} }
 
 .simba-img {
-width:min(320px, 80vw);
-height:min(320px, 80vw);
+width:min(340px, 85vw);
+height:min(340px, 85vw);
 object-fit:contain;
-filter:drop-shadow(0 16px 40px rgba(0,0,0,.3));
-animation:simbaFloat 2.5s ease-in-out infinite;
+filter:drop-shadow(0 16px 48px rgba(0,0,0,.35));
+animation:simbaFloat 2.4s ease-in-out infinite;
 }
-@keyframes simbaFloat {
-0%,100%{transform:translateY(0) rotate(-2deg);}
-50%{transform:translateY(-16px) rotate(2deg);}
-}
+@keyframes simbaFloat { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-18px) rotate(2deg);} }
 
 .orbit { position:absolute; inset:-24px; pointer-events:none; }
-.orbit-star { position:absolute; font-size:24px; animation:orbitPulse 2.5s ease-in-out infinite; }
+.orbit-star { position:absolute; font-size:26px; animation:orbitPulse 2.5s ease-in-out infinite; }
 .orbit-star:nth-child(1){top:-5px;left:50%;animation-delay:0s;}
 .orbit-star:nth-child(2){top:28%;right:-8px;animation-delay:.5s;}
 .orbit-star:nth-child(3){bottom:0;right:12%;animation-delay:1s;}
 .orbit-star:nth-child(4){bottom:0;left:12%;animation-delay:1.5s;}
 .orbit-star:nth-child(5){top:28%;left:-8px;animation-delay:2s;}
-@keyframes orbitPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.5);opacity:.5;} }
+@keyframes orbitPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.6);opacity:.5;} }
 
-.savane {
-position:absolute; bottom:0; left:0; right:0; height:70px;
-background:linear-gradient(180deg,#7dc43a,#3d7a10);
-border-radius:55% 55% 0 0/24px 24px 0 0; z-index:1;
-}
-.savane::before {
-content:‘🌾 🌿 🌾 🌿 🌾 🌿 🌾’;
-position:absolute; top:-14px; left:0; right:0;
-font-size:18px; text-align:center; letter-spacing:6px;
-}
+.savane { position:absolute; bottom:0; left:0; right:0; height:70px; background:linear-gradient(180deg,#7dc43a,#3d7a10); border-radius:55% 55% 0 0/24px 24px 0 0; z-index:1; }
+.savane::before { content:‘🌾 🌿 🌾 🌿 🌾 🌿 🌾’; position:absolute; top:-14px; left:0; right:0; font-size:18px; text-align:center; letter-spacing:6px; }
 
-.win-btns {
-display:flex; gap:14px;
-animation:fadeUp .5s .55s both;
-position:relative; z-index:3;
-}
-.win-btn {
-padding:13px 26px; border:none; border-radius:20px;
-font-family:‘Baloo 2’,cursive; font-weight:800;
-font-size:clamp(14px,4vw,18px); cursor:pointer;
-box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
-}
+.win-btns { display:flex; gap:14px; animation:fadeUp .5s .55s both; position:relative; z-index:3; }
+.win-btn { padding:13px 26px; border:none; border-radius:20px; font-family:‘Baloo 2’,cursive; font-weight:800; font-size:clamp(14px,4vw,18px); cursor:pointer; box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s; }
 .win-btn:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.2); }
 .btn-rejouer { background:#FF6B00; color:white; }
 .btn-menu    { background:rgba(255,255,255,.75); color:#5a1a00; }
 
-/* Confettis */
 .confetti { position:absolute; border-radius:2px; pointer-events:none; animation:confettiFall linear forwards; z-index:1; }
 @keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1;} 100%{transform:translateY(100vh) rotate(720deg);opacity:0;} }
 </style>
@@ -225,26 +121,18 @@ box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
   <source src="bulles.mp3" type="audio/mpeg">
 </audio>
 
-<!-- HEADER -->
-
 <div class="header">
   <div class="header-row1">
     <a class="btn-r" href="index.html">⬅️</a>
-
-```
-<!-- Animal à trouver -->
-<div class="target-box">
-  <div class="target-label">Touche les</div>
-  <div class="target-animal" id="targetAnimal">🐬</div>
-  <div class="target-label">!</div>
-</div>
-
-<button class="btn-r" id="mBtn">🎵</button>
-```
-
+    <div class="target-box">
+      <div class="target-label">Touche les</div>
+      <div class="target-animal" id="targetAnimal">🐬</div>
+      <div class="target-label">!</div>
+    </div>
+    <button class="btn-r" id="mBtn">🎵</button>
   </div>
-
-  <div class="progress-wrap">
+  <div>
+    <div class="progress-count" id="progCount">0 / 50 🫧</div>
     <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
     <div class="progress-stars" id="progStars">
       <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
@@ -254,24 +142,20 @@ box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
 
 <canvas id="c"></canvas>
 
-<!-- ÉCRAN VICTOIRE -->
+<!-- VICTOIRE -->
 
 <div class="win-screen" id="winScreen">
   <div class="win-title">🦁 Simba est libre !</div>
   <div class="win-stars">⭐ ⭐ ⭐</div>
   <div class="win-sub">Bravo Malo, tu es le Roi des Bulles ! 👑</div>
-
   <div class="simba-wrap">
     <img class="simba-img" src="Photoroom_20260419_110623.png" alt="Simba">
     <div class="orbit">
-      <span class="orbit-star">✨</span>
-      <span class="orbit-star">⭐</span>
-      <span class="orbit-star">✨</span>
-      <span class="orbit-star">⭐</span>
+      <span class="orbit-star">✨</span><span class="orbit-star">⭐</span>
+      <span class="orbit-star">✨</span><span class="orbit-star">⭐</span>
       <span class="orbit-star">✨</span>
     </div>
   </div>
-
   <div class="win-btns">
     <button class="win-btn btn-rejouer" id="btnRejouer">🔄 Rejouer</button>
     <a class="win-btn btn-menu" href="index.html">🏠 Menu</a>
@@ -280,19 +164,13 @@ box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
 </div>
 
 <script>
-/* ============================================================
-   CONFIG
-   ============================================================ */
 const ANIMALS_LIST = ['🐬','🦈','🐙','🦀','🐠','🐡','🦑','🦞','🐳','🦭','🐧','🦐','🪸','🐚','⭐'];
-const MAX = 10; // 10 bons animaux à trouver
-
+const MAX = 50;
 let targetAnimal = '🐬';
 let score = 0;
 let gameOver = false;
 
-/* ============================================================
-   CANVAS
-   ============================================================ */
+/* ====== CANVAS ====== */
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 let W, H, bubbles = [];
@@ -300,209 +178,205 @@ let W, H, bubbles = [];
 function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
 
-/* Choisir un nouvel animal cible au hasard */
-function pickTarget() {
+function pickTarget(){
   const prev = targetAnimal;
   do { targetAnimal = ANIMALS_LIST[Math.floor(Math.random()*ANIMALS_LIST.length)]; }
-  while (targetAnimal === prev);
+  while(targetAnimal === prev);
   document.getElementById('targetAnimal').textContent = targetAnimal;
-
-  // Mettre à jour les bulles existantes pour garantir au moins 3 bulles avec la cible
-  let count = 0;
-  bubbles.forEach(b => {
-    if (b.animal === targetAnimal) count++;
-  });
-  // Si pas assez, forcer 3 bulles avec la cible
-  let forced = 0;
-  bubbles.forEach(b => {
-    if (forced < 3 - count) {
-      b.animal = targetAnimal;
-      forced++;
-    }
-  });
+  // Forcer au moins 3 bulles avec la nouvelle cible
+  let c = 0;
+  bubbles.forEach(b => { if(b.animal===targetAnimal) c++; });
+  bubbles.forEach(b => { if(c<4 && b.animal!==targetAnimal){ b.animal=targetAnimal; b.isTarget=true; c++; } });
 }
 
-/* ============================================================
-   BULLE
-   ============================================================ */
 class Bubble {
   constructor(init){ this.reset(init); }
   reset(init){
-    this.r   = 32 + Math.random()*44;
+    this.r   = 30 + Math.random()*44;
     this.x   = this.r + Math.random()*Math.max(1, W-this.r*2);
     this.y   = init ? Math.random()*H : H+this.r*2;
     this.vx  = (Math.random()-.5)*1.1;
-    this.vy  = -(0.65+Math.random()*1.2);
-    // Animal : 35% de chance que ce soit la cible
-    this.animal = Math.random() < 0.35 ? targetAnimal
-                : ANIMALS_LIST[Math.floor(Math.random()*ANIMALS_LIST.length)];
+    this.vy  = -(0.6+Math.random()*1.2);
+    this.animal = Math.random()<0.38 ? targetAnimal : ANIMALS_LIST[Math.floor(Math.random()*ANIMALS_LIST.length)];
     this.hue = 170+Math.random()*55;
-    this.op  = .6+Math.random()*.28;
+    this.op  = .58+Math.random()*.28;
     this.wb  = Math.random()*Math.PI*2;
-    this.ws  = .018+Math.random()*.026;
-    // Surbrillance si c'est la cible
-    this.isTarget = this.animal === targetAnimal;
-  }
-  updateTarget(){
-    this.isTarget = this.animal === targetAnimal;
+    this.ws  = .016+Math.random()*.026;
+    this.isTarget = this.animal===targetAnimal;
   }
   update(){
-    this.wb += this.ws;
-    this.x  += this.vx + Math.sin(this.wb)*.32;
-    this.y  += this.vy;
-    if(this.y < -this.r*2) this.reset(false);
-    if(this.x < this.r || this.x > W-this.r) this.vx *= -1;
-    this.isTarget = this.animal === targetAnimal;
+    this.wb+=this.ws;
+    this.x+=this.vx+Math.sin(this.wb)*.32;
+    this.y+=this.vy;
+    if(this.y<-this.r*2) this.reset(false);
+    if(this.x<this.r||this.x>W-this.r) this.vx*=-1;
+    this.isTarget = this.animal===targetAnimal;
   }
   draw(){
-    const x=this.x, y=this.y, r=this.r;
-    ctx.save();
-    ctx.globalAlpha = this.op;
-
-    // Halo brillant si c'est la cible
+    const x=this.x,y=this.y,r=this.r;
+    ctx.save(); ctx.globalAlpha=this.op;
     if(this.isTarget){
-      ctx.beginPath(); ctx.arc(x,y,r+6,0,Math.PI*2);
-      ctx.fillStyle = 'rgba(255,255,100,.18)';
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r+7,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,80,.2)'; ctx.fill();
     }
-
-    const g = ctx.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
+    const g=ctx.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
     if(this.isTarget){
-      g.addColorStop(0,`hsla(55,100%,95%,.9)`);
-      g.addColorStop(.5,`hsla(55,80%,70%,.45)`);
-      g.addColorStop(1,`hsla(55,90%,55%,.7)`);
+      g.addColorStop(0,'hsla(55,100%,96%,.9)');
+      g.addColorStop(.5,'hsla(55,80%,70%,.45)');
+      g.addColorStop(1,'hsla(55,90%,55%,.7)');
     } else {
       g.addColorStop(0,`hsla(${this.hue},75%,92%,.85)`);
       g.addColorStop(.5,`hsla(${this.hue},65%,65%,.4)`);
       g.addColorStop(1,`hsla(${this.hue},75%,50%,.65)`);
     }
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-
-    // Reflet
     ctx.beginPath(); ctx.ellipse(x-r*.26,y-r*.3,r*.2,r*.1,-Math.PI/4,0,Math.PI*2);
     ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fill();
-
-    // Bord — doré si cible
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-    ctx.strokeStyle = this.isTarget ? 'rgba(255,220,0,.9)' : `hsla(${this.hue},65%,82%,.75)`;
-    ctx.lineWidth = this.isTarget ? 3 : 2;
-    ctx.stroke();
-
-    ctx.globalAlpha = 1;
-    ctx.font = `${r*.9}px serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(this.animal, x, y+2);
+    ctx.strokeStyle=this.isTarget?'rgba(255,210,0,.95)':`hsla(${this.hue},65%,82%,.75)`;
+    ctx.lineWidth=this.isTarget?3:2; ctx.stroke();
+    ctx.globalAlpha=1;
+    ctx.font=`${r*.9}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(this.animal,x,y+2);
     ctx.restore();
   }
-  hit(px,py){ return Math.hypot(px-this.x, py-this.y) < this.r; }
+  hit(px,py){ return Math.hypot(px-this.x,py-this.y)<this.r; }
 }
 
 function initBubbles(){
-  const n = Math.min(11, Math.floor(W*H/34000)+5);
-  bubbles = Array.from({length:n}, ()=>new Bubble(true));
-  // Garantir au moins 3 bulles cibles au départ
+  const n=Math.min(12,Math.floor(W*H/32000)+5);
+  bubbles=Array.from({length:n},()=>new Bubble(true));
   let c=0;
-  bubbles.forEach(b=>{ if(b.animal===targetAnimal) c++; });
-  bubbles.slice(0, Math.max(0, 3-c)).forEach(b=>{ b.animal=targetAnimal; b.isTarget=true; });
+  bubbles.forEach(b=>{if(b.animal===targetAnimal)c++;});
+  bubbles.forEach(b=>{if(c<4&&b.animal!==targetAnimal){b.animal=targetAnimal;b.isTarget=true;c++;}});
 }
 
 function loop(){
   ctx.clearRect(0,0,W,H);
-  if(!gameOver) bubbles.forEach(b=>{ b.update(); b.draw(); });
+  if(!gameOver) bubbles.forEach(b=>{b.update();b.draw();});
   requestAnimationFrame(loop);
 }
 
-/* ============================================================
-   PROGRESSION
-   ============================================================ */
 function updateProgress(){
   const pct=(score/MAX)*100;
   document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progCount').textContent=`${score} / ${MAX} 🫧`;
   const stars=document.getElementById('progStars').children;
   const filled=Math.floor(score/(MAX/5));
   for(let i=0;i<5;i++) stars[i].textContent=i<filled?'⭐':'☆';
 }
 
-/* ============================================================
-   SONS
-   ============================================================ */
-function playPop(pitch, good){
+/* ====== SONS ====== */
+function getAC(){ return new(window.AudioContext||window.webkitAudioContext)(); }
+
+function playPop(pitch){
   try {
-    const ac=new(window.AudioContext||window.webkitAudioContext)();
-    const o=ac.createOscillator(), g=ac.createGain();
-    o.connect(g); g.connect(ac.destination);
-    if(good){
-      o.type='sine';
-      o.frequency.setValueAtTime(700*pitch, ac.currentTime);
-      o.frequency.exponentialRampToValueAtTime(150*pitch, ac.currentTime+.18);
-      g.gain.setValueAtTime(.28, ac.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+.22);
-      o.start(); o.stop(ac.currentTime+.25);
-    } else {
-      // Son "raté" grave
-      o.type='sawtooth';
-      o.frequency.setValueAtTime(200, ac.currentTime);
-      o.frequency.exponentialRampToValueAtTime(80, ac.currentTime+.2);
-      g.gain.setValueAtTime(.15, ac.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+.25);
-      o.start(); o.stop(ac.currentTime+.28);
-    }
+    const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g);g.connect(ac.destination); o.type='sine';
+    o.frequency.setValueAtTime(700*pitch,ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(150*pitch,ac.currentTime+.18);
+    g.gain.setValueAtTime(.28,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.22);
+    o.start();o.stop(ac.currentTime+.25);
   }catch(e){}
 }
 
-function playVictory(){
+function playWrong(){
   try {
-    const ac=new(window.AudioContext||window.webkitAudioContext)();
-    [523,659,784,1047,1319].forEach((f,i)=>{
+    const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g);g.connect(ac.destination); o.type='sawtooth';
+    o.frequency.setValueAtTime(200,ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(80,ac.currentTime+.2);
+    g.gain.setValueAtTime(.12,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.25);
+    o.start();o.stop(ac.currentTime+.28);
+  }catch(e){}
+}
+
+/* 🎺 Son de victoire — fanfare joyeuse */
+function playVictoryFanfare(){
+  try {
+    const ac=getAC();
+    // Fanfare montante
+    const fanfare=[
+      [523,.15],[659,.15],[784,.15],[1047,.3],
+      [784,.1],[1047,.1],[1319,.6],
+      [1047,.15],[1175,.15],[1319,.15],[1568,.5]
+    ];
+    let t=ac.currentTime+.05;
+    fanfare.forEach(([f,d])=>{
       const o=ac.createOscillator(),g=ac.createGain();
       o.connect(g);g.connect(ac.destination);
-      o.frequency.value=f; o.type='sine';
-      g.gain.setValueAtTime(.22,ac.currentTime+i*.14);
-      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.14+.4);
-      o.start(ac.currentTime+i*.14); o.stop(ac.currentTime+i*.14+.45);
+      o.type='triangle'; o.frequency.value=f;
+      g.gain.setValueAtTime(.0,t);
+      g.gain.linearRampToValueAtTime(.25,t+.02);
+      g.gain.setValueAtTime(.25,t+d-.03);
+      g.gain.linearRampToValueAtTime(.0,t+d);
+      o.start(t);o.stop(t+d+.01);
+      t+=d;
     });
   }catch(e){}
 }
 
-/* ============================================================
-   ACTIONS
-   ============================================================ */
-function popGood(b, cx, cy){
-  // ✅ Bonne bulle
-  const el=document.createElement('div');
-  el.className='pop'; el.textContent='✅';
-  el.style.left=(cx-18)+'px'; el.style.top=(cy-18)+'px';
-  document.body.appendChild(el); setTimeout(()=>el.remove(),600);
+/* 🦁 Rugissement du lion — grave et puissant */
+function playRoar(){
+  try {
+    const ac=getAC();
+    // Couche 1 — grave rumble
+    const buf=ac.createBuffer(1,ac.sampleRate*1.5,ac.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<data.length;i++){
+      data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,0.4);
+    }
+    const src=ac.createBufferSource();
+    src.buffer=buf;
+    const filter=ac.createBiquadFilter();
+    filter.type='lowpass'; filter.frequency.value=180;
+    const g=ac.createGain();
+    g.gain.setValueAtTime(0,ac.currentTime);
+    g.gain.linearRampToValueAtTime(.6,ac.currentTime+.1);
+    g.gain.setValueAtTime(.6,ac.currentTime+.8);
+    g.gain.linearRampToValueAtTime(0,ac.currentTime+1.5);
+    src.connect(filter);filter.connect(g);g.connect(ac.destination);
+    src.start();src.stop(ac.currentTime+1.6);
 
-  // Emoji qui explose aussi
-  const el2=document.createElement('div');
-  el2.className='pop'; el2.textContent=b.animal;
-  el2.style.left=(cx+10)+'px'; el2.style.top=(cy-30)+'px';
-  document.body.appendChild(el2); setTimeout(()=>el2.remove(),600);
+    // Couche 2 — harmoniques du rugissement
+    [80,120,160,200].forEach((f,i)=>{
+      const o=ac.createOscillator(),gn=ac.createGain();
+      o.connect(gn);gn.connect(ac.destination);
+      o.type='sawtooth'; o.frequency.value=f;
+      gn.gain.setValueAtTime(0,ac.currentTime);
+      gn.gain.linearRampToValueAtTime(.12-i*.02,ac.currentTime+.15);
+      gn.gain.setValueAtTime(.12-i*.02,ac.currentTime+.7);
+      gn.gain.linearRampToValueAtTime(0,ac.currentTime+1.4);
+      o.start(ac.currentTime);o.stop(ac.currentTime+1.5);
+    });
 
-  playPop(.8+Math.random()*.5, true);
-  score++; updateProgress();
-  b.reset(false);
+    // Couche 3 — montée aiguë caractéristique
+    const o2=ac.createOscillator(),g2=ac.createGain();
+    o2.connect(g2);g2.connect(ac.destination);
+    o2.type='sine';
+    o2.frequency.setValueAtTime(300,ac.currentTime+.1);
+    o2.frequency.exponentialRampToValueAtTime(120,ac.currentTime+1.2);
+    g2.gain.setValueAtTime(0,ac.currentTime+.1);
+    g2.gain.linearRampToValueAtTime(.18,ac.currentTime+.25);
+    g2.gain.linearRampToValueAtTime(0,ac.currentTime+1.3);
+    o2.start(ac.currentTime+.1);o2.stop(ac.currentTime+1.4);
 
-  if(score >= MAX){ showVictory(); return; }
-
-  // Nouveau target tous les 3 bons
-  if(score % 3 === 0) pickTarget();
+  }catch(e){}
 }
 
-function popWrong(b, cx, cy){
-  // ❌ Mauvaise bulle — juste un effet visuel sans pénalité
-  const el=document.createElement('div');
-  el.className='pop-wrong'; el.textContent='❌';
-  el.style.left=(cx-14)+'px'; el.style.top=(cy-14)+'px';
-  document.body.appendChild(el); setTimeout(()=>el.remove(),500);
-
-  // Shake léger du header
-  document.querySelector('.header').classList.add('shake');
-  setTimeout(()=>document.querySelector('.header').classList.remove('shake'), 400);
-
-  playPop(1, false);
-  b.reset(false);
+function launchConfetti(){
+  const colors=['#FFD700','#FF6B00','#FF4444','#44BBFF','#44FF88','#FF88CC'];
+  const ws=document.getElementById('winScreen');
+  for(let i=0;i<80;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='confetti';
+      const s=5+Math.random()*10;
+      el.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${s}px;height:${s}px;animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*.4}s;`;
+      ws.appendChild(el);setTimeout(()=>el.remove(),5000);
+    },i*30);
+  }
 }
 
 function showVictory(){
@@ -510,31 +384,45 @@ function showVictory(){
   document.getElementById('bgMusic').pause();
   setTimeout(()=>{
     document.getElementById('winScreen').classList.add('show');
-    launchConfetti(); playVictory();
+    launchConfetti();
+    // 1. Fanfare de victoire immédiate
+    playVictoryFanfare();
+    // 2. Rugissement de Simba après 1.2s (quand il apparaît)
+    setTimeout(()=>{ playRoar(); }, 1200);
+    // 3. Second rugissement pour l'effet
+    setTimeout(()=>{ playRoar(); }, 2800);
   },300);
 }
 
-function launchConfetti(){
-  const colors=['#FFD700','#FF6B00','#FF4444','#44BBFF','#44FF88','#FF88CC'];
-  const ws=document.getElementById('winScreen');
-  for(let i=0;i<70;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div'); el.className='confetti';
-      const s=5+Math.random()*10;
-      el.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${s}px;height:${s}px;animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.3}s;`;
-      ws.appendChild(el); setTimeout(()=>el.remove(),4500);
-    },i*35);
-  }
+/* ====== ACTIONS ====== */
+function popGood(b,cx,cy){
+  const el=document.createElement('div');el.className='pop';el.textContent='✅';
+  el.style.left=(cx-18)+'px';el.style.top=(cy-18)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),600);
+  const el2=document.createElement('div');el2.className='pop';el2.textContent=b.animal;
+  el2.style.left=(cx+12)+'px';el2.style.top=(cy-30)+'px';
+  document.body.appendChild(el2);setTimeout(()=>el2.remove(),600);
+  playPop(.8+Math.random()*.5);
+  score++;updateProgress();
+  b.reset(false);
+  if(score>=MAX){showVictory();return;}
+  if(score%5===0) pickTarget();
 }
 
-/* ============================================================
-   ENTRÉES
-   ============================================================ */
+function popWrong(b,cx,cy){
+  const el=document.createElement('div');el.className='pop-wrong';el.textContent='❌';
+  el.style.left=(cx-14)+'px';el.style.top=(cy-14)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),500);
+  document.querySelector('.header').classList.add('shake');
+  setTimeout(()=>document.querySelector('.header').classList.remove('shake'),350);
+  playWrong();
+  b.reset(false);
+}
+
 function onInput(e){
   e.preventDefault();
   if(gameOver) return;
   if(!musicStarted) startMusic();
-
   const list=e.changedTouches?Array.from(e.changedTouches):[{clientX:e.clientX,clientY:e.clientY}];
   list.forEach(t=>{
     const rect=canvas.getBoundingClientRect();
@@ -545,10 +433,9 @@ function onInput(e){
       if(b.hit(px,py)){
         if(b.animal===targetAnimal) popGood(b,t.clientX,t.clientY);
         else popWrong(b,t.clientX,t.clientY);
-        hit=true; break;
+        hit=true;break;
       }
     }
-    // Tap dans le vide
     if(!hit){
       const el=document.createElement('div');el.className='pop';el.textContent='💧';
       el.style.cssText=`left:${t.clientX-14}px;top:${t.clientY-14}px;font-size:20px;`;
@@ -561,51 +448,38 @@ canvas.addEventListener('touchstart',onInput,{passive:false});
 canvas.addEventListener('mousedown',onInput);
 
 document.getElementById('btnRejouer').addEventListener('click',()=>{
-  score=0; gameOver=false; updateProgress();
+  score=0;gameOver=false;updateProgress();
   document.getElementById('winScreen').classList.remove('show');
   document.querySelectorAll('.confetti').forEach(e=>e.remove());
-  pickTarget();
-  initBubbles();
-  startMusic();
+  pickTarget();initBubbles();startMusic();
 });
 
-/* ============================================================
-   MUSIQUE
-   ============================================================ */
-let musicOn=true, musicStarted=false;
+/* ====== MUSIQUE ====== */
+let musicOn=true,musicStarted=false;
 const music=document.getElementById('bgMusic');
-
 function startMusic(){
-  if(musicStarted&&!music.paused) return;
-  music.volume=0.6; music.play().catch(()=>{});
+  if(musicStarted&&!music.paused)return;
+  music.volume=0.55;music.play().catch(()=>{});
   musicStarted=true;
 }
-
 document.getElementById('mBtn').addEventListener('click',()=>{
   musicOn=!musicOn;
   document.getElementById('mBtn').textContent=musicOn?'🎵':'🔇';
-  if(musicOn) startMusic(); else music.pause();
+  if(musicOn)startMusic();else music.pause();
 });
-
 document.addEventListener('touchstart',function f(){startMusic();document.removeEventListener('touchstart',f);},{once:true,passive:true});
 document.addEventListener('mousedown', function f(){startMusic();document.removeEventListener('mousedown',f);},{once:true});
 
-/* Particules fond */
+/* Particules */
 const bg=document.querySelector('.bg');
 for(let i=0;i<18;i++){
-  const p=document.createElement('div'); p.className='particle';
+  const p=document.createElement('div');p.className='particle';
   const s=2+Math.random()*7;
   p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${-Math.random()*12}s;`;
   bg.appendChild(p);
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-pickTarget();
-initBubbles();
-updateProgress();
-loop();
+pickTarget();initBubbles();updateProgress();loop();
 </script>
 
 </body>
