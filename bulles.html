@@ -22,46 +22,109 @@ html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',curs
 .particle { position:absolute; border-radius:50%; background:rgba(255,255,255,.25); pointer-events:none; animation:rise linear infinite; }
 @keyframes rise { from{transform:translateY(110vh)scale(0);opacity:0;} 10%{opacity:.5;} 90%{opacity:.15;} to{transform:translateY(-80px)scale(1);opacity:0;} }
 
-/* HEADER */
-.header { position:fixed; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:12px 16px; z-index:50; }
-.btn-r { background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35); border-radius:50%; width:50px; height:50px; font-size:22px; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:transform .15s; backdrop-filter:blur(8px); }
-.btn-r:active { transform:scale(.88); }
-.progress-wrap { flex:1; margin:0 12px; }
-.progress-label { font-family:‘Nunito’,sans-serif; font-size:11px; color:rgba(255,255,255,.75); text-align:center; margin-bottom:4px; }
-.progress-bar { height:14px; background:rgba(255,255,255,.2); border-radius:10px; overflow:hidden; border:2px solid rgba(255,255,255,.3); }
-.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#FFD700,#FF8C00); border-radius:8px; transition:width .4s cubic-bezier(.34,1.56,.64,1); }
-.progress-stars { display:flex; justify-content:space-around; margin-top:3px; font-size:14px; }
+/* ===== HEADER ===== */
+.header {
+position:fixed; top:0; left:0; right:0;
+z-index:50;
+padding:10px 14px 8px;
+display:flex; flex-direction:column; gap:8px;
+}
 
-/* CANVAS JEU */
+.header-row1 {
+display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+
+.btn-r {
+flex-shrink:0;
+background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.35);
+border-radius:50%; width:48px; height:48px; font-size:20px;
+color:white; cursor:pointer;
+display:flex; align-items:center; justify-content:center;
+text-decoration:none; transition:transform .15s;
+backdrop-filter:blur(8px);
+}
+.btn-r:active { transform:scale(.88); }
+
+/* Cible — animal à trouver */
+.target-box {
+flex:1;
+background:rgba(255,255,255,.15);
+border:2px solid rgba(255,255,255,.4);
+border-radius:20px;
+padding:6px 12px;
+display:flex; align-items:center; justify-content:center; gap:8px;
+backdrop-filter:blur(8px);
+}
+.target-label {
+font-family:‘Nunito’,sans-serif; font-size:12px;
+color:rgba(255,255,255,.8); white-space:nowrap;
+}
+.target-animal {
+font-size:36px;
+animation:targetPulse 1.5s ease-in-out infinite;
+filter:drop-shadow(0 0 8px rgba(255,255,100,.9));
+}
+@keyframes targetPulse {
+0%,100%{transform:scale(1);}
+50%{transform:scale(1.2);}
+}
+
+/* Progression */
+.progress-wrap { }
+.progress-bar {
+height:12px; background:rgba(255,255,255,.2);
+border-radius:10px; overflow:hidden;
+border:2px solid rgba(255,255,255,.3);
+}
+.progress-fill {
+height:100%; width:0%;
+background:linear-gradient(90deg,#FFD700,#FF8C00);
+border-radius:8px;
+transition:width .35s cubic-bezier(.34,1.56,.64,1);
+}
+.progress-stars {
+display:flex; justify-content:space-around;
+margin-top:3px; font-size:13px;
+}
+
+/* CANVAS */
 #c { position:fixed; inset:0; width:100%; height:100%; }
 
-/* TITRE */
-.title-area { position:fixed; top:86px; left:0; right:0; text-align:center; pointer-events:none; z-index:10; }
-.title-area h1 { font-size:clamp(20px,5.5vw,30px); color:#fff; font-weight:800; text-shadow:0 3px 0 rgba(0,60,140,.7); }
-.title-area p  { font-family:‘Nunito’,sans-serif; font-size:clamp(11px,3vw,14px); color:rgba(255,255,255,.7); margin-top:2px; }
+/* POP correct */
+.pop { position:fixed; pointer-events:none; z-index:90; font-size:38px; animation:popOk .5s ease-out forwards; }
+@keyframes popOk { 0%{transform:scale(0);opacity:1;} 55%{transform:scale(1.6) rotate(10deg);opacity:1;} 100%{transform:scale(0);opacity:0;} }
 
-/* POP */
-.pop { position:fixed; pointer-events:none; z-index:90; font-size:36px; animation:popOut .55s ease-out forwards; }
-@keyframes popOut { 0%{transform:scale(0);opacity:1;} 55%{transform:scale(1.5);opacity:1;} 100%{transform:scale(0);opacity:0;} }
+/* POP mauvais */
+.pop-wrong { position:fixed; pointer-events:none; z-index:90; font-size:28px; animation:popWrong .5s ease-out forwards; }
+@keyframes popWrong { 0%{transform:scale(1);opacity:1;} 100%{transform:scale(0) translateY(-20px);opacity:0;} }
+
+/* Shake écran */
+@keyframes shake {
+0%,100%{transform:translateX(0);}
+20%{transform:translateX(-8px);}
+40%{transform:translateX(8px);}
+60%{transform:translateX(-6px);}
+80%{transform:translateX(6px);}
+}
+.shake { animation:shake .35s ease-out; }
 
 /* ===== ÉCRAN VICTOIRE ===== */
 .win-screen {
 position:fixed; inset:0; z-index:200;
 background:linear-gradient(160deg,#ff8c00 0%,#ffd700 45%,#ffe47a 70%,#fff5cc 100%);
 display:flex; flex-direction:column; align-items:center; justify-content:center;
-gap:8px;
+gap:6px;
 opacity:0; pointer-events:none;
 transition:opacity .5s;
 overflow:hidden;
 }
 .win-screen.show { opacity:1; pointer-events:all; }
 
-/* Halo soleil */
 .win-screen::before {
 content:’’;
 position:absolute; top:-60px; left:50%; transform:translateX(-50%);
 width:320px; height:320px;
-background:radial-gradient(circle,rgba(255,255,255,.45) 0%,transparent 65%);
+background:radial-gradient(circle,rgba(255,255,255,.4) 0%,transparent 65%);
 border-radius:50%;
 animation:halo 3s ease-in-out infinite;
 pointer-events:none;
@@ -77,7 +140,7 @@ position:relative; z-index:2; text-align:center;
 @keyframes titlePop { from{transform:scale(0) rotate(-5deg);} to{transform:scale(1) rotate(0);} }
 
 .win-stars {
-font-size:clamp(26px,7vw,40px);
+font-size:clamp(28px,7vw,42px);
 animation:starsIn .5s .25s cubic-bezier(.34,1.56,.64,1) both;
 position:relative; z-index:2;
 }
@@ -91,7 +154,7 @@ position:relative; z-index:2; text-align:center; padding:0 20px;
 }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
 
-/* SIMBA PHOTO */
+/* SIMBA PHOTO — GRANDE */
 .simba-wrap {
 position:relative; z-index:2;
 animation:simbaIn .7s .3s cubic-bezier(.34,1.56,.64,1) both;
@@ -99,39 +162,30 @@ animation:simbaIn .7s .3s cubic-bezier(.34,1.56,.64,1) both;
 @keyframes simbaIn { from{transform:scale(0) rotate(-15deg);} to{transform:scale(1) rotate(0);} }
 
 .simba-img {
-width:min(240px, 62vw);
-height:min(240px, 62vw);
+width:min(320px, 80vw);
+height:min(320px, 80vw);
 object-fit:contain;
-filter:drop-shadow(0 12px 32px rgba(0,0,0,.25));
+filter:drop-shadow(0 16px 40px rgba(0,0,0,.3));
 animation:simbaFloat 2.5s ease-in-out infinite;
 }
 @keyframes simbaFloat {
-0%,100% { transform:translateY(0) rotate(-2deg); }
-50%      { transform:translateY(-14px) rotate(2deg); }
+0%,100%{transform:translateY(0) rotate(-2deg);}
+50%{transform:translateY(-16px) rotate(2deg);}
 }
 
-/* Étoiles orbitales */
-.orbit { position:absolute; inset:-20px; pointer-events:none; }
-.orbit-star {
-position:absolute; font-size:22px;
-animation:orbit 3s linear infinite;
-}
-.orbit-star:nth-child(1){top:0;left:50%;animation-delay:0s;}
-.orbit-star:nth-child(2){top:30%;right:-5%;animation-delay:.6s;}
-.orbit-star:nth-child(3){bottom:5%;right:10%;animation-delay:1.2s;}
-.orbit-star:nth-child(4){bottom:5%;left:10%;animation-delay:1.8s;}
-.orbit-star:nth-child(5){top:30%;left:-5%;animation-delay:2.4s;}
-@keyframes orbit {
-0%,100%{transform:scale(1);opacity:1;}
-50%{transform:scale(1.5);opacity:.5;}
-}
+.orbit { position:absolute; inset:-24px; pointer-events:none; }
+.orbit-star { position:absolute; font-size:24px; animation:orbitPulse 2.5s ease-in-out infinite; }
+.orbit-star:nth-child(1){top:-5px;left:50%;animation-delay:0s;}
+.orbit-star:nth-child(2){top:28%;right:-8px;animation-delay:.5s;}
+.orbit-star:nth-child(3){bottom:0;right:12%;animation-delay:1s;}
+.orbit-star:nth-child(4){bottom:0;left:12%;animation-delay:1.5s;}
+.orbit-star:nth-child(5){top:28%;left:-8px;animation-delay:2s;}
+@keyframes orbitPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.5);opacity:.5;} }
 
-/* Savane */
 .savane {
 position:absolute; bottom:0; left:0; right:0; height:70px;
 background:linear-gradient(180deg,#7dc43a,#3d7a10);
-border-radius:55% 55% 0 0/24px 24px 0 0;
-z-index:1;
+border-radius:55% 55% 0 0/24px 24px 0 0; z-index:1;
 }
 .savane::before {
 content:‘🌾 🌿 🌾 🌿 🌾 🌿 🌾’;
@@ -139,14 +193,13 @@ position:absolute; top:-14px; left:0; right:0;
 font-size:18px; text-align:center; letter-spacing:6px;
 }
 
-/* Boutons */
 .win-btns {
 display:flex; gap:14px;
 animation:fadeUp .5s .55s both;
 position:relative; z-index:3;
 }
 .win-btn {
-padding:14px 28px; border:none; border-radius:20px;
+padding:13px 26px; border:none; border-radius:20px;
 font-family:‘Baloo 2’,cursive; font-weight:800;
 font-size:clamp(14px,4vw,18px); cursor:pointer;
 box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
@@ -172,21 +225,31 @@ box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
   <source src="bulles.mp3" type="audio/mpeg">
 </audio>
 
+<!-- HEADER -->
+
 <div class="header">
-  <a class="btn-r" href="index.html">⬅️</a>
+  <div class="header-row1">
+    <a class="btn-r" href="index.html">⬅️</a>
+
+```
+<!-- Animal à trouver -->
+<div class="target-box">
+  <div class="target-label">Touche les</div>
+  <div class="target-animal" id="targetAnimal">🐬</div>
+  <div class="target-label">!</div>
+</div>
+
+<button class="btn-r" id="mBtn">🎵</button>
+```
+
+  </div>
+
   <div class="progress-wrap">
-    <div class="progress-label" id="progLabel">Éclate 20 bulles pour libérer Simba ! 🫧</div>
     <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
     <div class="progress-stars" id="progStars">
       <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
     </div>
   </div>
-  <button class="btn-r" id="mBtn">🎵</button>
-</div>
-
-<div class="title-area">
-  <h1>🫧 Les Bulles !</h1>
-  <p>Éclate 20 bulles pour libérer Simba !</p>
 </div>
 
 <canvas id="c"></canvas>
@@ -213,93 +276,177 @@ box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s;
     <button class="win-btn btn-rejouer" id="btnRejouer">🔄 Rejouer</button>
     <a class="win-btn btn-menu" href="index.html">🏠 Menu</a>
   </div>
-
   <div class="savane"></div>
 </div>
 
 <script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const ANIMALS_LIST = ['🐬','🦈','🐙','🦀','🐠','🐡','🦑','🦞','🐳','🦭','🐧','🦐','🪸','🐚','⭐'];
+const MAX = 10; // 10 bons animaux à trouver
+
+let targetAnimal = '🐬';
+let score = 0;
+let gameOver = false;
+
+/* ============================================================
+   CANVAS
+   ============================================================ */
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
-let W, H, bubbles=[], score=0, gameOver=false;
-const MAX = 20;
-
-const ANIMALS = ['🐟','🐠','🐡','🦈','🐙','🦑','🦀','🦞','🐬','🐳','🦭','🐧','🦐','⭐','🪸','🐚','🌊','🐋'];
+let W, H, bubbles = [];
 
 function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
 
+/* Choisir un nouvel animal cible au hasard */
+function pickTarget() {
+  const prev = targetAnimal;
+  do { targetAnimal = ANIMALS_LIST[Math.floor(Math.random()*ANIMALS_LIST.length)]; }
+  while (targetAnimal === prev);
+  document.getElementById('targetAnimal').textContent = targetAnimal;
+
+  // Mettre à jour les bulles existantes pour garantir au moins 3 bulles avec la cible
+  let count = 0;
+  bubbles.forEach(b => {
+    if (b.animal === targetAnimal) count++;
+  });
+  // Si pas assez, forcer 3 bulles avec la cible
+  let forced = 0;
+  bubbles.forEach(b => {
+    if (forced < 3 - count) {
+      b.animal = targetAnimal;
+      forced++;
+    }
+  });
+}
+
+/* ============================================================
+   BULLE
+   ============================================================ */
 class Bubble {
   constructor(init){ this.reset(init); }
   reset(init){
-    this.r  = 30+Math.random()*46;
-    this.x  = this.r+Math.random()*Math.max(1,W-this.r*2);
-    this.y  = init ? Math.random()*H : H+this.r*2;
-    this.vx = (Math.random()-.5)*1.1;
-    this.vy = -(0.65+Math.random()*1.2);
-    this.a  = ANIMALS[Math.floor(Math.random()*ANIMALS.length)];
-    this.hue= 170+Math.random()*55;
-    this.op = .6+Math.random()*.28;
-    this.wb = Math.random()*Math.PI*2;
-    this.ws = .018+Math.random()*.026;
+    this.r   = 32 + Math.random()*44;
+    this.x   = this.r + Math.random()*Math.max(1, W-this.r*2);
+    this.y   = init ? Math.random()*H : H+this.r*2;
+    this.vx  = (Math.random()-.5)*1.1;
+    this.vy  = -(0.65+Math.random()*1.2);
+    // Animal : 35% de chance que ce soit la cible
+    this.animal = Math.random() < 0.35 ? targetAnimal
+                : ANIMALS_LIST[Math.floor(Math.random()*ANIMALS_LIST.length)];
+    this.hue = 170+Math.random()*55;
+    this.op  = .6+Math.random()*.28;
+    this.wb  = Math.random()*Math.PI*2;
+    this.ws  = .018+Math.random()*.026;
+    // Surbrillance si c'est la cible
+    this.isTarget = this.animal === targetAnimal;
+  }
+  updateTarget(){
+    this.isTarget = this.animal === targetAnimal;
   }
   update(){
-    this.wb+=this.ws;
-    this.x+=this.vx+Math.sin(this.wb)*.32;
-    this.y+=this.vy;
-    if(this.y<-this.r*2) this.reset(false);
-    if(this.x<this.r||this.x>W-this.r) this.vx*=-1;
+    this.wb += this.ws;
+    this.x  += this.vx + Math.sin(this.wb)*.32;
+    this.y  += this.vy;
+    if(this.y < -this.r*2) this.reset(false);
+    if(this.x < this.r || this.x > W-this.r) this.vx *= -1;
+    this.isTarget = this.animal === targetAnimal;
   }
   draw(){
-    const x=this.x,y=this.y,r=this.r;
-    ctx.save(); ctx.globalAlpha=this.op;
-    const g=ctx.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
-    g.addColorStop(0,`hsla(${this.hue},75%,92%,.85)`);
-    g.addColorStop(.5,`hsla(${this.hue},65%,65%,.4)`);
-    g.addColorStop(1,`hsla(${this.hue},75%,50%,.65)`);
+    const x=this.x, y=this.y, r=this.r;
+    ctx.save();
+    ctx.globalAlpha = this.op;
+
+    // Halo brillant si c'est la cible
+    if(this.isTarget){
+      ctx.beginPath(); ctx.arc(x,y,r+6,0,Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,100,.18)';
+      ctx.fill();
+    }
+
+    const g = ctx.createRadialGradient(x-r*.28,y-r*.28,r*.08,x,y,r);
+    if(this.isTarget){
+      g.addColorStop(0,`hsla(55,100%,95%,.9)`);
+      g.addColorStop(.5,`hsla(55,80%,70%,.45)`);
+      g.addColorStop(1,`hsla(55,90%,55%,.7)`);
+    } else {
+      g.addColorStop(0,`hsla(${this.hue},75%,92%,.85)`);
+      g.addColorStop(.5,`hsla(${this.hue},65%,65%,.4)`);
+      g.addColorStop(1,`hsla(${this.hue},75%,50%,.65)`);
+    }
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+
+    // Reflet
     ctx.beginPath(); ctx.ellipse(x-r*.26,y-r*.3,r*.2,r*.1,-Math.PI/4,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,255,255,.58)'; ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fill();
+
+    // Bord — doré si cible
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-    ctx.strokeStyle=`hsla(${this.hue},65%,82%,.75)`; ctx.lineWidth=2; ctx.stroke();
-    ctx.globalAlpha=1;
-    ctx.font=`${r*.88}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(this.a,x,y+2);
+    ctx.strokeStyle = this.isTarget ? 'rgba(255,220,0,.9)' : `hsla(${this.hue},65%,82%,.75)`;
+    ctx.lineWidth = this.isTarget ? 3 : 2;
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+    ctx.font = `${r*.9}px serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(this.animal, x, y+2);
     ctx.restore();
   }
-  hit(px,py){ return Math.hypot(px-this.x,py-this.y)<this.r; }
+  hit(px,py){ return Math.hypot(px-this.x, py-this.y) < this.r; }
 }
 
 function initBubbles(){
-  const n=Math.min(10,Math.floor(W*H/36000)+4);
-  bubbles=Array.from({length:n},()=>new Bubble(true));
+  const n = Math.min(11, Math.floor(W*H/34000)+5);
+  bubbles = Array.from({length:n}, ()=>new Bubble(true));
+  // Garantir au moins 3 bulles cibles au départ
+  let c=0;
+  bubbles.forEach(b=>{ if(b.animal===targetAnimal) c++; });
+  bubbles.slice(0, Math.max(0, 3-c)).forEach(b=>{ b.animal=targetAnimal; b.isTarget=true; });
 }
 
 function loop(){
   ctx.clearRect(0,0,W,H);
-  if(!gameOver) bubbles.forEach(b=>{b.update();b.draw();});
+  if(!gameOver) bubbles.forEach(b=>{ b.update(); b.draw(); });
   requestAnimationFrame(loop);
 }
 
+/* ============================================================
+   PROGRESSION
+   ============================================================ */
 function updateProgress(){
   const pct=(score/MAX)*100;
   document.getElementById('progFill').style.width=pct+'%';
-  document.getElementById('progLabel').textContent=
-    score<MAX ? `${score} / ${MAX} bulles pour libérer Simba ! 🫧` : '🦁 Simba est libre !';
   const stars=document.getElementById('progStars').children;
-  const filled=Math.floor(score/4);
+  const filled=Math.floor(score/(MAX/5));
   for(let i=0;i<5;i++) stars[i].textContent=i<filled?'⭐':'☆';
 }
 
-function playPop(pitch){
+/* ============================================================
+   SONS
+   ============================================================ */
+function playPop(pitch, good){
   try {
     const ac=new(window.AudioContext||window.webkitAudioContext)();
-    const o=ac.createOscillator(),g=ac.createGain();
-    o.connect(g);g.connect(ac.destination); o.type='sine';
-    o.frequency.setValueAtTime(700*pitch,ac.currentTime);
-    o.frequency.exponentialRampToValueAtTime(150*pitch,ac.currentTime+.18);
-    g.gain.setValueAtTime(.28,ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.22);
-    o.start(); o.stop(ac.currentTime+.25);
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    if(good){
+      o.type='sine';
+      o.frequency.setValueAtTime(700*pitch, ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(150*pitch, ac.currentTime+.18);
+      g.gain.setValueAtTime(.28, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+.22);
+      o.start(); o.stop(ac.currentTime+.25);
+    } else {
+      // Son "raté" grave
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(200, ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(80, ac.currentTime+.2);
+      g.gain.setValueAtTime(.15, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+.25);
+      o.start(); o.stop(ac.currentTime+.28);
+    }
   }catch(e){}
 }
 
@@ -317,6 +464,56 @@ function playVictory(){
   }catch(e){}
 }
 
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function popGood(b, cx, cy){
+  // ✅ Bonne bulle
+  const el=document.createElement('div');
+  el.className='pop'; el.textContent='✅';
+  el.style.left=(cx-18)+'px'; el.style.top=(cy-18)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),600);
+
+  // Emoji qui explose aussi
+  const el2=document.createElement('div');
+  el2.className='pop'; el2.textContent=b.animal;
+  el2.style.left=(cx+10)+'px'; el2.style.top=(cy-30)+'px';
+  document.body.appendChild(el2); setTimeout(()=>el2.remove(),600);
+
+  playPop(.8+Math.random()*.5, true);
+  score++; updateProgress();
+  b.reset(false);
+
+  if(score >= MAX){ showVictory(); return; }
+
+  // Nouveau target tous les 3 bons
+  if(score % 3 === 0) pickTarget();
+}
+
+function popWrong(b, cx, cy){
+  // ❌ Mauvaise bulle — juste un effet visuel sans pénalité
+  const el=document.createElement('div');
+  el.className='pop-wrong'; el.textContent='❌';
+  el.style.left=(cx-14)+'px'; el.style.top=(cy-14)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),500);
+
+  // Shake léger du header
+  document.querySelector('.header').classList.add('shake');
+  setTimeout(()=>document.querySelector('.header').classList.remove('shake'), 400);
+
+  playPop(1, false);
+  b.reset(false);
+}
+
+function showVictory(){
+  gameOver=true;
+  document.getElementById('bgMusic').pause();
+  setTimeout(()=>{
+    document.getElementById('winScreen').classList.add('show');
+    launchConfetti(); playVictory();
+  },300);
+}
+
 function launchConfetti(){
   const colors=['#FFD700','#FF6B00','#FF4444','#44BBFF','#44FF88','#FF88CC'];
   const ws=document.getElementById('winScreen');
@@ -330,31 +527,14 @@ function launchConfetti(){
   }
 }
 
-function showVictory(){
-  gameOver=true;
-  document.getElementById('bgMusic').pause();
-  updateProgress();
-  setTimeout(()=>{
-    document.getElementById('winScreen').classList.add('show');
-    launchConfetti();
-    playVictory();
-  },300);
-}
-
-function popBubble(b,cx,cy){
-  const el=document.createElement('div'); el.className='pop'; el.textContent=b.a;
-  el.style.left=(cx-18)+'px'; el.style.top=(cy-18)+'px';
-  document.body.appendChild(el); setTimeout(()=>el.remove(),650);
-  playPop(.75+Math.random()*.6);
-  score++; updateProgress();
-  if(score>=MAX){ showVictory(); return; }
-  b.reset(false);
-}
-
+/* ============================================================
+   ENTRÉES
+   ============================================================ */
 function onInput(e){
   e.preventDefault();
   if(gameOver) return;
   if(!musicStarted) startMusic();
+
   const list=e.changedTouches?Array.from(e.changedTouches):[{clientX:e.clientX,clientY:e.clientY}];
   list.forEach(t=>{
     const rect=canvas.getBoundingClientRect();
@@ -362,8 +542,13 @@ function onInput(e){
     const py=(t.clientY-rect.top)*(H/rect.height);
     let hit=false;
     for(const b of bubbles){
-      if(b.hit(px,py)){popBubble(b,t.clientX,t.clientY);hit=true;break;}
+      if(b.hit(px,py)){
+        if(b.animal===targetAnimal) popGood(b,t.clientX,t.clientY);
+        else popWrong(b,t.clientX,t.clientY);
+        hit=true; break;
+      }
     }
+    // Tap dans le vide
     if(!hit){
       const el=document.createElement('div');el.className='pop';el.textContent='💧';
       el.style.cssText=`left:${t.clientX-14}px;top:${t.clientY-14}px;font-size:20px;`;
@@ -379,35 +564,48 @@ document.getElementById('btnRejouer').addEventListener('click',()=>{
   score=0; gameOver=false; updateProgress();
   document.getElementById('winScreen').classList.remove('show');
   document.querySelectorAll('.confetti').forEach(e=>e.remove());
-  initBubbles(); startMusic();
+  pickTarget();
+  initBubbles();
+  startMusic();
 });
 
-/* MUSIQUE */
+/* ============================================================
+   MUSIQUE
+   ============================================================ */
 let musicOn=true, musicStarted=false;
 const music=document.getElementById('bgMusic');
+
 function startMusic(){
   if(musicStarted&&!music.paused) return;
   music.volume=0.6; music.play().catch(()=>{});
   musicStarted=true;
 }
+
 document.getElementById('mBtn').addEventListener('click',()=>{
   musicOn=!musicOn;
   document.getElementById('mBtn').textContent=musicOn?'🎵':'🔇';
   if(musicOn) startMusic(); else music.pause();
 });
-document.addEventListener('touchstart',function f(){startMusic();document.removeEventListener('touchstart',f);},{once:true,passive:true});
-document.addEventListener('mousedown', function f(){startMusic();document.removeEventListener('mousedown',f); },{once:true});
 
-/* Particules */
+document.addEventListener('touchstart',function f(){startMusic();document.removeEventListener('touchstart',f);},{once:true,passive:true});
+document.addEventListener('mousedown', function f(){startMusic();document.removeEventListener('mousedown',f);},{once:true});
+
+/* Particules fond */
 const bg=document.querySelector('.bg');
 for(let i=0;i<18;i++){
-  const p=document.createElement('div');p.className='particle';
+  const p=document.createElement('div'); p.className='particle';
   const s=2+Math.random()*7;
   p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${-Math.random()*12}s;`;
   bg.appendChild(p);
 }
 
-updateProgress(); initBubbles(); loop();
+/* ============================================================
+   INIT
+   ============================================================ */
+pickTarget();
+initBubbles();
+updateProgress();
+loop();
 </script>
 
 </body>
