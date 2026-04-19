@@ -169,7 +169,7 @@ const TARGETS = [
 ];
 const OBSTACLES_EMO = ['🪨','🌵','🌿','🌾'];
 const MAX_SCORE = 10;
-const WORLD = 55; // monde plus grand
+const WORLD = 55;
 
 /* ============================================================
    RENDERER
@@ -200,7 +200,7 @@ resize();
 window.addEventListener('resize',resize);
 
 /* ============================================================
-   LUMIÈRES — coucher de soleil Lion King
+   LUMIERES — coucher de soleil Lion King
    ============================================================ */
 scene.add(new THREE.AmbientLight(0xffcc80, 0.85));
 
@@ -217,16 +217,14 @@ sun.shadow.camera.bottom = -WORLD;
 sun.shadow.bias = -0.0005;
 scene.add(sun);
 
-// Lumière de remplissage chaude
 const fillL = new THREE.DirectionalLight(0xffcc60, 0.6);
 fillL.position.set(-20, 10, -10);
 scene.add(fillL);
 
-// Hémisphère ciel/sol
 scene.add(new THREE.HemisphereLight(0xff8840, 0x6b4500, 0.5));
 
 /* ============================================================
-   DÉGRADÉ CIEL — plan 3D
+   DEGRADE CIEL
    ============================================================ */
 function makeSkyGrad(){
   const cv=document.createElement('canvas');
@@ -251,14 +249,13 @@ skyMesh.position.set(0,80,-180);
 scene.add(skyMesh);
 
 /* ============================================================
-   SOL SAVANE — texture riche
+   SOL SAVANE
    ============================================================ */
 function makeSavannaTexture(){
   const S=1024;
   const cv=document.createElement('canvas'); cv.width=cv.height=S;
   const cx=cv.getContext('2d');
 
-  // Fond de base — dégradé terracotta
   const g=cx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.7);
   g.addColorStop(0,'#d4920a');
   g.addColorStop(0.4,'#c07808');
@@ -266,7 +263,6 @@ function makeSavannaTexture(){
   g.addColorStop(1,'#8a4a04');
   cx.fillStyle=g; cx.fillRect(0,0,S,S);
 
-  // Variations de couleur — taches
   for(let i=0;i<200;i++){
     const x=Math.random()*S, y=Math.random()*S;
     const r=4+Math.random()*22;
@@ -276,7 +272,6 @@ function makeSavannaTexture(){
     cx.fillStyle=gp; cx.beginPath(); cx.arc(x,y,r,0,Math.PI*2); cx.fill();
   }
 
-  // Craquelures sol sec
   cx.globalAlpha=0.22;
   for(let i=0;i<500;i++){
     cx.beginPath();
@@ -290,7 +285,6 @@ function makeSavannaTexture(){
     cx.stroke();
   }
 
-  // Touffes d'herbe sèche ponctuelles
   cx.globalAlpha=0.55;
   cx.font='12px serif';
   const blades=['|','/','\\','\'',',','.'];
@@ -300,7 +294,6 @@ function makeSavannaTexture(){
     cx.fillText(blades[Math.floor(Math.random()*blades.length)],x,y);
   }
 
-  // Pierres
   cx.globalAlpha=0.3;
   for(let i=0;i<30;i++){
     const x=Math.random()*S, y=Math.random()*S;
@@ -312,7 +305,6 @@ function makeSavannaTexture(){
   return new THREE.CanvasTexture(cv);
 }
 
-// Zone herbe verte (lisière jungle)
 function makeJungleTexture(){
   const S=512;
   const cv=document.createElement('canvas'); cv.width=cv.height=S;
@@ -333,13 +325,11 @@ function makeJungleTexture(){
   return new THREE.CanvasTexture(cv);
 }
 
-// Plan sol principal — grande savane
 const groundTex = makeSavannaTexture();
 groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping;
 groundTex.repeat.set(8,8);
 
 const groundGeo = new THREE.PlaneGeometry(WORLD*2, WORLD*2, 80, 80);
-// Ondulation terrain
 const pos=groundGeo.attributes.position.array;
 for(let i=0;i<pos.length;i+=3){
   const px=pos[i], pz=pos[i+1];
@@ -351,7 +341,6 @@ const ground = new THREE.Mesh(groundGeo, new THREE.MeshLambertMaterial({map:grou
 ground.rotation.x=-Math.PI/2; ground.receiveShadow=true;
 scene.add(ground);
 
-// Bord jungle (côté nord-ouest) — plan vert
 const jungleFloor = new THREE.Mesh(
   new THREE.PlaneGeometry(40,30),
   new THREE.MeshLambertMaterial({map:makeJungleTexture()})
@@ -362,17 +351,15 @@ jungleFloor.receiveShadow=true;
 scene.add(jungleFloor);
 
 /* ============================================================
-   POINT D'EAU — grand lac animé
+   POINT D'EAU
    ============================================================ */
 function makeWaterTexture(){
   const S=512;
   const cv=document.createElement('canvas'); cv.width=cv.height=S;
   const cx=cv.getContext('2d');
-  // Base bleue profonde
   const g=cx.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2);
   g.addColorStop(0,'#60c8f0'); g.addColorStop(0.5,'#3090c8'); g.addColorStop(1,'#1a5888');
   cx.fillStyle=g; cx.fillRect(0,0,S,S);
-  // Reflets
   cx.globalAlpha=0.35;
   for(let i=0;i<60;i++){
     const x=Math.random()*S, y=Math.random()*S;
@@ -384,7 +371,6 @@ function makeWaterTexture(){
   return new THREE.CanvasTexture(cv);
 }
 
-// Géométrie eau avec vagues (ondulation dans gameloop)
 const waterGeo = new THREE.CircleGeometry(14, 64);
 const waterMat = new THREE.MeshLambertMaterial({
   map: makeWaterTexture(),
@@ -397,7 +383,6 @@ waterMesh.position.set(22, 0.04, 18);
 waterMesh.receiveShadow=true;
 scene.add(waterMesh);
 
-// Rive du point d'eau — bord sableux
 const beachGeo=new THREE.RingGeometry(13.5,17,64);
 function makeBeachTex(){
   const S=256; const cv=document.createElement('canvas'); cv.width=cv.height=S;
@@ -417,7 +402,6 @@ beach.position.set(22,0.03,18);
 beach.receiveShadow=true;
 scene.add(beach);
 
-// Reflets eau animés (sprites)
 const waterSprites=[];
 for(let i=0;i<8;i++){
   const cv2=document.createElement('canvas'); cv2.width=64; cv2.height=16;
@@ -435,28 +419,24 @@ for(let i=0;i<8;i++){
 }
 
 /* ============================================================
-   CASCADE — coin nord-est
+   CASCADE
    ============================================================ */
-// Falaise rocheuse
 function makeCliff(){
   const g=new THREE.Group();
   const mat=new THREE.MeshLambertMaterial({color:0x7a6050});
   const matDark=new THREE.MeshLambertMaterial({color:0x5a4030});
 
-  // Corps principal falaise
   const base=new THREE.Mesh(new THREE.BoxGeometry(12,14,8),mat);
   base.position.set(0,7,0); base.castShadow=true; g.add(base);
-  // Saille gauche
   const l=new THREE.Mesh(new THREE.BoxGeometry(5,10,7),matDark);
   l.position.set(-7,5,0.5); l.castShadow=true; g.add(l);
-  // Épaule droite
   const r=new THREE.Mesh(new THREE.BoxGeometry(4,8,6),mat);
   r.position.set(7,4,0); r.castShadow=true; g.add(r);
-  // Rebord supérieur
   const top=new THREE.Mesh(new THREE.BoxGeometry(13,2.5,9),new THREE.MeshLambertMaterial({color:0x6a8a20}));
   top.position.set(0,14.2,0); top.castShadow=true; g.add(top);
-  // Détails rochers
-  [[3,12,2,2],[−4,9,3,1.5],[−6,13,2,1.2],[5,11,3,1.8]].forEach(([x,y,z,r])=>{
+
+  // CORRIGE : tirets ASCII normaux
+  [[3,12,2,2],[-4,9,3,1.5],[-6,13,2,1.2],[5,11,3,1.8]].forEach(([x,y,z,r])=>{
     const ro=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),mat);
     ro.position.set(x,y,z); ro.rotation.set(Math.random(),Math.random(),Math.random());
     ro.castShadow=true; g.add(ro);
@@ -468,7 +448,6 @@ function makeCliff(){
 }
 makeCliff();
 
-// Eau cascade — ruban blanc animé
 const cascadeParticles=[];
 function makeCascadeParticle(idx){
   const cv=document.createElement('canvas'); cv.width=24; cv.height=64;
@@ -490,7 +469,6 @@ function makeCascadeParticle(idx){
 }
 for(let i=0;i<8;i++) cascadeParticles.push(makeCascadeParticle(i));
 
-// Brume/éclaboussures bas de cascade
 const mistParticles=[];
 for(let i=0;i<20;i++){
   const cv2=document.createElement('canvas'); cv2.width=cv2.height=48;
@@ -509,14 +487,12 @@ for(let i=0;i<20;i++){
   mistParticles.push(sp2);
 }
 
-// Bassin au pied cascade
 const poolGeo=new THREE.CircleGeometry(5,32);
 const poolMat=new THREE.MeshLambertMaterial({color:0x3090c0,transparent:true,opacity:.75});
 const pool=new THREE.Mesh(poolGeo,poolMat);
 pool.rotation.x=-Math.PI/2; pool.position.set(-30,0.06,-36);
 scene.add(pool);
 
-// Rivière qui relie piscine au lac
 const riverShape=new THREE.Shape();
 riverShape.moveTo(0,0); riverShape.lineTo(2,0); riverShape.lineTo(3,20); riverShape.lineTo(0,20); riverShape.lineTo(-1,0);
 const riverGeo=new THREE.ShapeGeometry(riverShape);
@@ -526,11 +502,10 @@ river.rotation.x=-Math.PI/2; river.position.set(-29,0.05,-36);
 scene.add(river);
 
 /* ============================================================
-   JUNGLE — zone dense nord-ouest
+   JUNGLE
    ============================================================ */
 function makePalmTree(x,z,scale=1){
   const g=new THREE.Group();
-  // Tronc courbé (segments)
   const trunkMat=new THREE.MeshLambertMaterial({color:0x7a5a20});
   const segments=6;
   for(let i=0;i<segments;i++){
@@ -541,7 +516,6 @@ function makePalmTree(x,z,scale=1){
     seg.castShadow=true;
     g.add(seg);
   }
-  // Feuilles palmier
   const leafMat=new THREE.MeshLambertMaterial({color:0x2a7a10, side:THREE.DoubleSide});
   const leafDarkMat=new THREE.MeshLambertMaterial({color:0x1a5808, side:THREE.DoubleSide});
   const topY=segments*1.1;
@@ -557,7 +531,6 @@ function makePalmTree(x,z,scale=1){
     leaf.castShadow=true;
     g.add(leaf);
   }
-  // Noix de coco
   for(let ci=0;ci<3;ci++){
     const coco=new THREE.Mesh(new THREE.SphereGeometry(.28,7,6),new THREE.MeshLambertMaterial({color:0x5a3a10}));
     const ca=(ci/3)*Math.PI*2;
@@ -578,7 +551,7 @@ function makeJungleBush(x,z){
       new THREE.SphereGeometry(1+Math.random()*.8,8,6),
       new THREE.MeshLambertMaterial({color:colors[Math.floor(Math.random()*colors.length)]})
     );
-    b.position.set((Math.random()-.5)*2,(Math.random()*.5),( Math.random()-.5)*2);
+    b.position.set((Math.random()-.5)*2,(Math.random()*.5),(Math.random()-.5)*2);
     b.scale.y=0.7+Math.random()*.4;
     b.castShadow=true;
     g.add(b);
@@ -589,7 +562,6 @@ function makeJungleBush(x,z){
   return g;
 }
 
-// Fougères (plans texturés)
 function makeFern(x,z){
   const cv=document.createElement('canvas'); cv.width=cv.height=128;
   const cx=cv.getContext('2d');
@@ -601,7 +573,6 @@ function makeFern(x,z){
     cx.beginPath(); cx.moveTo(64,80);
     cx.quadraticCurveTo(64+Math.cos(angle)*20,80+Math.sin(angle)*20, 64+Math.cos(angle)*45,80+Math.sin(angle)*50-30);
     cx.strokeStyle=fi%2===0?'#3a8810':'#4aaa18'; cx.stroke();
-    // Petites feuilles
     for(let li=1;li<=4;li++){
       const t2=li/5;
       const lx=64+Math.cos(angle)*45*t2, ly=80+Math.sin(angle)*50*t2-30*t2;
@@ -616,20 +587,16 @@ function makeFern(x,z){
   return sp;
 }
 
-// Acacia savane (style dessin animé)
 function makeAcacia(x,z,scale=1){
   const g=new THREE.Group();
   const trunkMat=new THREE.MeshLambertMaterial({color:0x7a5018});
-  // Tronc
   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.1,.18,2.5+Math.random(),7),trunkMat);
   trunk.position.y=1.25; trunk.castShadow=true; g.add(trunk);
-  // Branches horizontales
   const brMat=new THREE.MeshLambertMaterial({color:0x6a4010});
   [-1.5,-0.5,0.5,1.5].forEach(bx=>{
     const br=new THREE.Mesh(new THREE.CylinderGeometry(.04,.07,2+Math.random(),5),brMat);
     br.rotation.z=Math.PI/2; br.position.set(bx*.6,2.6+Math.random()*.5,0); br.castShadow=true; g.add(br);
   });
-  // Feuillage aplati caractéristique
   const leafColors=[0x4a8e0e,0x5aaa14,0x3a780a,0x6ab018];
   const lMat=new THREE.MeshLambertMaterial({color:leafColors[Math.floor(Math.random()*leafColors.length)]});
   const foliage=new THREE.Mesh(new THREE.SphereGeometry(2.8+Math.random()*.6,10,6),lMat);
@@ -637,13 +604,11 @@ function makeAcacia(x,z,scale=1){
   foliage.position.y=3.2+Math.random()*.4;
   foliage.castShadow=true; foliage.receiveShadow=true;
   g.add(foliage);
-  // Ombre projetée
   g.position.set(x,0,z); g.scale.setScalar(scale*(0.7+Math.random()*.7));
   scene.add(g);
   return g;
 }
 
-// Rocher 3D stylisé
 function makeRock(x,z,scale=1){
   const mats=[
     new THREE.MeshLambertMaterial({color:0x8a7060}),
@@ -667,7 +632,7 @@ function makeRock(x,z,scale=1){
 }
 
 /* ============================================================
-   PRIDE ROCK — monument iconique
+   PRIDE ROCK
    ============================================================ */
 function makePrideRock(){
   const g=new THREE.Group();
@@ -675,28 +640,24 @@ function makePrideRock(){
   const matD=new THREE.MeshLambertMaterial({color:0x906830});
   const matL=new THREE.MeshLambertMaterial({color:0xc0a060});
 
-  // Base massive
   const base=new THREE.Mesh(new THREE.CylinderGeometry(7,10,5,8,1,false),mat);
   base.position.y=2.5; base.castShadow=true; g.add(base);
-  // Corps
   const body=new THREE.Mesh(new THREE.CylinderGeometry(4,7,6,8),mat);
   body.position.y=8; body.castShadow=true; g.add(body);
-  // Tour principale
   const tower=new THREE.Mesh(new THREE.CylinderGeometry(2.5,4,5,7),matL);
   tower.position.y=13.5; tower.castShadow=true; g.add(tower);
-  // Pointe
   const tip=new THREE.Mesh(new THREE.ConeGeometry(2.5,4,7),matD);
   tip.position.y=18; tip.castShadow=true; g.add(tip);
-  // Terrasse (le rebord où Simba est présenté)
   const terrace=new THREE.Mesh(new THREE.BoxGeometry(6,1,4),matL);
   terrace.position.set(3,12,0); terrace.castShadow=true; g.add(terrace);
-  // Décors rochers éparpillés
-  [[4,1,3,1.5],[−5,0,4,2],[6,0,−2,1.2],[−3,0,−5,1.8],[8,0,2,1]].forEach(([x,y,z,r])=>{
+
+  // CORRIGE : tirets ASCII normaux
+  [[4,1,3,1.5],[-5,0,4,2],[6,0,-2,1.2],[-3,0,-5,1.8],[8,0,2,1]].forEach(([x,y,z,r])=>{
     const ro=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),matD);
     ro.position.set(x,y,z); ro.rotation.set(Math.random(),Math.random(),Math.random());
     ro.castShadow=true; g.add(ro);
   });
-  // Herbe sur le rebord
+
   const gMat=new THREE.MeshLambertMaterial({color:0x5aaa10});
   const grass=new THREE.Mesh(new THREE.SphereGeometry(2.5,8,5),gMat);
   grass.scale.y=.15; grass.position.set(0,4.8,0); g.add(grass);
@@ -708,15 +669,15 @@ function makePrideRock(){
 makePrideRock();
 
 /* ============================================================
-   NUAGES VOLUMÉTRIQUES
+   NUAGES
    ============================================================ */
 function makeCloud(x,y,z,big=false){
   const g=new THREE.Group();
   const mat=new THREE.MeshLambertMaterial({color:0xffe8c0, transparent:true, opacity:.88});
   const matW=new THREE.MeshLambertMaterial({color:0xfff8e8, transparent:true, opacity:.7});
   const spheres=big?
-    [[0,0,0,4],[3.5,1,0,2.8],[−3,0.5,0,2.5],[1,2,−1,2],[−1,1.5,1,1.8],[4.5,−.5,1,1.5],[−4.5,0,1,1.8]]:
-    [[0,0,0,2.5],[2.2,.8,0,1.8],[−2,.5,0,1.6],[.8,1.4,0,1.4]];
+    [[0,0,0,4],[3.5,1,0,2.8],[-3,0.5,0,2.5],[1,2,-1,2],[-1,1.5,1,1.8],[4.5,-.5,1,1.5],[-4.5,0,1,1.8]]:
+    [[0,0,0,2.5],[2.2,.8,0,1.8],[-2,.5,0,1.6],[.8,1.4,0,1.4]];
   spheres.forEach(([px,py,pz,r],i)=>{
     const m=new THREE.Mesh(new THREE.SphereGeometry(r,8,6),i<2?mat:matW);
     m.position.set(px,py,pz);
@@ -734,43 +695,38 @@ const clouds=[
 ];
 
 /* ============================================================
-   PEUPLER LA SAVANE — végétation
+   VEGETATION
    ============================================================ */
 const acacias=[], rocks=[];
 
-// Acacias parsemés dans la savane
 const acaciaPositions=[
-  [15,5],[−20,10],[8,−25],[−12,−15],[30,−8],[−35,20],[25,30],[−18,35],
-  [40,15],[−40,−5],[12,40],[35,−30],[−25,−35],[48,−20],[−48,25],
-  [5,−45],[−45,−30],[42,40],[−8,−48],[20,−42]
+  [15,5],[-20,10],[8,-25],[-12,-15],[30,-8],[-35,20],[25,30],[-18,35],
+  [40,15],[-40,-5],[12,40],[35,-30],[-25,-35],[48,-20],[-48,25],
+  [5,-45],[-45,-30],[42,40],[-8,-48],[20,-42]
 ];
 acaciaPositions.forEach(([x,z])=>acacias.push(makeAcacia(x,z)));
 
-// Rochers
-const rockPos=[[10,−10],[−8,15],[25,−18],[−22,8],[18,22],[−30,−12],[35,10],[−15,28],[40,−35],[−38,18]];
+const rockPos=[[10,-10],[-8,15],[25,-18],[-22,8],[18,22],[-30,-12],[35,10],[-15,28],[40,-35],[-38,18]];
 rockPos.forEach(([x,z])=>rocks.push(makeRock(x,z)));
 
-// Palmiers zone jungle (nord-ouest)
 const jungleArea=[
-  [−28,−30],[−32,−25],[−25,−38],[−38,−32],[−22,−42],[−42,−20],
-  [−30,−45],[−45,−35],[−18,−28],[−35,−18],[−28,−22],[−20,−35]
+  [-28,-30],[-32,-25],[-25,-38],[-38,-32],[-22,-42],[-42,-20],
+  [-30,-45],[-45,-35],[-18,-28],[-35,-18],[-28,-22],[-20,-35]
 ];
 jungleArea.forEach(([x,z])=>makePalmTree(x,z));
 
-// Buissons jungle
 for(let i=0;i<25;i++){
-  const x=−20−Math.random()*25, z=−20−Math.random()*25;
+  const x=-20-Math.random()*25, z=-20-Math.random()*25;
   makeJungleBush(x,z);
 }
 
-// Fougères jungle
 for(let i=0;i<30;i++){
-  const x=−18−Math.random()*28, z=−18−Math.random()*28;
+  const x=-18-Math.random()*28, z=-18-Math.random()*28;
   makeFern(x,z);
 }
 
 /* ============================================================
-   HERBE HAUTE — zone de transition
+   HERBE HAUTE
    ============================================================ */
 function makeGrassPatch(x,z){
   const g=new THREE.Group();
@@ -792,7 +748,7 @@ for(let i=0;i<120;i++){
 }
 
 /* ============================================================
-   SIMBA — SPRITE GIF
+   SIMBA SPRITE GIF
    ============================================================ */
 const simbaImg=new Image();
 simbaImg.src='simbagif.gif';
@@ -814,7 +770,6 @@ simbaSprite.scale.set(4,4,1);
 simbaSprite.position.set(0,2,0);
 scene.add(simbaSprite);
 
-// Ombre sol
 const shadowMesh=new THREE.Mesh(
   new THREE.CircleGeometry(1.1,16),
   new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.3,depthWrite:false})
@@ -824,7 +779,7 @@ shadowMesh.position.y=0.03;
 scene.add(shadowMesh);
 
 /* ============================================================
-   ÉTAT JEU
+   ETAT JEU
    ============================================================ */
 let simbaPos=new THREE.Vector3(0,0,0);
 let simbaTarget=new THREE.Vector3(0,0,0);
@@ -840,12 +795,11 @@ let items=[], obstacleSprites=[];
    SPAWN
    ============================================================ */
 function randPos(){
-  // Spawn partout sauf dans l'eau
   let x,z;
   do {
     x=(Math.random()*2-1)*(WORLD-4);
     z=(Math.random()*2-1)*(WORLD-4);
-  } while(Math.hypot(x-22,z-18)<16); // pas dans l'eau
+  } while(Math.hypot(x-22,z-18)<16);
   return new THREE.Vector3(x,0,z);
 }
 
@@ -898,7 +852,7 @@ function updateTargetHUD(){
 }
 
 /* ============================================================
-   ZONES — indicateur
+   ZONES
    ============================================================ */
 const ZONES=[
   {name:'🌅 Savane de la Fierté', check:(x,z)=>Math.hypot(x,z)<25},
@@ -926,7 +880,7 @@ function updateZone(){
 }
 
 /* ============================================================
-   CAMÉRA
+   CAMERA
    ============================================================ */
 const camOff=new THREE.Vector3(0,22,20);
 function updateCamera(){
@@ -951,7 +905,6 @@ function handleTap(cx,cy){
   pt.z=Math.max(-WORLD+1,Math.min(WORLD-1,pt.z));
   simbaTarget.set(pt.x,0,pt.z);
   simbaSpeed=6;
-  // Ripple
   const r=document.createElement('div');
   r.className='ripple'; r.style.left=cx+'px'; r.style.top=cy+'px';
   document.body.appendChild(r); setTimeout(()=>r.remove(),650);
@@ -1076,7 +1029,6 @@ function loop(){
   const now=performance.now();
 
   if(!gameOver){
-    // Mouvement Simba
     const dist=simbaPos.distanceTo(simbaTarget);
     if(dist>0.12){
       const dir=simbaTarget.clone().sub(simbaPos).normalize();
@@ -1084,29 +1036,22 @@ function loop(){
       faceRight=dir.x>=0;
     } else simbaSpeed=0;
 
-    // Bornes monde
     simbaPos.x=Math.max(-WORLD+1,Math.min(WORLD-1,simbaPos.x));
     simbaPos.z=Math.max(-WORLD+1,Math.min(WORLD-1,simbaPos.z));
 
-    // Hauteur sol (légère ondulation)
     const groundY=Math.sin(simbaPos.x*.15)*.25+Math.cos(simbaPos.z*.18)*.2;
     simbaSprite.position.set(simbaPos.x, groundY+2, simbaPos.z);
     simbaSprite.scale.set(faceRight?4:-4,4,1);
     shadowMesh.position.set(simbaPos.x,groundY+.03,simbaPos.z);
 
-    // GIF refresh
     if(now-lastGifUp>80){updateSimbaTex();if(simbaTex)simbaMat.map=simbaTex;simbaMat.needsUpdate=true;lastGifUp=now;}
 
-    // Bob animaux
     items.forEach(item=>{if(!item.userData.alive)return;item.userData.bob+=dt*2.8;item.position.y=1.3+Math.sin(item.userData.bob)*.25;});
 
-    // Nuages
     clouds.forEach(cl=>{cl.position.x+=cl.userData.speed;if(cl.position.x>90)cl.position.x=-90;});
 
-    // Eau — rotation texture légère
     waterMesh.rotation.z+=dt*.025;
 
-    // Reflets eau
     waterSprites.forEach(sp=>{
       sp.userData.angle+=dt*sp.userData.speed;
       sp.position.x=22+Math.cos(sp.userData.angle)*sp.userData.r;
@@ -1114,7 +1059,6 @@ function loop(){
       sp.material.opacity=.3+Math.sin(sp.userData.angle*2)*.2;
     });
 
-    // Cascade — particules tombent
     cascadeParticles.forEach(sp=>{
       sp.userData.y-=sp.userData.speed*dt*5;
       if(sp.userData.y<.3) sp.userData.y=12+Math.random()*4;
@@ -1123,7 +1067,6 @@ function loop(){
       sp.position.x=-30+sp.userData.ox+wobble;
     });
 
-    // Brume cascade
     mistParticles.forEach(sp=>{
       sp.userData.phase+=dt*.8;
       sp.material.opacity=.2+Math.sin(sp.userData.phase)*.15;
