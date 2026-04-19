@@ -13,6 +13,15 @@
 html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; user-select:none; background:#000; }
 #c { position:fixed; inset:0; width:100%; height:100%; cursor:crosshair; }
 
+/* Simba GIF overlay */
+#simbaOverlay {
+position:fixed; pointer-events:none; z-index:40;
+width:80px; height:80px;
+transform:translate(-50%,-50%);
+image-rendering:auto;
+filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
+
 .ripple {
 position:fixed; pointer-events:none; z-index:90;
 width:44px; height:44px; margin:-22px 0 0 -22px;
@@ -123,6 +132,7 @@ gap:8px; opacity:0; pointer-events:none; transition:opacity .5s; overflow:hidden
 </audio>
 
 <canvas id="c"></canvas>
+<img id="simbaOverlay" src="simba gif.gif" alt="Simba">
 
 <div class="hud">
   <div class="hud-row">
@@ -748,28 +758,11 @@ for(let i=0;i<120;i++){
 }
 
 /* ============================================================
-   SIMBA SPRITE GIF
+   SIMBA — overlay IMG natif (GIF animé par le navigateur)
    ============================================================ */
-const simbaImg=new Image();
-simbaImg.src='simbagif.gif';
-let simbaTex=null;
+const simbaOverlay = document.getElementById('simbaOverlay');
 
-function updateSimbaTex(){
-  if(!simbaImg.complete||simbaImg.naturalWidth===0) return;
-  const cv=document.createElement('canvas'); cv.width=cv.height=256;
-  const cx=cv.getContext('2d');
-  cx.clearRect(0,0,256,256);
-  cx.drawImage(simbaImg,0,0,256,256);
-  if(simbaTex) simbaTex.dispose();
-  simbaTex=new THREE.CanvasTexture(cv);
-}
-
-const simbaMat=new THREE.SpriteMaterial({map:null,transparent:true,depthWrite:false});
-const simbaSprite=new THREE.Sprite(simbaMat);
-simbaSprite.scale.set(4,4,1);
-simbaSprite.position.set(0,2,0);
-scene.add(simbaSprite);
-
+// Ombre sol Three.js
 const shadowMesh=new THREE.Mesh(
   new THREE.CircleGeometry(1.1,16),
   new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.3,depthWrite:false})
@@ -777,6 +770,9 @@ const shadowMesh=new THREE.Mesh(
 shadowMesh.rotation.x=-Math.PI/2;
 shadowMesh.position.y=0.03;
 scene.add(shadowMesh);
+
+// Vecteur 3D factice pour la projection de position
+const simba3D=new THREE.Vector3(0,2,0);
 
 /* ============================================================
    ETAT JEU
@@ -1021,12 +1017,11 @@ document.getElementById('btnRejouer').addEventListener('click',()=>{
    BOUCLE PRINCIPALE
    ============================================================ */
 const clock=new THREE.Clock();
-let totalTime=0, lastGifUp=0;
+let totalTime=0;
 
 function loop(){
   requestAnimationFrame(loop);
   const dt=clock.getDelta(); totalTime+=dt;
-  const now=performance.now();
 
   if(!gameOver){
     const dist=simbaPos.distanceTo(simbaTarget);
@@ -1040,11 +1035,17 @@ function loop(){
     simbaPos.z=Math.max(-WORLD+1,Math.min(WORLD-1,simbaPos.z));
 
     const groundY=Math.sin(simbaPos.x*.15)*.25+Math.cos(simbaPos.z*.18)*.2;
-    simbaSprite.position.set(simbaPos.x, groundY+2, simbaPos.z);
-    simbaSprite.scale.set(faceRight?4:-4,4,1);
-    shadowMesh.position.set(simbaPos.x,groundY+.03,simbaPos.z);
 
-    if(now-lastGifUp>80){updateSimbaTex();if(simbaTex)simbaMat.map=simbaTex;simbaMat.needsUpdate=true;lastGifUp=now;}
+    // Projection 3D → écran pour positionner l'img overlay
+    simba3D.set(simbaPos.x, groundY+2, simbaPos.z);
+    const projected=simba3D.clone().project(camera);
+    const sx=(projected.x+1)/2*window.innerWidth;
+    const sy=(-projected.y+1)/2*window.innerHeight;
+    simbaOverlay.style.left=sx+'px';
+    simbaOverlay.style.top=sy+'px';
+    simbaOverlay.style.transform=`translate(-50%,-50%) scaleX(${faceRight?1:-1})`;
+
+    shadowMesh.position.set(simbaPos.x,groundY+.03,simbaPos.z);
 
     items.forEach(item=>{if(!item.userData.alive)return;item.userData.bob+=dt*2.8;item.position.y=1.3+Math.sin(item.userData.bob)*.25;});
 
