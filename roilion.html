@@ -10,163 +10,82 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; user-select:none; }
+html,body { width:100%; height:100%; overflow:hidden; font-family:'Baloo 2',cursive; touch-action:manipulation; user-select:none; background:#000; }
+#c { position:fixed; inset:0; width:100%; height:100%; cursor:crosshair; }
 
-/* ===== FOND SAVANE ===== */
-.sky {
-position:fixed; inset:0;
-background:linear-gradient(180deg,#FF6B35 0%,#FF8C00 25%,#FFB347 50%,#87CEEB 50%,#87CEEB 100%);
-z-index:0;
-}
-/* Soleil */
-.sun {
-position:fixed; top:40px; right:60px;
-width:80px; height:80px;
-background:radial-gradient(circle,#fff8a0 30%,#FFD700 70%,#FF8C00 100%);
+.ripple {
+position:fixed; pointer-events:none; z-index:90;
+width:44px; height:44px; margin:-22px 0 0 -22px;
 border-radius:50%;
-box-shadow:0 0 40px 20px rgba(255,180,0,.5);
-z-index:1;
-animation:sunPulse 4s ease-in-out infinite;
+border:3px solid rgba(255,220,80,.95);
+box-shadow:0 0 12px rgba(255,180,0,.6);
+animation:rippleOut .55s ease-out forwards;
 }
-@keyframes sunPulse { 0%,100%{box-shadow:0 0 40px 20px rgba(255,180,0,.5);} 50%{box-shadow:0 0 60px 30px rgba(255,180,0,.7);} }
+@keyframes rippleOut { 0%{transform:scale(0);opacity:1;} 100%{transform:scale(2.8);opacity:0;} }
 
-/* Nuages */
-.cloud { position:fixed; background:rgba(255,255,255,.7); border-radius:50px; z-index:1; }
-.cloud::before,.cloud::after { content:’’; position:absolute; background:rgba(255,255,255,.7); border-radius:50%; }
-.cl1 { width:80px; height:28px; top:55px; animation:cloudMove 25s linear infinite; left:-100px; }
-.cl1::before { width:40px; height:40px; top:-22px; left:10px; }
-.cl1::after  { width:28px; height:28px; top:-14px; left:42px; }
-.cl2 { width:110px; height:36px; top:90px; animation:cloudMove 35s linear infinite 10s; left:-140px; opacity:.6; }
-.cl2::before { width:54px; height:54px; top:-28px; left:14px; }
-.cl2::after  { width:36px; height:36px; top:-18px; left:58px; }
-@keyframes cloudMove { from{transform:translateX(0);} to{transform:translateX(calc(100vw + 200px));} }
-
-/* Sol */
-#gameCanvas {
-position:fixed; inset:0;
-width:100%; height:100%;
-z-index:2;
-}
-
-/* ===== HEADER ===== */
+/* ===== HUD ===== */
 .hud {
-position:fixed; top:0; left:0; right:0;
-z-index:50;
-padding:8px 12px;
-display:flex; flex-direction:column; gap:6px;
+position:fixed; top:0; left:0; right:0; z-index:50;
+padding:10px 14px; display:flex; flex-direction:column; gap:6px;
+pointer-events:none;
 }
-.hud-row {
-display:flex; align-items:center; gap:8px;
-}
+.hud-row { display:flex; align-items:center; gap:8px; }
 .btn-r {
-flex-shrink:0;
-background:rgba(255,255,255,.25); border:2px solid rgba(255,255,255,.5);
+flex-shrink:0; pointer-events:all;
+background:rgba(20,8,0,.7); border:2px solid rgba(255,180,30,.5);
 border-radius:50%; width:46px; height:46px; font-size:20px;
-color:white; cursor:pointer;
-display:flex; align-items:center; justify-content:center;
-text-decoration:none; backdrop-filter:blur(6px);
-transition:transform .15s;
+color:white; cursor:pointer; display:flex; align-items:center; justify-content:center;
+text-decoration:none; backdrop-filter:blur(10px); transition:transform .15s;
+box-shadow:0 2px 12px rgba(0,0,0,.4);
 }
 .btn-r:active { transform:scale(.88); }
-
-/* Animal cible */
 .target-box {
-flex:1; background:rgba(255,255,255,.2);
-border:2px solid rgba(255,255,255,.5);
+flex:1; pointer-events:all;
+background:rgba(20,8,0,.65); border:2px solid rgba(255,180,30,.45);
 border-radius:18px; padding:5px 12px;
-display:flex; align-items:center; gap:8px;
-backdrop-filter:blur(6px);
+display:flex; align-items:center; gap:8px; backdrop-filter:blur(10px);
+box-shadow:0 2px 12px rgba(0,0,0,.4);
 }
-.target-txt { font-family:‘Nunito’,sans-serif; font-size:11px; color:white; white-space:nowrap; }
+.target-txt { font-family:‘Nunito’,sans-serif; font-size:11px; color:rgba(255,230,150,.95); white-space:nowrap; }
 .target-img {
-width:44px; height:44px; object-fit:contain;
-border-radius:10px; border:2px solid rgba(255,255,255,.6);
-background:rgba(255,255,255,.15);
+width:44px; height:44px; object-fit:contain; border-radius:10px;
+border:2px solid rgba(255,200,80,.55); background:rgba(0,0,0,.25);
 animation:targetBounce 1.2s ease-in-out infinite;
 }
-@keyframes targetBounce { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
-
-/* Score */
+@keyframes targetBounce { 0%,100%{transform:scale(1);} 50%{transform:scale(1.18);} }
 .score-box {
-background:rgba(0,0,0,.25); border-radius:16px;
-padding:4px 12px; text-align:center;
-backdrop-filter:blur(6px);
+background:rgba(20,8,0,.7); border:2px solid rgba(255,180,30,.5);
+border-radius:16px; padding:4px 12px; text-align:center; backdrop-filter:blur(10px);
+box-shadow:0 2px 12px rgba(0,0,0,.4);
 }
-.score-num { font-size:22px; font-weight:800; color:#FFD700; line-height:1; text-shadow:0 2px 4px rgba(0,0,0,.4); }
-.score-lbl { font-family:‘Nunito’,sans-serif; font-size:9px; color:rgba(255,255,255,.8); }
+.score-num { font-size:22px; font-weight:800; color:#FFD700; line-height:1; text-shadow:0 2px 8px rgba(255,140,0,.7); }
+.score-lbl { font-family:‘Nunito’,sans-serif; font-size:9px; color:rgba(255,200,100,.8); }
+.prog-bar { height:10px; background:rgba(0,0,0,.4); border-radius:8px; overflow:hidden; border:1.5px solid rgba(255,180,30,.45); }
+.prog-fill { height:100%; width:0%; background:linear-gradient(90deg,#FFD700,#FF6B00); border-radius:6px; transition:width .35s; }
 
-/* Barre progression */
-.prog-bar { height:10px; background:rgba(255,255,255,.2); border-radius:8px; overflow:hidden; border:1.5px solid rgba(255,255,255,.4); }
-.prog-fill { height:100%; width:0%; background:linear-gradient(90deg,#FFD700,#FF6B00); border-radius:6px; transition:width .3s; }
+/* Zone indicator */
+.zone-tag {
+position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+background:rgba(20,8,0,.7); border:1.5px solid rgba(255,180,30,.45);
+border-radius:20px; padding:6px 16px;
+font-family:‘Nunito’,sans-serif; font-size:12px; color:rgba(255,230,150,.95);
+backdrop-filter:blur(8px); z-index:50; pointer-events:none;
+transition:opacity .5s; white-space:nowrap;
+box-shadow:0 2px 12px rgba(0,0,0,.4);
+}
 
-/* ===== CONTRÔLES ===== */
-.controls {
-position:fixed; bottom:20px; left:0; right:0;
-z-index:50;
-display:flex; flex-direction:column; align-items:center; gap:8px;
-}
-.dpad {
-display:grid;
-grid-template-columns:60px 60px 60px;
-grid-template-rows:60px 60px 60px;
-gap:4px;
-}
-.dpad-btn {
-background:rgba(255,255,255,.22);
-border:2px solid rgba(255,255,255,.45);
-border-radius:16px;
-font-size:26px;
-cursor:pointer;
-display:flex; align-items:center; justify-content:center;
-backdrop-filter:blur(6px);
-transition:transform .1s, background .1s;
--webkit-tap-highlight-color:transparent;
-}
-.dpad-btn:active, .dpad-btn.pressed {
-transform:scale(.88);
-background:rgba(255,255,255,.4);
-}
-.dpad-center {
-background:rgba(255,200,0,.3);
-border-color:rgba(255,200,0,.6);
-font-size:14px;
-font-family:‘Nunito’,sans-serif;
-font-weight:900;
-color:white;
-flex-direction:column;
-gap:2px;
-}
-.dpad-empty { visibility:hidden; }
-
-.speed-btn {
-background:rgba(255,150,0,.35);
-border:2px solid rgba(255,200,0,.6);
-border-radius:20px;
-padding:8px 24px;
-font-family:‘Baloo 2’,cursive;
-font-weight:800; font-size:14px; color:white;
-cursor:pointer; backdrop-filter:blur(6px);
-}
-.speed-btn:active { transform:scale(.93); }
-
-/* ===== FEEDBACK ===== */
+/* FX */
 .collect-fx {
-position:fixed; pointer-events:none; z-index:90;
-font-size:40px; animation:collectPop .6s ease-out forwards;
+position:fixed; pointer-events:none; z-index:90; font-size:44px;
+animation:collectPop .65s ease-out forwards;
 }
-@keyframes collectPop { 0%{transform:scale(0) translateY(0);opacity:1;} 60%{transform:scale(1.4) translateY(-20px);opacity:1;} 100%{transform:scale(0) translateY(-50px);opacity:0;} }
-
-.hit-fx {
-position:fixed; pointer-events:none; z-index:90;
-font-size:36px; animation:hitShake .4s ease-out forwards;
+@keyframes collectPop {
+0%  { transform:scale(0) translateY(0); opacity:1; }
+60% { transform:scale(1.5) translateY(-24px); opacity:1; }
+100%{ transform:scale(0) translateY(-60px); opacity:0; }
 }
-@keyframes hitShake { 0%{transform:scale(1.2);opacity:1;} 100%{transform:scale(0);opacity:0;} }
 
-/* Flash rouge obstacle */
-@keyframes flashRed { 0%,100%{background:transparent;} 50%{background:rgba(255,0,0,.3);} }
-.flash { animation:flashRed .3s ease-out; }
-
-/* ===== ÉCRAN VICTOIRE ===== */
+/* ===== VICTOIRE ===== */
 .win-screen {
 position:fixed; inset:0; z-index:200;
 background:linear-gradient(160deg,#ff8c00 0%,#ffd700 45%,#fff5cc 100%);
@@ -182,21 +101,16 @@ gap:8px; opacity:0; pointer-events:none; transition:opacity .5s; overflow:hidden
 @keyframes starsIn { from{transform:scale(0);opacity:0;} to{transform:scale(1);opacity:1;} }
 .win-sub { font-family:‘Nunito’,sans-serif; font-size:clamp(13px,3.5vw,17px); color:#5a1a00; animation:fadeUp .5s .3s both; z-index:2; text-align:center; padding:0 20px; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
-.simba-win {
-width:min(300px,75vw); height:min(300px,75vw); object-fit:contain;
-filter:drop-shadow(0 12px 32px rgba(0,0,0,.3));
-animation:simbaIn .7s .35s cubic-bezier(.34,1.56,.64,1) both, simbaFloat 2.5s ease-in-out infinite 1s;
-z-index:2;
-}
+.simba-win { width:min(280px,70vw); height:min(280px,70vw); object-fit:contain; filter:drop-shadow(0 12px 32px rgba(0,0,0,.3)); animation:simbaIn .7s .35s cubic-bezier(.34,1.56,.64,1) both, simbaFloat 2.5s ease-in-out infinite 1s; z-index:2; }
 @keyframes simbaIn { from{transform:scale(0) rotate(-15deg);} to{transform:scale(1) rotate(0);} }
-@keyframes simbaFloat { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-16px) rotate(2deg);} }
+@keyframes simbaFloat { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-14px) rotate(2deg);} }
 .win-btns { display:flex; gap:14px; animation:fadeUp .5s .5s both; z-index:3; }
 .win-btn { padding:13px 26px; border:none; border-radius:20px; font-family:‘Baloo 2’,cursive; font-weight:800; font-size:clamp(14px,4vw,18px); cursor:pointer; box-shadow:0 6px 0 rgba(0,0,0,.2); transition:transform .1s; }
 .win-btn:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.2); }
 .btn-rejouer { background:#FF6B00; color:white; }
 .btn-menu    { background:rgba(255,255,255,.75); color:#5a1a00; }
-.savane { position:absolute; bottom:0; left:0; right:0; height:70px; background:linear-gradient(180deg,#7dc43a,#3d7a10); border-radius:55% 55% 0 0/24px 24px 0 0; z-index:1; }
-.savane::before { content:‘🌾 🌿 🌾 🌿 🌾 🌿 🌾’; position:absolute; top:-14px; left:0; right:0; font-size:18px; text-align:center; letter-spacing:6px; }
+.savane-win { position:absolute; bottom:0; left:0; right:0; height:70px; background:linear-gradient(180deg,#7dc43a,#3d7a10); border-radius:55% 55% 0 0/24px 24px 0 0; z-index:1; }
+.savane-win::before { content:‘🌾 🌿 🌾 🌿 🌾 🌿 🌾’; position:absolute; top:-14px; left:0; right:0; font-size:18px; text-align:center; letter-spacing:6px; }
 .confetti { position:absolute; border-radius:2px; pointer-events:none; animation:confettiFall linear forwards; z-index:1; }
 @keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1;} 100%{transform:translateY(100vh) rotate(720deg);opacity:0;} }
 </style>
@@ -204,20 +118,11 @@ z-index:2;
 </head>
 <body>
 
-<!-- DÉCOR -->
-
-<div class="sky"></div>
-<div class="sun"></div>
-<div class="cloud cl1"></div>
-<div class="cloud cl2"></div>
-
-<!-- MUSIQUE -->
-
 <audio id="bgMusic" loop preload="auto">
   <source src="cycle de la vie.mp3" type="audio/mpeg">
 </audio>
 
-<!-- HUD -->
+<canvas id="c"></canvas>
 
 <div class="hud">
   <div class="hud-row">
@@ -236,28 +141,7 @@ z-index:2;
   <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
 </div>
 
-<!-- CANVAS JEU -->
-
-<canvas id="gameCanvas"></canvas>
-
-<!-- CONTRÔLES -->
-
-<div class="controls">
-  <div class="dpad">
-    <div class="dpad-empty"></div>
-    <div class="dpad-btn" id="btnUp">⬆️</div>
-    <div class="dpad-empty"></div>
-    <div class="dpad-btn" id="btnLeft">⬅️</div>
-    <div class="dpad-btn dpad-center" id="btnStop">⏸<span style="font-size:9px">STOP</span></div>
-    <div class="dpad-btn" id="btnRight">➡️</div>
-    <div class="dpad-empty"></div>
-    <div class="dpad-btn" id="btnDown">⬇️</div>
-    <div class="dpad-empty"></div>
-  </div>
-  <button class="speed-btn" id="btnSpeed">🚶 Marche</button>
-</div>
-
-<!-- VICTOIRE -->
+<div class="zone-tag" id="zoneTag">🌅 Savane de la Fierté</div>
 
 <div class="win-screen" id="winScreen">
   <div class="win-title">🏆 Bravo Malo !</div>
@@ -268,350 +152,861 @@ z-index:2;
     <button class="win-btn btn-rejouer" id="btnRejouer">🔄 Rejouer</button>
     <a class="win-btn btn-menu" href="index.html">🏠 Menu</a>
   </div>
-  <div class="savane"></div>
+  <div class="savane-win"></div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 /* ============================================================
-   CONFIG
+   CONFIG JEUX
    ============================================================ */
 const TARGETS = [
-  { emoji:'🦓', name:'Zèbre',    img:null },
-  { emoji:'🐘', name:'Éléphant', img:null },
-  { emoji:'🦒', name:'Girafe',   img:null },
-  { emoji:'🦏', name:'Rhino',    img:null },
-  { emoji:'🐊', name:'Croco',    img:null },
-  { emoji:'🦛', name:'Hippo',    img:null },
-  { emoji:'🐒', name:'Singe',    img:null },
-  { emoji:'🦜', name:'Perroquet',img:null },
-  { emoji:'🦩', name:'Flamant',  img:null },
-  { emoji:'🐆', name:'Guépard',  img:null },
+  {emoji:'🦓',name:'Zèbre'},{emoji:'🐘',name:'Éléphant'},{emoji:'🦒',name:'Girafe'},
+  {emoji:'🦏',name:'Rhino'},{emoji:'🐊',name:'Croco'},{emoji:'🦛',name:'Hippo'},
+  {emoji:'🐒',name:'Singe'},{emoji:'🦜',name:'Perroquet'},{emoji:'🦩',name:'Flamant'},
+  {emoji:'🐆',name:'Guépard'},
 ];
-
-const OBSTACLES = ['🪨','🌿','🌵','🪨','🌿'];
+const OBSTACLES_EMO = ['🪨','🌵','🌿','🌾'];
 const MAX_SCORE = 10;
-const TILE = 48; // taille cellule grille
+const WORLD = 55; // monde plus grand
 
 /* ============================================================
-   CANVAS
+   RENDERER
    ============================================================ */
-const canvas = document.getElementById('gameCanvas');
-const ctx    = canvas.getContext('2d');
-let W, H;
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xffb060, 60, 160);
+scene.background = new THREE.Color(0xff7030);
+
+const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 300);
+camera.position.set(0, 22, 20);
+camera.lookAt(0,0,0);
 
 function resize(){
-  W = canvas.width  = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+  const w=window.innerWidth, h=window.innerHeight;
+  renderer.setSize(w,h);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
 }
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resize);
 
 /* ============================================================
-   ÉTAT DU JEU
+   LUMIÈRES — coucher de soleil Lion King
    ============================================================ */
-let simba = { x:0, y:0, dx:0, dy:0, speed:2, running:false };
-let items = [];       // animaux à ramasser
-let obstacles = [];   // rochers/buissons
-let score = 0;
-let gameOver = false;
-let currentTarget = 0;
-let bgOffset = 0;     // défilement savane
+scene.add(new THREE.AmbientLight(0xffcc80, 0.85));
 
-// Image Simba GIF
-const simbaGif = new Image();
-simbaGif.src = 'simbagif.gif';
+const sun = new THREE.DirectionalLight(0xff9a30, 2.8);
+sun.position.set(30, 45, 20);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096,4096);
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 200;
+sun.shadow.camera.left = -WORLD;
+sun.shadow.camera.right = WORLD;
+sun.shadow.camera.top = WORLD;
+sun.shadow.camera.bottom = -WORLD;
+sun.shadow.bias = -0.0005;
+scene.add(sun);
 
-// Direction visuelle
-let simbaFacingRight = true;
+// Lumière de remplissage chaude
+const fillL = new THREE.DirectionalLight(0xffcc60, 0.6);
+fillL.position.set(-20, 10, -10);
+scene.add(fillL);
+
+// Hémisphère ciel/sol
+scene.add(new THREE.HemisphereLight(0xff8840, 0x6b4500, 0.5));
 
 /* ============================================================
-   SAVANE — TILES DE FOND
+   DÉGRADÉ CIEL — plan 3D
    ============================================================ */
-// Couleurs sol
-const GROUND_COLORS = ['#C8860A','#D4920C','#BC7A08','#D9960E','#CA8A0B'];
+function makeSkyGrad(){
+  const cv=document.createElement('canvas');
+  cv.width=4; cv.height=512;
+  const cx=cv.getContext('2d');
+  const g=cx.createLinearGradient(0,0,0,512);
+  g.addColorStop(0,'#0d0a2e');
+  g.addColorStop(0.2,'#6b1a50');
+  g.addColorStop(0.45,'#cc3a00');
+  g.addColorStop(0.65,'#ff7020');
+  g.addColorStop(0.8,'#ffb040');
+  g.addColorStop(1,'#ffd88a');
+  cx.fillStyle=g; cx.fillRect(0,0,4,512);
+  const t=new THREE.CanvasTexture(cv);
+  return t;
+}
+const skyMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(800,300),
+  new THREE.MeshBasicMaterial({map:makeSkyGrad(), depthWrite:false, side:THREE.FrontSide})
+);
+skyMesh.position.set(0,80,-180);
+scene.add(skyMesh);
 
-function drawGround(){
-  const tileW = 80, tileH = 40;
-  const cols = Math.ceil(W/tileW)+2;
-  const rows = Math.ceil(H/tileH)+2;
-  const offX = bgOffset % tileW;
+/* ============================================================
+   SOL SAVANE — texture riche
+   ============================================================ */
+function makeSavannaTexture(){
+  const S=1024;
+  const cv=document.createElement('canvas'); cv.width=cv.height=S;
+  const cx=cv.getContext('2d');
 
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const color = GROUND_COLORS[(r+c)%GROUND_COLORS.length];
-      ctx.fillStyle = color;
-      ctx.fillRect(c*tileW - offX, r*tileH + H*0.48, tileW, tileH);
-    }
+  // Fond de base — dégradé terracotta
+  const g=cx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.7);
+  g.addColorStop(0,'#d4920a');
+  g.addColorStop(0.4,'#c07808');
+  g.addColorStop(0.8,'#a86006');
+  g.addColorStop(1,'#8a4a04');
+  cx.fillStyle=g; cx.fillRect(0,0,S,S);
+
+  // Variations de couleur — taches
+  for(let i=0;i<200;i++){
+    const x=Math.random()*S, y=Math.random()*S;
+    const r=4+Math.random()*22;
+    const gp=cx.createRadialGradient(x,y,0,x,y,r);
+    const c=Math.random()>.5?'rgba(180,120,20,0.25)':'rgba(80,40,0,0.18)';
+    gp.addColorStop(0,c); gp.addColorStop(1,'transparent');
+    cx.fillStyle=gp; cx.beginPath(); cx.arc(x,y,r,0,Math.PI*2); cx.fill();
   }
 
-  // Herbe en bas
-  ctx.fillStyle = '#5a9e20';
-  ctx.fillRect(0, H-60, W, 60);
+  // Craquelures sol sec
+  cx.globalAlpha=0.22;
+  for(let i=0;i<500;i++){
+    cx.beginPath();
+    const x=Math.random()*S, y=Math.random()*S;
+    const len=8+Math.random()*30;
+    const angle=Math.random()*Math.PI;
+    cx.moveTo(x,y);
+    cx.lineTo(x+Math.cos(angle)*len, y+Math.sin(angle)*len);
+    cx.strokeStyle=Math.random()>.6?'#7a3a02':'#e8b040';
+    cx.lineWidth=.5+Math.random()*.8;
+    cx.stroke();
+  }
 
-  // Horizon
-  const grad = ctx.createLinearGradient(0, H*0.45, 0, H*0.55);
-  grad.addColorStop(0,'rgba(255,140,0,.0)');
-  grad.addColorStop(1,'rgba(139,90,0,.3)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, H*0.45, W, H*0.1);
+  // Touffes d'herbe sèche ponctuelles
+  cx.globalAlpha=0.55;
+  cx.font='12px serif';
+  const blades=['|','/','\\','\'',',','.'];
+  for(let i=0;i<400;i++){
+    const x=Math.random()*S, y=Math.random()*S;
+    cx.fillStyle=Math.random()>.5?'#a8b840':'#c8c040';
+    cx.fillText(blades[Math.floor(Math.random()*blades.length)],x,y);
+  }
+
+  // Pierres
+  cx.globalAlpha=0.3;
+  for(let i=0;i<30;i++){
+    const x=Math.random()*S, y=Math.random()*S;
+    const rp=3+Math.random()*8;
+    cx.fillStyle='#8a7060';
+    cx.beginPath(); cx.ellipse(x,y,rp,rp*.6,Math.random(),0,Math.PI*2); cx.fill();
+  }
+  cx.globalAlpha=1;
+  return new THREE.CanvasTexture(cv);
+}
+
+// Zone herbe verte (lisière jungle)
+function makeJungleTexture(){
+  const S=512;
+  const cv=document.createElement('canvas'); cv.width=cv.height=S;
+  const cx=cv.getContext('2d');
+  const g=cx.createLinearGradient(0,0,S,S);
+  g.addColorStop(0,'#2d6a0a'); g.addColorStop(0.5,'#3a8010'); g.addColorStop(1,'#1a5008');
+  cx.fillStyle=g; cx.fillRect(0,0,S,S);
+  cx.globalAlpha=0.4;
+  for(let i=0;i<300;i++){
+    cx.beginPath();
+    const x=Math.random()*S, y=Math.random()*S;
+    const r=2+Math.random()*12;
+    cx.arc(x,y,r,0,Math.PI*2);
+    cx.fillStyle=Math.random()>.5?'#4aaa18':'#1a4808';
+    cx.fill();
+  }
+  cx.globalAlpha=1;
+  return new THREE.CanvasTexture(cv);
+}
+
+// Plan sol principal — grande savane
+const groundTex = makeSavannaTexture();
+groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping;
+groundTex.repeat.set(8,8);
+
+const groundGeo = new THREE.PlaneGeometry(WORLD*2, WORLD*2, 80, 80);
+// Ondulation terrain
+const pos=groundGeo.attributes.position.array;
+for(let i=0;i<pos.length;i+=3){
+  const px=pos[i], pz=pos[i+1];
+  pos[i+2] = Math.sin(px*.15)*0.4 + Math.cos(pz*.18)*0.3 + (Math.random()-.5)*0.25;
+}
+groundGeo.computeVertexNormals();
+
+const ground = new THREE.Mesh(groundGeo, new THREE.MeshLambertMaterial({map:groundTex}));
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true;
+scene.add(ground);
+
+// Bord jungle (côté nord-ouest) — plan vert
+const jungleFloor = new THREE.Mesh(
+  new THREE.PlaneGeometry(40,30),
+  new THREE.MeshLambertMaterial({map:makeJungleTexture()})
+);
+jungleFloor.rotation.x=-Math.PI/2;
+jungleFloor.position.set(-35, 0.05, -35);
+jungleFloor.receiveShadow=true;
+scene.add(jungleFloor);
+
+/* ============================================================
+   POINT D'EAU — grand lac animé
+   ============================================================ */
+function makeWaterTexture(){
+  const S=512;
+  const cv=document.createElement('canvas'); cv.width=cv.height=S;
+  const cx=cv.getContext('2d');
+  // Base bleue profonde
+  const g=cx.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2);
+  g.addColorStop(0,'#60c8f0'); g.addColorStop(0.5,'#3090c8'); g.addColorStop(1,'#1a5888');
+  cx.fillStyle=g; cx.fillRect(0,0,S,S);
+  // Reflets
+  cx.globalAlpha=0.35;
+  for(let i=0;i<60;i++){
+    const x=Math.random()*S, y=Math.random()*S;
+    const w=10+Math.random()*60, h=2+Math.random()*8;
+    cx.fillStyle='rgba(255,255,255,0.5)';
+    cx.beginPath(); cx.ellipse(x,y,w,h,Math.random()*.5,0,Math.PI*2); cx.fill();
+  }
+  cx.globalAlpha=1;
+  return new THREE.CanvasTexture(cv);
+}
+
+// Géométrie eau avec vagues (ondulation dans gameloop)
+const waterGeo = new THREE.CircleGeometry(14, 64);
+const waterMat = new THREE.MeshLambertMaterial({
+  map: makeWaterTexture(),
+  transparent:true, opacity:0.82,
+  color:0x40aae0
+});
+const waterMesh = new THREE.Mesh(waterGeo, waterMat);
+waterMesh.rotation.x=-Math.PI/2;
+waterMesh.position.set(22, 0.04, 18);
+waterMesh.receiveShadow=true;
+scene.add(waterMesh);
+
+// Rive du point d'eau — bord sableux
+const beachGeo=new THREE.RingGeometry(13.5,17,64);
+function makeBeachTex(){
+  const S=256; const cv=document.createElement('canvas'); cv.width=cv.height=S;
+  const cx=cv.getContext('2d');
+  cx.fillStyle='#e8c878'; cx.fillRect(0,0,S,S);
+  cx.globalAlpha=0.3;
+  for(let i=0;i<200;i++){
+    cx.fillStyle=Math.random()>.5?'#d4b060':'#c8a050';
+    cx.beginPath(); cx.arc(Math.random()*S,Math.random()*S,1+Math.random()*3,0,Math.PI*2); cx.fill();
+  }
+  cx.globalAlpha=1;
+  return new THREE.CanvasTexture(cv);
+}
+const beach=new THREE.Mesh(beachGeo, new THREE.MeshLambertMaterial({map:makeBeachTex()}));
+beach.rotation.x=-Math.PI/2;
+beach.position.set(22,0.03,18);
+beach.receiveShadow=true;
+scene.add(beach);
+
+// Reflets eau animés (sprites)
+const waterSprites=[];
+for(let i=0;i<8;i++){
+  const cv2=document.createElement('canvas'); cv2.width=64; cv2.height=16;
+  const cx2=cv2.getContext('2d');
+  cx2.fillStyle='rgba(255,255,255,0.7)';
+  cx2.beginPath(); cx2.ellipse(32,8,28,4,0,0,Math.PI*2); cx2.fill();
+  const t=new THREE.CanvasTexture(cv2);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,opacity:.5,depthWrite:false}));
+  const angle=Math.random()*Math.PI*2;
+  sp.scale.set(3+Math.random()*4, 0.6, 1);
+  sp.position.set(22+Math.cos(angle)*8, 0.15, 18+Math.sin(angle)*8);
+  sp.userData={angle, speed:0.3+Math.random()*.3, r:8+Math.random()*4};
+  scene.add(sp);
+  waterSprites.push(sp);
 }
 
 /* ============================================================
-   ITEMS — ANIMAUX À RAMASSER
+   CASCADE — coin nord-est
    ============================================================ */
+// Falaise rocheuse
+function makeCliff(){
+  const g=new THREE.Group();
+  const mat=new THREE.MeshLambertMaterial({color:0x7a6050});
+  const matDark=new THREE.MeshLambertMaterial({color:0x5a4030});
+
+  // Corps principal falaise
+  const base=new THREE.Mesh(new THREE.BoxGeometry(12,14,8),mat);
+  base.position.set(0,7,0); base.castShadow=true; g.add(base);
+  // Saille gauche
+  const l=new THREE.Mesh(new THREE.BoxGeometry(5,10,7),matDark);
+  l.position.set(-7,5,0.5); l.castShadow=true; g.add(l);
+  // Épaule droite
+  const r=new THREE.Mesh(new THREE.BoxGeometry(4,8,6),mat);
+  r.position.set(7,4,0); r.castShadow=true; g.add(r);
+  // Rebord supérieur
+  const top=new THREE.Mesh(new THREE.BoxGeometry(13,2.5,9),new THREE.MeshLambertMaterial({color:0x6a8a20}));
+  top.position.set(0,14.2,0); top.castShadow=true; g.add(top);
+  // Détails rochers
+  [[3,12,2,2],[−4,9,3,1.5],[−6,13,2,1.2],[5,11,3,1.8]].forEach(([x,y,z,r])=>{
+    const ro=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),mat);
+    ro.position.set(x,y,z); ro.rotation.set(Math.random(),Math.random(),Math.random());
+    ro.castShadow=true; g.add(ro);
+  });
+
+  g.position.set(-30, 0, -42);
+  scene.add(g);
+  return g;
+}
+makeCliff();
+
+// Eau cascade — ruban blanc animé
+const cascadeParticles=[];
+function makeCascadeParticle(idx){
+  const cv=document.createElement('canvas'); cv.width=24; cv.height=64;
+  const cx=cv.getContext('2d');
+  const g=cx.createLinearGradient(0,0,0,64);
+  g.addColorStop(0,'rgba(255,255,255,0)');
+  g.addColorStop(0.3,'rgba(200,240,255,0.9)');
+  g.addColorStop(0.7,'rgba(180,230,255,0.7)');
+  g.addColorStop(1,'rgba(255,255,255,0)');
+  cx.fillStyle=g; cx.fillRect(0,0,24,64);
+  const t=new THREE.CanvasTexture(cv);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false,opacity:.8}));
+  sp.scale.set(1.2, 4, 1);
+  const ox=(idx-3)*1.2;
+  sp.position.set(-30+ox, 8, -38);
+  sp.userData={y:8+Math.random()*4, speed:4+Math.random()*2, ox};
+  scene.add(sp);
+  return sp;
+}
+for(let i=0;i<8;i++) cascadeParticles.push(makeCascadeParticle(i));
+
+// Brume/éclaboussures bas de cascade
+const mistParticles=[];
+for(let i=0;i<20;i++){
+  const cv2=document.createElement('canvas'); cv2.width=cv2.height=48;
+  const cx2=cv2.getContext('2d');
+  const g2=cx2.createRadialGradient(24,24,0,24,24,22);
+  g2.addColorStop(0,'rgba(200,240,255,0.6)'); g2.addColorStop(1,'rgba(200,240,255,0)');
+  cx2.fillStyle=g2; cx2.beginPath(); cx2.arc(24,24,22,0,Math.PI*2); cx2.fill();
+  const t2=new THREE.CanvasTexture(cv2);
+  const sp2=new THREE.Sprite(new THREE.SpriteMaterial({map:t2,transparent:true,depthWrite:false}));
+  sp2.scale.set(2+Math.random()*2,2+Math.random()*2,1);
+  const angle=Math.random()*Math.PI*2;
+  const r2=Math.random()*4;
+  sp2.position.set(-30+Math.cos(angle)*r2, 0.3+Math.random()*.8, -36+Math.sin(angle)*r2);
+  sp2.userData={angle, speed:0.5+Math.random()*.5, phase:Math.random()*Math.PI*2};
+  scene.add(sp2);
+  mistParticles.push(sp2);
+}
+
+// Bassin au pied cascade
+const poolGeo=new THREE.CircleGeometry(5,32);
+const poolMat=new THREE.MeshLambertMaterial({color:0x3090c0,transparent:true,opacity:.75});
+const pool=new THREE.Mesh(poolGeo,poolMat);
+pool.rotation.x=-Math.PI/2; pool.position.set(-30,0.06,-36);
+scene.add(pool);
+
+// Rivière qui relie piscine au lac
+const riverShape=new THREE.Shape();
+riverShape.moveTo(0,0); riverShape.lineTo(2,0); riverShape.lineTo(3,20); riverShape.lineTo(0,20); riverShape.lineTo(-1,0);
+const riverGeo=new THREE.ShapeGeometry(riverShape);
+const riverMat=new THREE.MeshLambertMaterial({color:0x3090c8,transparent:true,opacity:.65});
+const river=new THREE.Mesh(riverGeo,riverMat);
+river.rotation.x=-Math.PI/2; river.position.set(-29,0.05,-36);
+scene.add(river);
+
+/* ============================================================
+   JUNGLE — zone dense nord-ouest
+   ============================================================ */
+function makePalmTree(x,z,scale=1){
+  const g=new THREE.Group();
+  // Tronc courbé (segments)
+  const trunkMat=new THREE.MeshLambertMaterial({color:0x7a5a20});
+  const segments=6;
+  for(let i=0;i<segments;i++){
+    const seg=new THREE.Mesh(new THREE.CylinderGeometry(0.18-i*.015, 0.22-i*.01, 1.2, 7), trunkMat);
+    const lean=i*.08;
+    seg.position.set(Math.sin(lean)*i*.6, i*1.1+0.6, 0);
+    seg.rotation.z=lean*.4;
+    seg.castShadow=true;
+    g.add(seg);
+  }
+  // Feuilles palmier
+  const leafMat=new THREE.MeshLambertMaterial({color:0x2a7a10, side:THREE.DoubleSide});
+  const leafDarkMat=new THREE.MeshLambertMaterial({color:0x1a5808, side:THREE.DoubleSide});
+  const topY=segments*1.1;
+  const topX=Math.sin(.08*segments)*(segments-1)*.6;
+  for(let li=0;li<7;li++){
+    const angle=(li/7)*Math.PI*2;
+    const leaf=new THREE.Mesh(
+      new THREE.PlaneGeometry(0.3+Math.random()*.15, 3.5+Math.random()*.8),
+      li%2===0?leafMat:leafDarkMat
+    );
+    leaf.position.set(topX+Math.cos(angle)*.4, topY+Math.random()*.3, Math.sin(angle)*.4);
+    leaf.rotation.set(-Math.PI/5+Math.random()*.2, angle, Math.PI/6*Math.cos(angle));
+    leaf.castShadow=true;
+    g.add(leaf);
+  }
+  // Noix de coco
+  for(let ci=0;ci<3;ci++){
+    const coco=new THREE.Mesh(new THREE.SphereGeometry(.28,7,6),new THREE.MeshLambertMaterial({color:0x5a3a10}));
+    const ca=(ci/3)*Math.PI*2;
+    coco.position.set(topX+Math.cos(ca)*.5, topY-.5, Math.sin(ca)*.5);
+    g.add(coco);
+  }
+  g.position.set(x,0,z);
+  g.scale.setScalar(scale*(0.8+Math.random()*.5));
+  scene.add(g);
+  return g;
+}
+
+function makeJungleBush(x,z){
+  const g=new THREE.Group();
+  const colors=[0x2a7010,0x3a8818,0x1e5a08,0x487a10];
+  for(let i=0;i<5;i++){
+    const b=new THREE.Mesh(
+      new THREE.SphereGeometry(1+Math.random()*.8,8,6),
+      new THREE.MeshLambertMaterial({color:colors[Math.floor(Math.random()*colors.length)]})
+    );
+    b.position.set((Math.random()-.5)*2,(Math.random()*.5),( Math.random()-.5)*2);
+    b.scale.y=0.7+Math.random()*.4;
+    b.castShadow=true;
+    g.add(b);
+  }
+  g.position.set(x,.3,z);
+  g.scale.setScalar(.7+Math.random()*.7);
+  scene.add(g);
+  return g;
+}
+
+// Fougères (plans texturés)
+function makeFern(x,z){
+  const cv=document.createElement('canvas'); cv.width=cv.height=128;
+  const cx=cv.getContext('2d');
+  cx.fillStyle='rgba(0,0,0,0)';
+  cx.clearRect(0,0,128,128);
+  cx.strokeStyle='#3a8810'; cx.lineWidth=2;
+  for(let fi=0;fi<8;fi++){
+    const angle=(fi/8)*Math.PI*2;
+    cx.beginPath(); cx.moveTo(64,80);
+    cx.quadraticCurveTo(64+Math.cos(angle)*20,80+Math.sin(angle)*20, 64+Math.cos(angle)*45,80+Math.sin(angle)*50-30);
+    cx.strokeStyle=fi%2===0?'#3a8810':'#4aaa18'; cx.stroke();
+    // Petites feuilles
+    for(let li=1;li<=4;li++){
+      const t2=li/5;
+      const lx=64+Math.cos(angle)*45*t2, ly=80+Math.sin(angle)*50*t2-30*t2;
+      cx.beginPath(); cx.ellipse(lx,ly,5,2,angle,0,Math.PI*2);
+      cx.fillStyle='rgba(60,130,20,0.8)'; cx.fill();
+    }
+  }
+  const t=new THREE.CanvasTexture(cv);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false}));
+  sp.scale.set(2.5,2.5,1); sp.position.set(x,1.2,z);
+  scene.add(sp);
+  return sp;
+}
+
+// Acacia savane (style dessin animé)
+function makeAcacia(x,z,scale=1){
+  const g=new THREE.Group();
+  const trunkMat=new THREE.MeshLambertMaterial({color:0x7a5018});
+  // Tronc
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.1,.18,2.5+Math.random(),7),trunkMat);
+  trunk.position.y=1.25; trunk.castShadow=true; g.add(trunk);
+  // Branches horizontales
+  const brMat=new THREE.MeshLambertMaterial({color:0x6a4010});
+  [-1.5,-0.5,0.5,1.5].forEach(bx=>{
+    const br=new THREE.Mesh(new THREE.CylinderGeometry(.04,.07,2+Math.random(),5),brMat);
+    br.rotation.z=Math.PI/2; br.position.set(bx*.6,2.6+Math.random()*.5,0); br.castShadow=true; g.add(br);
+  });
+  // Feuillage aplati caractéristique
+  const leafColors=[0x4a8e0e,0x5aaa14,0x3a780a,0x6ab018];
+  const lMat=new THREE.MeshLambertMaterial({color:leafColors[Math.floor(Math.random()*leafColors.length)]});
+  const foliage=new THREE.Mesh(new THREE.SphereGeometry(2.8+Math.random()*.6,10,6),lMat);
+  foliage.scale.y=.2+Math.random()*.08;
+  foliage.position.y=3.2+Math.random()*.4;
+  foliage.castShadow=true; foliage.receiveShadow=true;
+  g.add(foliage);
+  // Ombre projetée
+  g.position.set(x,0,z); g.scale.setScalar(scale*(0.7+Math.random()*.7));
+  scene.add(g);
+  return g;
+}
+
+// Rocher 3D stylisé
+function makeRock(x,z,scale=1){
+  const mats=[
+    new THREE.MeshLambertMaterial({color:0x8a7060}),
+    new THREE.MeshLambertMaterial({color:0x7a6050}),
+    new THREE.MeshLambertMaterial({color:0x9a8070}),
+  ];
+  const g=new THREE.Group();
+  const n=2+Math.floor(Math.random()*3);
+  for(let i=0;i<n;i++){
+    const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.8+Math.random()*1.2,0),mats[i%3]);
+    rock.position.set((Math.random()-.5)*.8, .3+Math.random()*.3,(Math.random()-.5)*.8);
+    rock.rotation.set(Math.random(),Math.random(),Math.random());
+    rock.scale.set(1,0.6+Math.random()*.4,1);
+    rock.castShadow=true; rock.receiveShadow=true;
+    g.add(rock);
+  }
+  g.position.set(x,.1,z);
+  g.scale.setScalar(scale*(0.7+Math.random()*.6));
+  scene.add(g);
+  return g;
+}
+
+/* ============================================================
+   PRIDE ROCK — monument iconique
+   ============================================================ */
+function makePrideRock(){
+  const g=new THREE.Group();
+  const mat=new THREE.MeshLambertMaterial({color:0xb08850});
+  const matD=new THREE.MeshLambertMaterial({color:0x906830});
+  const matL=new THREE.MeshLambertMaterial({color:0xc0a060});
+
+  // Base massive
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(7,10,5,8,1,false),mat);
+  base.position.y=2.5; base.castShadow=true; g.add(base);
+  // Corps
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(4,7,6,8),mat);
+  body.position.y=8; body.castShadow=true; g.add(body);
+  // Tour principale
+  const tower=new THREE.Mesh(new THREE.CylinderGeometry(2.5,4,5,7),matL);
+  tower.position.y=13.5; tower.castShadow=true; g.add(tower);
+  // Pointe
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(2.5,4,7),matD);
+  tip.position.y=18; tip.castShadow=true; g.add(tip);
+  // Terrasse (le rebord où Simba est présenté)
+  const terrace=new THREE.Mesh(new THREE.BoxGeometry(6,1,4),matL);
+  terrace.position.set(3,12,0); terrace.castShadow=true; g.add(terrace);
+  // Décors rochers éparpillés
+  [[4,1,3,1.5],[−5,0,4,2],[6,0,−2,1.2],[−3,0,−5,1.8],[8,0,2,1]].forEach(([x,y,z,r])=>{
+    const ro=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),matD);
+    ro.position.set(x,y,z); ro.rotation.set(Math.random(),Math.random(),Math.random());
+    ro.castShadow=true; g.add(ro);
+  });
+  // Herbe sur le rebord
+  const gMat=new THREE.MeshLambertMaterial({color:0x5aaa10});
+  const grass=new THREE.Mesh(new THREE.SphereGeometry(2.5,8,5),gMat);
+  grass.scale.y=.15; grass.position.set(0,4.8,0); g.add(grass);
+
+  g.position.set(-WORLD+10, 0, -WORLD+12);
+  g.scale.setScalar(1.8);
+  scene.add(g);
+}
+makePrideRock();
+
+/* ============================================================
+   NUAGES VOLUMÉTRIQUES
+   ============================================================ */
+function makeCloud(x,y,z,big=false){
+  const g=new THREE.Group();
+  const mat=new THREE.MeshLambertMaterial({color:0xffe8c0, transparent:true, opacity:.88});
+  const matW=new THREE.MeshLambertMaterial({color:0xfff8e8, transparent:true, opacity:.7});
+  const spheres=big?
+    [[0,0,0,4],[3.5,1,0,2.8],[−3,0.5,0,2.5],[1,2,−1,2],[−1,1.5,1,1.8],[4.5,−.5,1,1.5],[−4.5,0,1,1.8]]:
+    [[0,0,0,2.5],[2.2,.8,0,1.8],[−2,.5,0,1.6],[.8,1.4,0,1.4]];
+  spheres.forEach(([px,py,pz,r],i)=>{
+    const m=new THREE.Mesh(new THREE.SphereGeometry(r,8,6),i<2?mat:matW);
+    m.position.set(px,py,pz);
+    g.add(m);
+  });
+  g.position.set(x,y,z);
+  g.userData={speed:.002+Math.random()*.003, startX:x};
+  scene.add(g);
+  return g;
+}
+const clouds=[
+  makeCloud(-40,28,-35,true), makeCloud(15,32,-45,false),
+  makeCloud(-15,25,-28,true), makeCloud(40,30,-38,false),
+  makeCloud(-60,26,-20,false), makeCloud(55,34,-50,true),
+];
+
+/* ============================================================
+   PEUPLER LA SAVANE — végétation
+   ============================================================ */
+const acacias=[], rocks=[];
+
+// Acacias parsemés dans la savane
+const acaciaPositions=[
+  [15,5],[−20,10],[8,−25],[−12,−15],[30,−8],[−35,20],[25,30],[−18,35],
+  [40,15],[−40,−5],[12,40],[35,−30],[−25,−35],[48,−20],[−48,25],
+  [5,−45],[−45,−30],[42,40],[−8,−48],[20,−42]
+];
+acaciaPositions.forEach(([x,z])=>acacias.push(makeAcacia(x,z)));
+
+// Rochers
+const rockPos=[[10,−10],[−8,15],[25,−18],[−22,8],[18,22],[−30,−12],[35,10],[−15,28],[40,−35],[−38,18]];
+rockPos.forEach(([x,z])=>rocks.push(makeRock(x,z)));
+
+// Palmiers zone jungle (nord-ouest)
+const jungleArea=[
+  [−28,−30],[−32,−25],[−25,−38],[−38,−32],[−22,−42],[−42,−20],
+  [−30,−45],[−45,−35],[−18,−28],[−35,−18],[−28,−22],[−20,−35]
+];
+jungleArea.forEach(([x,z])=>makePalmTree(x,z));
+
+// Buissons jungle
+for(let i=0;i<25;i++){
+  const x=−20−Math.random()*25, z=−20−Math.random()*25;
+  makeJungleBush(x,z);
+}
+
+// Fougères jungle
+for(let i=0;i<30;i++){
+  const x=−18−Math.random()*28, z=−18−Math.random()*28;
+  makeFern(x,z);
+}
+
+/* ============================================================
+   HERBE HAUTE — zone de transition
+   ============================================================ */
+function makeGrassPatch(x,z){
+  const g=new THREE.Group();
+  const mat=new THREE.MeshLambertMaterial({color:0x9ab830,side:THREE.DoubleSide});
+  const mat2=new THREE.MeshLambertMaterial({color:0xb8c840,side:THREE.DoubleSide});
+  for(let i=0;i<8;i++){
+    const blade=new THREE.Mesh(new THREE.PlaneGeometry(.15,.8+Math.random()*.6),i%2===0?mat:mat2);
+    blade.position.set((Math.random()-.5)*.6,.4+Math.random()*.3,(Math.random()-.5)*.6);
+    blade.rotation.y=Math.random()*Math.PI;
+    blade.rotation.z=(Math.random()-.5)*.3;
+    g.add(blade);
+  }
+  g.position.set(x,.01,z);
+  scene.add(g);
+  return g;
+}
+for(let i=0;i<120;i++){
+  makeGrassPatch((Math.random()*2-1)*(WORLD-.5), (Math.random()*2-1)*(WORLD-.5));
+}
+
+/* ============================================================
+   SIMBA — SPRITE GIF
+   ============================================================ */
+const simbaImg=new Image();
+simbaImg.src='simbagif.gif';
+let simbaTex=null;
+
+function updateSimbaTex(){
+  if(!simbaImg.complete||simbaImg.naturalWidth===0) return;
+  const cv=document.createElement('canvas'); cv.width=cv.height=256;
+  const cx=cv.getContext('2d');
+  cx.clearRect(0,0,256,256);
+  cx.drawImage(simbaImg,0,0,256,256);
+  if(simbaTex) simbaTex.dispose();
+  simbaTex=new THREE.CanvasTexture(cv);
+}
+
+const simbaMat=new THREE.SpriteMaterial({map:null,transparent:true,depthWrite:false});
+const simbaSprite=new THREE.Sprite(simbaMat);
+simbaSprite.scale.set(4,4,1);
+simbaSprite.position.set(0,2,0);
+scene.add(simbaSprite);
+
+// Ombre sol
+const shadowMesh=new THREE.Mesh(
+  new THREE.CircleGeometry(1.1,16),
+  new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.3,depthWrite:false})
+);
+shadowMesh.rotation.x=-Math.PI/2;
+shadowMesh.position.y=0.03;
+scene.add(shadowMesh);
+
+/* ============================================================
+   ÉTAT JEU
+   ============================================================ */
+let simbaPos=new THREE.Vector3(0,0,0);
+let simbaTarget=new THREE.Vector3(0,0,0);
+let simbaSpeed=0;
+let score=0, gameOver=false, currentTarget=0;
+let faceRight=true;
+const groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+const raycaster=new THREE.Raycaster();
+
+let items=[], obstacleSprites=[];
+
+/* ============================================================
+   SPAWN
+   ============================================================ */
+function randPos(){
+  // Spawn partout sauf dans l'eau
+  let x,z;
+  do {
+    x=(Math.random()*2-1)*(WORLD-4);
+    z=(Math.random()*2-1)*(WORLD-4);
+  } while(Math.hypot(x-22,z-18)<16); // pas dans l'eau
+  return new THREE.Vector3(x,0,z);
+}
+
+function makeEmojiSprite(emoji, scale=2.4){
+  const cv=document.createElement('canvas'); cv.width=cv.height=192;
+  const cx=cv.getContext('2d');
+  cx.font='140px serif'; cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText(emoji,96,96);
+  const t=new THREE.CanvasTexture(cv);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthWrite:false}));
+  sp.scale.set(scale,scale,1);
+  return sp;
+}
+
 function spawnItem(){
-  const t = TARGETS[currentTarget % TARGETS.length];
-  // Position aléatoire sur le terrain
-  const margin = 80;
-  const x = margin + Math.random()*(W - margin*2);
-  const y = H*0.5 + Math.random()*(H*0.35);
-  items.push({ x, y, emoji: t.emoji, name: t.name, size:44, alive:true });
+  const t=TARGETS[currentTarget%TARGETS.length];
+  const sp=makeEmojiSprite(t.emoji, 2.6);
+  const pos=randPos();
+  sp.position.set(pos.x,1.3,pos.z);
+  sp.userData={emoji:t.emoji,name:t.name,alive:true,bob:Math.random()*Math.PI*2};
+  scene.add(sp); items.push(sp);
 }
 
 function spawnObstacle(){
-  const x = Math.random()*W;
-  const y = H*0.5 + Math.random()*(H*0.35);
-  const e = OBSTACLES[Math.floor(Math.random()*OBSTACLES.length)];
-  obstacles.push({ x, y, emoji:e, size:38, alive:true });
+  const e=OBSTACLES_EMO[Math.floor(Math.random()*OBSTACLES_EMO.length)];
+  const sp=makeEmojiSprite(e,1.8);
+  const pos=randPos();
+  sp.position.set(pos.x,.9,pos.z);
+  sp.userData={alive:true};
+  scene.add(sp); obstacleSprites.push(sp);
 }
 
 function initLevel(){
-  items = [];
-  obstacles = [];
-  // 3 animaux cibles + 4 obstacles
+  items.forEach(s=>scene.remove(s));
+  obstacleSprites.forEach(s=>scene.remove(s));
+  items=[]; obstacleSprites=[];
   for(let i=0;i<3;i++) spawnItem();
-  for(let i=0;i<5;i++) spawnObstacle();
+  for(let i=0;i<6;i++) spawnObstacle();
   updateTargetHUD();
 }
 
 function updateTargetHUD(){
-  const t = TARGETS[currentTarget % TARGETS.length];
-  document.getElementById('targetImg').style.fontSize = '32px';
-  document.getElementById('targetImg').style.display = 'none';
-  // On affiche l'emoji directement dans le name
-  document.getElementById('targetName').textContent = t.emoji + ' ' + t.name;
-  // Créer un canvas emoji comme image
-  const ec = document.createElement('canvas'); ec.width=44; ec.height=44;
-  const ec2 = ec.getContext('2d');
-  ec2.font='34px serif'; ec2.textAlign='center'; ec2.textBaseline='middle';
-  ec2.fillText(t.emoji, 22, 22);
-  document.getElementById('targetImg').src = ec.toDataURL();
-  document.getElementById('targetImg').style.display='block';
+  const t=TARGETS[currentTarget%TARGETS.length];
+  document.getElementById('targetName').textContent=t.emoji+' '+t.name;
+  const cv=document.createElement('canvas'); cv.width=cv.height=88;
+  const cx=cv.getContext('2d');
+  cx.font='66px serif'; cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText(t.emoji,44,44);
+  document.getElementById('targetImg').src=cv.toDataURL();
 }
 
 /* ============================================================
-   SIMBA
+   ZONES — indicateur
    ============================================================ */
-function initSimba(){
-  simba.x = W/2;
-  simba.y = H*0.65;
-  simba.dx = 0; simba.dy = 0;
-}
-
-function drawSimba(){
-  const size = 70;
-  ctx.save();
-  if(!simbaFacingRight){
-    ctx.translate(simba.x + size/2, 0);
-    ctx.scale(-1,1);
-    ctx.translate(-simba.x - size/2, 0);
+const ZONES=[
+  {name:'🌅 Savane de la Fierté', check:(x,z)=>Math.hypot(x,z)<25},
+  {name:'💧 Point d\'Eau',        check:(x,z)=>Math.hypot(x-22,z-18)<18},
+  {name:'🌴 Jungle Profonde',     check:(x,z)=>x<-15&&z<-15},
+  {name:'🌊 Cascade Sacrée',      check:(x,z)=>Math.hypot(x+30,z+40)<15},
+  {name:'🌾 Hautes Herbes',       check:()=>true},
+];
+let lastZone='';
+function updateZone(){
+  const x=simbaPos.x, z=simbaPos.z;
+  for(const zn of ZONES){
+    if(zn.check(x,z)){
+      if(zn.name!==lastZone){
+        lastZone=zn.name;
+        const tag=document.getElementById('zoneTag');
+        tag.textContent=zn.name;
+        tag.style.opacity='1';
+        clearTimeout(tag._t);
+        tag._t=setTimeout(()=>tag.style.opacity='0',3000);
+      }
+      break;
+    }
   }
-  // Ombre
-  ctx.beginPath();
-  ctx.ellipse(simba.x, simba.y+size*0.45, size*0.38, size*0.1, 0, 0, Math.PI*2);
-  ctx.fillStyle='rgba(0,0,0,.25)';
-  ctx.fill();
-
-  if(simbaGif.complete && simbaGif.naturalWidth > 0){
-    ctx.drawImage(simbaGif, simba.x-size/2, simba.y-size/2, size, size);
-  } else {
-    // Fallback emoji si GIF pas chargé
-    ctx.font=`${size*0.85}px serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🦁', simba.x, simba.y);
-  }
-  ctx.restore();
 }
 
-function moveSimba(){
-  if(simba.dx===0 && simba.dy===0) return;
-
-  const spd = simba.running ? simba.speed*1.9 : simba.speed;
-  simba.x += simba.dx * spd;
-  simba.y += simba.dy * spd;
-
-  // Direction visuelle
-  if(simba.dx > 0) simbaFacingRight = true;
-  if(simba.dx < 0) simbaFacingRight = false;
-
-  // Défilement fond
-  bgOffset += simba.dx * spd * 0.4;
-
-  // Limites terrain
-  const margin = 36;
-  const yMin = H*0.5;
-  const yMax = H - 90;
-  simba.x = Math.max(margin, Math.min(W-margin, simba.x));
-  simba.y = Math.max(yMin, Math.min(yMax, simba.y));
+/* ============================================================
+   CAMÉRA
+   ============================================================ */
+const camOff=new THREE.Vector3(0,22,20);
+function updateCamera(){
+  camera.position.lerp(simbaPos.clone().add(camOff),.055);
+  const look=simbaPos.clone(); look.y=2;
+  camera.lookAt(look);
 }
+
+/* ============================================================
+   CLICK → MOVE
+   ============================================================ */
+function handleTap(cx,cy){
+  if(gameOver) return;
+  if(!started) startMusic();
+  if(cy<90) return;
+  const w=window.innerWidth,h=window.innerHeight;
+  const mouse=new THREE.Vector2((cx/w)*2-1,-(cy/h)*2+1);
+  raycaster.setFromCamera(mouse,camera);
+  const pt=new THREE.Vector3();
+  if(!raycaster.ray.intersectPlane(groundPlane,pt)) return;
+  pt.x=Math.max(-WORLD+1,Math.min(WORLD-1,pt.x));
+  pt.z=Math.max(-WORLD+1,Math.min(WORLD-1,pt.z));
+  simbaTarget.set(pt.x,0,pt.z);
+  simbaSpeed=6;
+  // Ripple
+  const r=document.createElement('div');
+  r.className='ripple'; r.style.left=cx+'px'; r.style.top=cy+'px';
+  document.body.appendChild(r); setTimeout(()=>r.remove(),650);
+}
+canvas.addEventListener('click',e=>handleTap(e.clientX,e.clientY));
+canvas.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];handleTap(t.clientX,t.clientY);},{passive:false});
 
 /* ============================================================
    COLLISIONS
    ============================================================ */
 function checkCollisions(){
-  const sr = 30; // rayon Simba
-
-  // Items
-  items.forEach(item => {
-    if(!item.alive) return;
-    const dist = Math.hypot(simba.x - item.x, simba.y - item.y);
-    if(dist < sr + item.size/2 - 8){
-      const t = TARGETS[currentTarget % TARGETS.length];
-      if(item.emoji === t.emoji){
-        // ✅ Bon animal !
-        item.alive = false;
-        score++;
-        playCollect();
-        showFX(item.x, item.y, '✅');
-        document.getElementById('scoreNum').textContent = score;
-        document.getElementById('progFill').style.width = (score/MAX_SCORE*100)+'%';
-
-        if(score >= MAX_SCORE){ showVictory(); return; }
-
-        // Nouveau target tous les 3
-        if(score % 3 === 0){
-          currentTarget++;
-          updateTargetHUD();
-        }
-        // Respawn items si plus rien
-        const alive = items.filter(i=>i.alive).length;
-        if(alive === 0) for(let i=0;i<3;i++) spawnItem();
-        else setTimeout(spawnItem, 800);
+  items.forEach(item=>{
+    if(!item.userData.alive) return;
+    const dist=simbaPos.distanceTo(new THREE.Vector3(item.position.x,0,item.position.z));
+    if(dist<2.2){
+      const t=TARGETS[currentTarget%TARGETS.length];
+      scene.remove(item); item.userData.alive=false;
+      items=items.filter(i=>i!==item);
+      if(item.userData.emoji===t.emoji){
+        score++; playCollect();
+        const sc=item.position.clone().project(camera);
+        showFX((sc.x+1)/2*window.innerWidth,(-sc.y+1)/2*window.innerHeight,'✅');
+        document.getElementById('scoreNum').textContent=score;
+        document.getElementById('progFill').style.width=(score/MAX_SCORE*100)+'%';
+        if(score>=MAX_SCORE){showVictory();return;}
+        if(score%3===0){currentTarget++;updateTargetHUD();}
+        if(items.filter(i=>i.userData.alive).length===0) for(let i=0;i<3;i++) spawnItem();
+        else setTimeout(spawnItem,900);
       } else {
-        // ❌ Mauvais animal
         playWrong();
-        showFX(item.x, item.y, '❌');
-        item.alive = false;
-        setTimeout(spawnItem, 1000);
+        const sc=item.position.clone().project(camera);
+        showFX((sc.x+1)/2*window.innerWidth,(-sc.y+1)/2*window.innerHeight,'❌');
+        setTimeout(spawnItem,1000);
       }
     }
   });
-
-  // Obstacles
-  obstacles.forEach(obs => {
-    if(!obs.alive) return;
-    const dist = Math.hypot(simba.x - obs.x, simba.y - obs.y);
-    if(dist < sr + obs.size/2 - 10){
-      playBump();
-      // Repousser Simba
-      simba.x -= simba.dx * 15;
-      simba.y -= simba.dy * 15;
-      flashScreen();
+  obstacleSprites.forEach(obs=>{
+    if(!obs.userData.alive) return;
+    const dist=simbaPos.distanceTo(new THREE.Vector3(obs.position.x,0,obs.position.z));
+    if(dist<1.6){
+      const dir=simbaPos.clone().sub(new THREE.Vector3(obs.position.x,0,obs.position.z)).normalize();
+      simbaPos.addScaledVector(dir,1.5);
+      simbaTarget.copy(simbaPos); simbaSpeed=0; playBump();
     }
   });
 }
 
-function flashScreen(){
-  canvas.classList.add('flash');
-  setTimeout(()=>canvas.classList.remove('flash'),320);
-}
-
 /* ============================================================
-   EFFETS VISUELS
+   FX
    ============================================================ */
-function showFX(x, y, emoji){
-  const el = document.createElement('div');
-  el.className = 'collect-fx';
-  el.textContent = emoji;
-  el.style.left = (x-20)+'px';
-  el.style.top  = (y-20)+'px';
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(), 700);
-}
-
-function launchConfetti(){
-  const colors=['#FFD700','#FF6B00','#FF4444','#44BBFF','#44FF88','#FF88CC'];
-  const ws=document.getElementById('winScreen');
-  for(let i=0;i<80;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div');el.className='confetti';
-      const s=5+Math.random()*10;
-      el.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${s}px;height:${s}px;animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*.5}s;`;
-      ws.appendChild(el);setTimeout(()=>el.remove(),5000);
-    },i*30);
-  }
-}
-
-/* ============================================================
-   SONS
-   ============================================================ */
-function getAC(){ return new(window.AudioContext||window.webkitAudioContext)(); }
-
-function playCollect(){
-  try {
-    const ac=getAC();
-    [523,659,784,1047].forEach((f,i)=>{
-      const o=ac.createOscillator(),g=ac.createGain();
-      o.connect(g);g.connect(ac.destination);
-      o.type='sine';o.frequency.value=f;
-      g.gain.setValueAtTime(.18,ac.currentTime+i*.09);
-      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.09+.22);
-      o.start(ac.currentTime+i*.09);o.stop(ac.currentTime+i*.09+.25);
-    });
-  }catch(e){}
-}
-
-function playWrong(){
-  try {
-    const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();
-    o.connect(g);g.connect(ac.destination);
-    o.type='sawtooth';o.frequency.setValueAtTime(220,ac.currentTime);
-    o.frequency.exponentialRampToValueAtTime(80,ac.currentTime+.25);
-    g.gain.setValueAtTime(.15,ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.28);
-    o.start();o.stop(ac.currentTime+.3);
-  }catch(e){}
-}
-
-function playBump(){
-  try {
-    const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();
-    o.connect(g);g.connect(ac.destination);
-    o.type='square';o.frequency.setValueAtTime(150,ac.currentTime);
-    o.frequency.exponentialRampToValueAtTime(60,ac.currentTime+.15);
-    g.gain.setValueAtTime(.12,ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);
-    o.start();o.stop(ac.currentTime+.2);
-  }catch(e){}
-}
-
-function playVictory(){
-  try {
-    const ac=getAC();
-    const fanfare=[[523,.15],[659,.15],[784,.15],[1047,.3],[784,.1],[1047,.1],[1319,.7],[1047,.15],[1175,.15],[1319,.15],[1568,.5]];
-    let t=ac.currentTime+.05;
-    fanfare.forEach(([f,d])=>{
-      const o=ac.createOscillator(),g=ac.createGain();
-      o.connect(g);g.connect(ac.destination);
-      o.type='triangle';o.frequency.value=f;
-      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+.02);
-      g.gain.setValueAtTime(.22,t+d-.03);g.gain.linearRampToValueAtTime(0,t+d);
-      o.start(t);o.stop(t+d+.01);t+=d;
-    });
-    // Rugissement
-    setTimeout(()=>{
-      const ac2=getAC();
-      [80,120,160].forEach((f,i)=>{
-        const o=ac2.createOscillator(),g=ac2.createGain();
-        o.connect(g);g.connect(ac2.destination);
-        o.type='sawtooth';o.frequency.value=f;
-        g.gain.setValueAtTime(0,ac2.currentTime);
-        g.gain.linearRampToValueAtTime(.15-i*.03,ac2.currentTime+.15);
-        g.gain.linearRampToValueAtTime(0,ac2.currentTime+1.4);
-        o.start();o.stop(ac2.currentTime+1.5);
-      });
-    },1200);
-  }catch(e){}
+function showFX(x,y,emoji){
+  const el=document.createElement('div');
+  el.className='collect-fx'; el.textContent=emoji;
+  el.style.left=(x-22)+'px'; el.style.top=(y-22)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),750);
 }
 
 /* ============================================================
@@ -622,138 +1017,132 @@ function showVictory(){
   document.getElementById('bgMusic').pause();
   setTimeout(()=>{
     document.getElementById('winScreen').classList.add('show');
-    launchConfetti();
-    playVictory();
+    launchConfetti(); playVictory();
   },300);
 }
-
-/* ============================================================
-   BOUCLE DE JEU
-   ============================================================ */
-function drawItems(){
-  items.forEach(item=>{
-    if(!item.alive) return;
-    // Halo
-    ctx.beginPath();
-    ctx.arc(item.x, item.y, item.size/2+8, 0, Math.PI*2);
-    ctx.fillStyle='rgba(255,255,100,.18)';
-    ctx.fill();
-    ctx.font=`${item.size}px serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(item.emoji, item.x, item.y);
-  });
-}
-
-function drawObstacles(){
-  obstacles.forEach(obs=>{
-    if(!obs.alive) return;
-    ctx.font=`${obs.size}px serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(obs.emoji, obs.x, obs.y);
-  });
-}
-
-function gameLoop(){
-  ctx.clearRect(0,0,W,H);
-  if(!gameOver){
-    drawGround();
-    drawObstacles();
-    drawItems();
-    moveSimba();
-    checkCollisions();
-    drawSimba();
+function launchConfetti(){
+  const colors=['#FFD700','#FF6B00','#FF4444','#44BBFF','#44FF88','#FF88CC'];
+  const ws=document.getElementById('winScreen');
+  for(let i=0;i<80;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div'); el.className='confetti';
+      const s=5+Math.random()*10;
+      el.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${s}px;height:${s}px;animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*.5}s;`;
+      ws.appendChild(el); setTimeout(()=>el.remove(),5000);
+    },i*30);
   }
-  requestAnimationFrame(gameLoop);
 }
 
 /* ============================================================
-   CONTRÔLES D-PAD
+   SONS
    ============================================================ */
-const DIRS = {
-  btnUp:    {dx:0,  dy:-1},
-  btnDown:  {dx:0,  dy:1},
-  btnLeft:  {dx:-1, dy:0},
-  btnRight: {dx:1,  dy:0},
-  btnStop:  {dx:0,  dy:0},
-};
-
-Object.keys(DIRS).forEach(id=>{
-  const btn = document.getElementById(id);
-  if(!btn) return;
-  function press(){
-    if(!started) startMusic();
-    const d = DIRS[id];
-    simba.dx = d.dx; simba.dy = d.dy;
-    btn.classList.add('pressed');
-  }
-  function release(){ btn.classList.remove('pressed'); }
-  btn.addEventListener('touchstart', e=>{ e.preventDefault(); press(); }, {passive:false});
-  btn.addEventListener('touchend',   e=>{ e.preventDefault(); release(); }, {passive:false});
-  btn.addEventListener('mousedown',  press);
-  btn.addEventListener('mouseup',    release);
-});
-
-// Bouton vitesse
-let running = false;
-document.getElementById('btnSpeed').addEventListener('click',()=>{
-  running = !running;
-  simba.running = running;
-  document.getElementById('btnSpeed').textContent = running ? '🏃 Course' : '🚶 Marche';
-});
-
-// Clavier PC
-window.addEventListener('keydown', e=>{
-  if(!started) startMusic();
-  if(e.key==='ArrowLeft'  || e.key==='a') { simba.dx=-1; simbaFacingRight=false; }
-  if(e.key==='ArrowRight' || e.key==='d') { simba.dx=1;  simbaFacingRight=true; }
-  if(e.key==='ArrowUp'    || e.key==='w') simba.dy=-1;
-  if(e.key==='ArrowDown'  || e.key==='s') simba.dy=1;
-  if(e.key===' ') { running=!running; simba.running=running; }
-});
-window.addEventListener('keyup', e=>{
-  if(['ArrowLeft','ArrowRight','a','d'].includes(e.key)) simba.dx=0;
-  if(['ArrowUp','ArrowDown','w','s'].includes(e.key)) simba.dy=0;
-});
+function getAC(){return new(window.AudioContext||window.webkitAudioContext)();}
+function playCollect(){try{const ac=getAC();[523,659,784,1047].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.18,ac.currentTime+i*.09);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.09+.22);o.start(ac.currentTime+i*.09);o.stop(ac.currentTime+i*.09+.25);});}catch(e){}}
+function playWrong(){try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type='sawtooth';o.frequency.setValueAtTime(220,ac.currentTime);o.frequency.exponentialRampToValueAtTime(80,ac.currentTime+.25);g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.28);o.start();o.stop(ac.currentTime+.3);}catch(e){}}
+function playBump(){try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type='square';o.frequency.setValueAtTime(150,ac.currentTime);o.frequency.exponentialRampToValueAtTime(60,ac.currentTime+.15);g.gain.setValueAtTime(.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);o.start();o.stop(ac.currentTime+.2);}catch(e){}}
+function playVictory(){try{const ac=getAC();const fan=[[523,.15],[659,.15],[784,.15],[1047,.3],[784,.1],[1047,.1],[1319,.7]];let t=ac.currentTime+.05;fan.forEach(([f,d])=>{const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+.02);g.gain.setValueAtTime(.22,t+d-.03);g.gain.linearRampToValueAtTime(0,t+d);o.start(t);o.stop(t+d+.01);t+=d;});}catch(e){}}
 
 /* ============================================================
    MUSIQUE
    ============================================================ */
-let musicOn=true, started=false;
+let musicOn=true,started=false;
 const music=document.getElementById('bgMusic');
-
-function startMusic(){
-  if(started&&!music.paused) return;
-  music.volume=0.6; music.play().catch(()=>{});
-  started=true;
-}
-
-document.getElementById('mBtn').addEventListener('click',()=>{
-  musicOn=!musicOn;
-  document.getElementById('mBtn').textContent=musicOn?'🎵':'🔇';
-  if(musicOn) startMusic(); else music.pause();
-});
-
+function startMusic(){if(started&&!music.paused)return;music.volume=.55;music.play().catch(()=>{});started=true;}
+document.getElementById('mBtn').addEventListener('click',()=>{musicOn=!musicOn;document.getElementById('mBtn').textContent=musicOn?'🎵':'🔇';if(musicOn)startMusic();else music.pause();});
 document.addEventListener('touchstart',function f(){startMusic();document.removeEventListener('touchstart',f);},{once:true,passive:true});
-document.addEventListener('mousedown', function f(){startMusic();document.removeEventListener('mousedown',f);},{once:true});
 
 /* ============================================================
    REJOUER
    ============================================================ */
 document.getElementById('btnRejouer').addEventListener('click',()=>{
-  score=0; gameOver=false; currentTarget=0;
+  score=0;gameOver=false;currentTarget=0;
   document.getElementById('scoreNum').textContent='0';
   document.getElementById('progFill').style.width='0%';
   document.getElementById('winScreen').classList.remove('show');
   document.querySelectorAll('.confetti').forEach(e=>e.remove());
-  initSimba(); initLevel(); startMusic();
+  simbaPos.set(0,0,0);simbaTarget.set(0,0,0);simbaSpeed=0;
+  initLevel();startMusic();
 });
+
+/* ============================================================
+   BOUCLE PRINCIPALE
+   ============================================================ */
+const clock=new THREE.Clock();
+let totalTime=0, lastGifUp=0;
+
+function loop(){
+  requestAnimationFrame(loop);
+  const dt=clock.getDelta(); totalTime+=dt;
+  const now=performance.now();
+
+  if(!gameOver){
+    // Mouvement Simba
+    const dist=simbaPos.distanceTo(simbaTarget);
+    if(dist>0.12){
+      const dir=simbaTarget.clone().sub(simbaPos).normalize();
+      simbaPos.addScaledVector(dir,Math.min(simbaSpeed*dt,dist));
+      faceRight=dir.x>=0;
+    } else simbaSpeed=0;
+
+    // Bornes monde
+    simbaPos.x=Math.max(-WORLD+1,Math.min(WORLD-1,simbaPos.x));
+    simbaPos.z=Math.max(-WORLD+1,Math.min(WORLD-1,simbaPos.z));
+
+    // Hauteur sol (légère ondulation)
+    const groundY=Math.sin(simbaPos.x*.15)*.25+Math.cos(simbaPos.z*.18)*.2;
+    simbaSprite.position.set(simbaPos.x, groundY+2, simbaPos.z);
+    simbaSprite.scale.set(faceRight?4:-4,4,1);
+    shadowMesh.position.set(simbaPos.x,groundY+.03,simbaPos.z);
+
+    // GIF refresh
+    if(now-lastGifUp>80){updateSimbaTex();if(simbaTex)simbaMat.map=simbaTex;simbaMat.needsUpdate=true;lastGifUp=now;}
+
+    // Bob animaux
+    items.forEach(item=>{if(!item.userData.alive)return;item.userData.bob+=dt*2.8;item.position.y=1.3+Math.sin(item.userData.bob)*.25;});
+
+    // Nuages
+    clouds.forEach(cl=>{cl.position.x+=cl.userData.speed;if(cl.position.x>90)cl.position.x=-90;});
+
+    // Eau — rotation texture légère
+    waterMesh.rotation.z+=dt*.025;
+
+    // Reflets eau
+    waterSprites.forEach(sp=>{
+      sp.userData.angle+=dt*sp.userData.speed;
+      sp.position.x=22+Math.cos(sp.userData.angle)*sp.userData.r;
+      sp.position.z=18+Math.sin(sp.userData.angle)*sp.userData.r;
+      sp.material.opacity=.3+Math.sin(sp.userData.angle*2)*.2;
+    });
+
+    // Cascade — particules tombent
+    cascadeParticles.forEach(sp=>{
+      sp.userData.y-=sp.userData.speed*dt*5;
+      if(sp.userData.y<.3) sp.userData.y=12+Math.random()*4;
+      sp.position.y=sp.userData.y;
+      const wobble=Math.sin(totalTime*3+sp.userData.ox)*.2;
+      sp.position.x=-30+sp.userData.ox+wobble;
+    });
+
+    // Brume cascade
+    mistParticles.forEach(sp=>{
+      sp.userData.phase+=dt*.8;
+      sp.material.opacity=.2+Math.sin(sp.userData.phase)*.15;
+      sp.scale.setScalar(1.5+Math.sin(sp.userData.phase*.7)*.5);
+    });
+
+    checkCollisions();
+    updateZone();
+    updateCamera();
+  }
+
+  renderer.render(scene,camera);
+}
 
 /* ============================================================
    INIT
    ============================================================ */
-initSimba();
 initLevel();
-gameLoop();
+loop();
 </script>
 
 </body>
